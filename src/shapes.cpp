@@ -11,7 +11,7 @@
 
 using namespace std;
 
-const double PI = 3.141592653589793238463;
+// const double PI = 3.141592653589793238463;
 
 class Shape
 {
@@ -33,7 +33,7 @@ public:
     {
         return this->index;
     }
-}
+};
 
 class Cylinder : public Shape
 {   
@@ -52,13 +52,14 @@ public:
 
     void add_vertices(glm::vec4* vert_arr) override
     {   
-        double theta = 2*PI/(this->num_tesselations);
-        double h_d = (this->h)/(this->num_tesselations)
+        double theta = 2*M_PI/(this->num_tesselations);
+        double h_d = (this->height)/(this->num_tesselations);
         for(int i=0; i<(this->num_tesselations); i++)
         {
-            for(int j=0; j<(this->num_tesselations), j++)
+            for(int j=0; j<(this->num_tesselations); j++)
             {
                 float r = this->radius;
+                float h = this->height;
                 double curr_theta1 = i*theta;
                 double curr_theta2 = (i+1)*theta;
 
@@ -69,7 +70,7 @@ public:
                 double y2 = r*sin(curr_theta2);
 
                 double z1 = i*h_d - h/2;
-                double z2 = (i+1)*h_d - h/2
+                double z2 = (i+1)*h_d - h/2;
 
                 glm::vec4 a(x1, y1, z1, 1.0f);
                 glm::vec4 b(x2, y2, z1, 1.0f);
@@ -95,11 +96,11 @@ class Sphere : public Shape
 
     void add_vertices(glm::vec4* vert_arr)
     {
-        double theta_z = (2*PI)/(this->num_tesselations);
-        double theta_x = (2*PI)/(this->num_tesselations)
+        double theta_z = (2*M_PI)/(this->num_tesselations);
+        double theta_x = (2*M_PI)/(this->num_tesselations);
         for(int i=0; i<(this->num_tesselations); i++)
         {
-            for(int j=0; j<(this->num_tesselations), j++)
+            for(int j=0; j<(this->num_tesselations); j++)
             {
                 float r = this->radius;
                 double curr_theta_x1 = i*theta_x;
@@ -113,10 +114,10 @@ class Sphere : public Shape
                 double x1_z2 = r*sin(curr_theta_z2)*cos(curr_theta_x1);
                 double x2_z2 = r*sin(curr_theta_z2)*cos(curr_theta_x2);
 
-                double y1_z1 = r*sin(curr_theta_z1)*sin(curr_theta_y1);
-                double y2_z1 = r*sin(curr_theta_z1)*sin(curr_theta_y2);
-                double y1_z2 = r*sin(curr_theta_z2)*sin(curr_theta_y1);
-                double y2_z2 = r*sin(curr_theta_z2)*sin(curr_theta_y2);
+                double y1_z1 = r*sin(curr_theta_z1)*sin(curr_theta_x1);
+                double y2_z1 = r*sin(curr_theta_z1)*sin(curr_theta_x2);
+                double y1_z2 = r*sin(curr_theta_z2)*sin(curr_theta_x1);
+                double y2_z2 = r*sin(curr_theta_z2)*sin(curr_theta_x2);
 
                 double z1 = r*cos(curr_theta_z1);
                 double z2 = r*cos(curr_theta_z2);
@@ -136,7 +137,7 @@ class Sphere : public Shape
 class Cuboid : public Shape
 {
     float a, b, c;
-    Sphere(float a, float b, float c)
+    Cuboid(float a, float b, float c)
     {
         this->a = a;
         this->b = b;
