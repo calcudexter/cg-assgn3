@@ -82,9 +82,7 @@ namespace csX75
       {  shift_held = true;}
       else if(action == GLFW_RELEASE)
       { shift_held = false;}
-    }
-
-    
+    }    
   }
 };  
   
