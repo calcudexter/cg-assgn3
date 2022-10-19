@@ -49,4 +49,6 @@ GLuint vPosition,vColor;
 //global matrix stack for hierarchical modelling
 std::vector<glm::mat4> matrixStack;
 
+csX75::HNode* curr_node;
+
 #endif

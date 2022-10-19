@@ -3,7 +3,7 @@
 
 extern GLfloat c_xrot,c_yrot,c_zrot;
 extern bool enable_perspective;
-extern csX75::HNode* node1, *node2, *node3,*curr_node;
+extern csX75::HNode* getNode(char), *curr_node;
 namespace csX75
 {
   //! Initialize GL State
@@ -35,23 +35,48 @@ namespace csX75
   //!GLFW keyboard callback
   void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
   {
+    int cond = (curr_node->name == "LArmL") ||
+               (curr_node->name == "LArmR") ||
+               (curr_node->name == "LegL") ||
+               (curr_node->name == "LegR");
+
     //!Close the window if the ESC key was pressed
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
       glfwSetWindowShouldClose(window, GL_TRUE);
-    if (key == GLFW_KEY_P && action == GLFW_PRESS)
+    else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS | GLFW_REPEAT)
+      {if(!cond) curr_node->dec_ry();}
+    else if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS | GLFW_REPEAT)
+      {if(!cond) curr_node->inc_ry();}
+    else if (key == GLFW_KEY_UP && action == GLFW_PRESS | GLFW_REPEAT)
+      {curr_node->dec_rx();}
+    else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS | GLFW_REPEAT)
+      {curr_node->inc_rx();}
+    else if (key == GLFW_KEY_PAGE_UP && action == GLFW_PRESS | GLFW_REPEAT)
+      {if(!cond) curr_node->inc_rz();}
+    else if (key == GLFW_KEY_PAGE_DOWN && action == GLFW_PRESS | GLFW_REPEAT)
+      {if(!cond) curr_node->dec_rz();}
+    else if (key == GLFW_KEY_P && action == GLFW_PRESS)
       enable_perspective = !enable_perspective;   
     else if (key == GLFW_KEY_A  && action == GLFW_PRESS | GLFW_REPEAT)
-      c_yrot -= 1.0;
+      c_yrot -= 3.0;
     else if (key == GLFW_KEY_D  && action == GLFW_PRESS | GLFW_REPEAT)
-      c_yrot += 1.0;
+      c_yrot += 3.0;
     else if (key == GLFW_KEY_W  && action == GLFW_PRESS | GLFW_REPEAT)
-      c_xrot -= 1.0;
+      c_xrot -= 3.0;
     else if (key == GLFW_KEY_S  && action == GLFW_PRESS | GLFW_REPEAT)
-      c_xrot += 1.0;        
+      c_xrot += 3.0;
     else if (key == GLFW_KEY_Q  && action == GLFW_PRESS | GLFW_REPEAT)
-      c_zrot -= 1.0;
+      c_zrot -= 3.0;
     else if (key == GLFW_KEY_E  && action == GLFW_PRESS | GLFW_REPEAT)
-      c_zrot += 1.0;   
+      c_zrot += 3.0;
+    else if (key == GLFW_KEY_C && action == GLFW_PRESS) {
+      printf("Press keys to select the part\n");
+      char c;
+      scanf(" %c", &c);
+      printf("Key pressed %c\n", c);
+
+      curr_node = getNode(c);
+    }
   }
 };  
   
