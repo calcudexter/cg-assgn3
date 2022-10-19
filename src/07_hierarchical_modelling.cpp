@@ -1,19 +1,3 @@
-/*
-  CSX75 Tutorial on Hierarchical Modelling
-
-  Use the arrow keys and PgUp,PgDn, 
-  keys to make the arms move.
-
-  Use the keys 1,2 and 3 to switch between arms.
-
-  Modified from An Introduction to OpenGL Programming, 
-  Ed Angel and Dave Shreiner, SIGGRAPH 2013
-
-  Written by - 
-               Harshavardhan Kode
-*/
-
-
 #include "07_hierarchical_modelling.hpp"
 
 GLuint shaderProgram;
@@ -22,72 +6,28 @@ glm::mat4 rotation_matrix;
 glm::mat4 projection_matrix;
 glm::mat4 c_rotation_matrix;
 glm::mat4 lookat_matrix;
-
 glm::mat4 model_matrix;
 glm::mat4 view_matrix;
-
-
 glm::mat4 modelview_matrix;
-
 GLuint uModelViewMatrix;
-const int num_vertices = 36;
 
-
-//-----------------------------------------------------------------
-
-//Eight vertices in homogenous coordinates
-//elongated cuboid , basic arm in the hierarchy;
-glm::vec4 positions[8] = {
-  glm::vec4(0.0, -0.25, 0.25, 1.0),
-  glm::vec4(0.0, 0.25, 0.25, 1.0),
-  glm::vec4(2.0, 0.25, 0.25, 1.0),
-  glm::vec4(2.0, -0.25, 0.25, 1.0),
-  glm::vec4(0.0, -0.25, -0.25, 1.0),
-  glm::vec4(0.0, 0.25, -0.25, 1.0),
-  glm::vec4(2.0, 0.25, -0.25, 1.0),
-  glm::vec4(2.0, -0.25, -0.25, 1.0)
+Human* h;
+Bike* b;
+float bike_params[] = 
+{
+  3.0f, //wheel radius
+  0.8f, //wheel thickness
+  6.0f, //body width
+  4.0f, //body height
+  1.0f, //body thickness
+  1.0f, //rod radius
+  10.0f, //rod length
+  1.0f, // rod hinge length
+  45.0f // rod body angle
 };
 
-//RGBA colors
-glm::vec4 colors[8] = {
-  glm::vec4(0.0, 0.0, 0.0, 1.0),
-  glm::vec4(1.0, 0.0, 0.0, 1.0),
-  glm::vec4(1.0, 1.0, 0.0, 1.0),
-  glm::vec4(0.0, 1.0, 0.0, 1.0),
-  glm::vec4(0.0, 0.0, 1.0, 1.0),
-  glm::vec4(1.0, 0.0, 1.0, 1.0),
-  glm::vec4(1.0, 1.0, 1.0, 1.0),
-  glm::vec4(0.0, 1.0, 1.0, 1.0)
-};
+float* dof_param;
 
-int tri_idx=0;
-glm::vec4 v_positions[num_vertices];
-glm::vec4 v_colors[num_vertices];
-
-// quad generates two triangles for each face and assigns colors to the vertices
-void quad(int a, int b, int c, int d)
-{
-  v_colors[tri_idx] = colors[a]; v_positions[tri_idx] = positions[a]; tri_idx++;
-  v_colors[tri_idx] = colors[b]; v_positions[tri_idx] = positions[b]; tri_idx++;
-  v_colors[tri_idx] = colors[c]; v_positions[tri_idx] = positions[c]; tri_idx++;
-  v_colors[tri_idx] = colors[a]; v_positions[tri_idx] = positions[a]; tri_idx++;
-  v_colors[tri_idx] = colors[c]; v_positions[tri_idx] = positions[c]; tri_idx++;
-  v_colors[tri_idx] = colors[d]; v_positions[tri_idx] = positions[d]; tri_idx++;
- }
-
-// generate 12 triangles: 36 vertices and 36 colors
-void colorcube(void)
-{
-    quad( 1, 0, 3, 2 );
-    quad( 2, 3, 7, 6 );
-    quad( 3, 0, 4, 7 );
-    quad( 6, 5, 1, 2 );
-    quad( 4, 5, 6, 7 );
-    quad( 5, 4, 0, 1 );
-}
-
-
-//-----------------------------------------------------------------
 
 void initBuffersGL(void)
 {
@@ -108,20 +48,9 @@ void initBuffersGL(void)
   vColor = glGetAttribLocation( shaderProgram, "vColor" ); 
   uModelViewMatrix = glGetUniformLocation( shaderProgram, "uModelViewMatrix");
 
-  // Creating the hierarchy:
-  // We are using the original colorcube function to generate the vertices of the cuboid
-  colorcube();
-
   //note that the buffers are initialized in the respective constructors
- 
-  node1 = new csX75::HNode(NULL,num_vertices,v_positions,v_colors,sizeof(v_positions),sizeof(v_colors));
-  node2 = new csX75::HNode(node1,num_vertices,v_positions,v_colors,sizeof(v_positions),sizeof(v_colors));
-  node2->change_parameters(2.0,0.0,0.0,0.0,0.0,0.0);
-  node3 = new csX75::HNode(node2,num_vertices,v_positions,v_colors,sizeof(v_positions),sizeof(v_colors));
-  node3->change_parameters(2.0,0.0,0.0,0.0,0.0,0.0);
-  root_node = node1;
-  curr_node = node3;
-
+  h = new Human();
+  b = new Bike(bike_params);
 }
 
 void renderGL(void)
@@ -145,14 +74,15 @@ void renderGL(void)
     projection_matrix = glm::frustum(-7.0, 7.0, -7.0, 7.0, 1.0, 7.0);
     //projection_matrix = glm::perspective(glm::radians(90.0),1.0,0.1,5.0);
   else
-    projection_matrix = glm::ortho(-7.0, 7.0, -7.0, 7.0, -5.0, 5.0);
+    projection_matrix = glm::ortho(-20.0, 20.0, -20.0, 20.0, -500.0, 500.0);
 
   view_matrix = projection_matrix*lookat_matrix;
 
   matrixStack.push_back(view_matrix);
 
-  node1->render_tree();
-
+  // h->torso->render_tree();
+  b->update_bike(dof_param);
+  b->render_bike();
 }
 
 int main(int argc, char** argv)
@@ -164,7 +94,7 @@ int main(int argc, char** argv)
   glfwSetErrorCallback(csX75::error_callback);
 
   //! Initialize GLFW
-  if (!glfwInit())
+  if (!glfwInit())  
     return -1;
 
   //We want OpenGL 4.0
@@ -213,6 +143,8 @@ int main(int argc, char** argv)
   //Initialize GL state
   csX75::initGL();
   initBuffersGL();
+
+  dof_param = (float*) malloc(3*sizeof(float));
 
   // Loop until the user closes the window
   while (glfwWindowShouldClose(window) == 0)

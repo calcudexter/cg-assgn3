@@ -26,6 +26,8 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "hierarchy_node.hpp"
+#include "rider.hpp"
+#include "bike.hpp"
 
 /*// Translation Parameters
 GLfloat xpos=0.0,ypos=0.0,zpos=0.0;
@@ -47,13 +49,5 @@ GLuint vPosition,vColor;
 
 //global matrix stack for hierarchical modelling
 std::vector<glm::mat4> matrixStack;
-
-csX75::HNode* root_node;
-csX75::HNode* curr_node;
-csX75::HNode* node1;
-csX75::HNode* node2;
-csX75::HNode* node3;
-
-//-------------------------------------------------------------------------
 
 #endif

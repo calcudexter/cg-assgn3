@@ -11,6 +11,8 @@ namespace csX75
 	HNode::HNode(HNode* a_parent, GLuint num_v, glm::vec4* a_vertices, glm::vec4* a_colours, std::size_t v_size, std::size_t c_size){
 
 		num_vertices = num_v;
+
+		// sizes in bytes
 		vertex_buffer_size = v_size;
 		color_buffer_size = c_size;
 		// initialize vao and vbo of the object;
@@ -97,7 +99,6 @@ namespace csX75
 	}
 
 	void HNode::render_tree(){
-		
 		matrixStack.push_back(translation);
 		matrixStack.push_back(rotation);
 
@@ -107,7 +108,6 @@ namespace csX75
 		}
 		matrixStack.pop_back();
 		matrixStack.pop_back();
-
 	}
 
 	void HNode::inc_rx(){
