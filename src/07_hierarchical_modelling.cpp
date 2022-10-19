@@ -12,6 +12,22 @@ glm::mat4 modelview_matrix;
 GLuint uModelViewMatrix;
 
 Human* h;
+Bike* b;
+float bike_params[] = 
+{
+  3.0f, //wheel radius
+  0.8f, //wheel thickness
+  6.0f, //body width
+  4.0f, //body height
+  1.0f, //body thickness
+  1.0f, //rod radius
+  10.0f, //rod length
+  1.0f, // rod hinge length
+  45.0f // rod body angle
+};
+
+float* dof_param;
+
 
 void initBuffersGL(void)
 {
@@ -35,6 +51,7 @@ void initBuffersGL(void)
   //note that the buffers are initialized in the respective constructors
   h = new Human();
   curr_node = h->torso;
+  b = new Bike(bike_params);
 }
 
 void renderGL(void)
@@ -65,6 +82,8 @@ void renderGL(void)
   matrixStack.push_back(view_matrix);
 
   h->torso->render_tree();
+  b->update_bike(dof_param);
+  b->render_bike();
 }
 
 HNode* getNode(char key)
@@ -129,7 +148,7 @@ int main(int argc, char** argv)
   glfwSetErrorCallback(csX75::error_callback);
 
   //! Initialize GLFW
-  if (!glfwInit())
+  if (!glfwInit())  
     return -1;
 
   //We want OpenGL 4.0
@@ -178,6 +197,8 @@ int main(int argc, char** argv)
   //Initialize GL state
   csX75::initGL();
   initBuffersGL();
+
+  dof_param = (float*) malloc(3*sizeof(float));
 
   // Loop until the user closes the window
   while (glfwWindowShouldClose(window) == 0)

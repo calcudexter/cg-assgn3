@@ -27,6 +27,7 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "hierarchy_node.hpp"
 #include "rider.hpp"
+#include "bike.hpp"
 
 /*// Translation Parameters
 GLfloat xpos=0.0,ypos=0.0,zpos=0.0;

@@ -4,6 +4,9 @@
 extern GLfloat c_xrot,c_yrot,c_zrot;
 extern bool enable_perspective;
 extern csX75::HNode* getNode(char), *curr_node;
+extern float* dof_param;
+
+bool shift_held = false;
 namespace csX75
 {
   //! Initialize GL State
@@ -77,6 +80,34 @@ namespace csX75
 
       curr_node = getNode(c);
     }
+    else if (key == GLFW_KEY_F && action == GLFW_PRESS | GLFW_REPEAT)
+    {
+      if(shift_held)
+        dof_param[1] -= 1.0f;
+      else 
+        dof_param[1] += 1.0f;
+    }
+    else if (key == GLFW_KEY_R && action == GLFW_PRESS | GLFW_REPEAT)
+    {
+      if(shift_held)
+        dof_param[0] -= 1.0f;
+      else 
+        dof_param[0] += 1.0f;
+    }
+    else if (key == GLFW_KEY_T && action == GLFW_PRESS | GLFW_REPEAT)
+    {
+      if(shift_held)
+        dof_param[2] -= 1.0f;
+      else 
+        dof_param[2] += 1.0f;
+    }
+    else if ((key == GLFW_KEY_LEFT_SHIFT || key == GLFW_KEY_RIGHT_SHIFT))
+    {
+      if (action == GLFW_PRESS)
+      {  shift_held = true;}
+      else if(action == GLFW_RELEASE)
+      { shift_held = false;}
+    }    
   }
 };  
   

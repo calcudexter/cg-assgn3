@@ -76,6 +76,16 @@ namespace csX75
 		children.push_back(a_child);
 	}
 
+	void HNode::change_parameters(GLfloat atx, GLfloat aty, GLfloat atz, GLfloat arx, GLfloat ary, GLfloat arz){
+		tx = atx;
+		ty = aty;
+		tz = atz;
+		rx = arx;
+		ry = ary;
+		rz = arz;
+		update_matrices();
+	}
+
 	void HNode::change_parameters(GLfloat atx, GLfloat aty, GLfloat atz, GLfloat arx, GLfloat ary, GLfloat arz, GLfloat ptx, GLfloat pty, GLfloat ptz){
 		tx = atx;
 		ty = aty;

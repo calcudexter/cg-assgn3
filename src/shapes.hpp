@@ -1,5 +1,5 @@
 #ifndef _SHAPES_HPP_
-#define _SHAPE_HPP_
+#define _SHAPES_HPP_
 
 #include "glm/vec3.hpp"
 #include "glm/vec4.hpp"
