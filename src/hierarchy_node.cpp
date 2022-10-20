@@ -8,7 +8,7 @@ extern std::vector<glm::mat4> matrixStack;
 namespace csX75
 {
 
-	HNode::HNode(HNode* a_parent, GLuint num_v, glm::vec4* a_vertices, glm::vec4* a_colours, std::size_t v_size, std::size_t c_size){
+	HNode::HNode(HNode* a_parent, GLuint num_v, glm::vec4* a_vertices, glm::vec4* a_colours, std::size_t v_size, std::size_t c_size, std::string name){
 
 		num_vertices = num_v;
 
@@ -52,25 +52,28 @@ namespace csX75
 
 		//initial parameters are set to 0;
 
-		tx=ty=tz=rx=ry=rz=0;
+		tx=ty=tz=rx=ry=rz=ptx=pty=ptz=0;
 
 		update_matrices();
+		rot_mat = glm::mat4(1.0f);	
+
+		this->name = name;
 	}
 
 	void HNode::update_matrices(){
 
-		rotation = glm::rotate(glm::mat4(1.0f), glm::radians(rx), glm::vec3(1.0f,0.0f,0.0f));
-		rotation = glm::rotate(rotation, glm::radians(ry), glm::vec3(0.0f,1.0f,0.0f));
-		rotation = glm::rotate(rotation, glm::radians(rz), glm::vec3(0.0f,0.0f,1.0f));
+		pre_rot = glm::rotate(glm::mat4(1.0f), glm::radians(rx), glm::vec3(1.0f,0.0f,0.0f));
+		pre_rot = glm::rotate(pre_rot, glm::radians(ry), glm::vec3(0.0f,1.0f,0.0f));
+		pre_rot = glm::rotate(pre_rot, glm::radians(rz), glm::vec3(0.0f,0.0f,1.0f));
 
 		translation = glm::translate(glm::mat4(1.0f),glm::vec3(tx,ty,tz));
-
-
+		pre_trans = glm::translate(glm::mat4(1.0f),glm::vec3(ptx,pty,ptz));
+		inv_trans = glm::translate(glm::mat4(1.0f),glm::vec3(-ptx,-pty,-ptz));
+		rotation = rot_mat * pre_rot;
 	}
 
 	void HNode::add_child(HNode* a_child){
 		children.push_back(a_child);
-
 	}
 
 	void HNode::change_parameters(GLfloat atx, GLfloat aty, GLfloat atz, GLfloat arx, GLfloat ary, GLfloat arz){
@@ -80,7 +83,19 @@ namespace csX75
 		rx = arx;
 		ry = ary;
 		rz = arz;
+		update_matrices();
+	}
 
+	void HNode::change_parameters(GLfloat atx, GLfloat aty, GLfloat atz, GLfloat arx, GLfloat ary, GLfloat arz, GLfloat ptx, GLfloat pty, GLfloat ptz){
+		tx = atx;
+		ty = aty;
+		tz = atz;
+		rx = arx;
+		ry = ary;
+		rz = arz;
+		this->ptx = ptx;
+		this->pty = pty;
+		this->ptz = ptz;
 		update_matrices();
 	}
 
@@ -99,45 +114,52 @@ namespace csX75
 	}
 
 	void HNode::render_tree(){
+		matrixStack.push_back(inv_trans);
+		matrixStack.push_back(rot_mat);
+		matrixStack.push_back(pre_trans);
 		matrixStack.push_back(translation);
-		matrixStack.push_back(rotation);
+		matrixStack.push_back(pre_rot);
 
 		render();
 		for(int i=0;i<children.size();i++){
 			children[i]->render_tree();
 		}
+
+		matrixStack.pop_back();
+		matrixStack.pop_back();
+		matrixStack.pop_back();
 		matrixStack.pop_back();
 		matrixStack.pop_back();
 	}
 
 	void HNode::inc_rx(){
-		rx++;
+		// rx++;
+		rot_mat = glm::rotate(glm::mat4(1.0f), glm::radians(3.0f), glm::vec3(1.0f, 0.0f, 0.0f)) * rot_mat;
 		update_matrices();
 	}
 
-
 	void HNode::inc_ry(){
-		ry++;
+		rot_mat = glm::rotate(glm::mat4(1.0f), glm::radians(3.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * rot_mat;
 		update_matrices();
 	}
 
 	void HNode::inc_rz(){
-		rz++;
+		rot_mat = glm::rotate(glm::mat4(1.0f), glm::radians(3.0f), glm::vec3(0.0f, 0.0f, 1.0f)) * rot_mat;
 		update_matrices();
 	}
 
 	void HNode::dec_rx(){
-		rx--;
+		rot_mat = glm::rotate(glm::mat4(1.0f), glm::radians(-3.0f), glm::vec3(1.0f, 0.0f, 0.0f)) * rot_mat;
 		update_matrices();
 	}
 
 	void HNode::dec_ry(){
-		ry--;
+		rot_mat = glm::rotate(glm::mat4(1.0f), glm::radians(-3.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * rot_mat;
 		update_matrices();
 	}
 
 	void HNode::dec_rz(){
-		rz--;
+		rot_mat = glm::rotate(glm::mat4(1.0f), glm::radians(-3.0f), glm::vec3(0.0f, 0.0f, 1.0f)) * rot_mat;
 		update_matrices();
 	}
 

@@ -50,22 +50,22 @@ void Bike::initialize_hnode()
   Cylinder* front_dot_s = new Cylinder(this->wheel_t+0.1f, this->wheel_r/4, NUM_T, glm::vec4(1.0f, 0.0f, 1.0f, 1.0f));
   Cylinder* rear_dot_s = new Cylinder(this->wheel_t+0.1f, this->wheel_r/4, NUM_T, glm::vec4(1.0f, 0.0f, 1.0f, 1.0f));
 
-  this->body = new HNode(NULL, body_s->num_vertices, body_s->vert_arr, body_s->col_arr, body_s->num_vertices*sizeof(glm::vec4), body_s->num_vertices*sizeof(glm::vec4));
+  this->body = new HNode(NULL, body_s->num_vertices, body_s->vert_arr, body_s->col_arr, body_s->num_vertices*sizeof(glm::vec4), body_s->num_vertices*sizeof(glm::vec4), "Body");
   // this->body->change_parameters();
 
-  this->rod = new HNode(this->body, rod_s->num_vertices, rod_s->vert_arr, rod_s->col_arr, rod_s->num_vertices*sizeof(glm::vec4), rod_s->num_vertices*sizeof(glm::vec4));
+  this->rod = new HNode(this->body, rod_s->num_vertices, rod_s->vert_arr, rod_s->col_arr, rod_s->num_vertices*sizeof(glm::vec4), rod_s->num_vertices*sizeof(glm::vec4), "Rod");
   this->rod->change_parameters(this->body_w/2, this->body_h/2, 0.0f, -90.0f, -(this->rod_body_angle), 90.0f+this->rod_rot);
 
-  this->front_wheel = new HNode(this->rod, front_wheel_s->num_vertices, front_wheel_s->vert_arr, front_wheel_s->col_arr, front_wheel_s->num_vertices*sizeof(glm::vec4), front_wheel_s->num_vertices*sizeof(glm::vec4));
+  this->front_wheel = new HNode(this->rod, front_wheel_s->num_vertices, front_wheel_s->vert_arr, front_wheel_s->col_arr, front_wheel_s->num_vertices*sizeof(glm::vec4), front_wheel_s->num_vertices*sizeof(glm::vec4), "FrontWheel");
   this->front_wheel->change_parameters(0.0f, 0.0f, -this->rod_l/2, 0.0f, 90.0f, this->front_rot);
 
-  this->rear_wheel = new HNode(this->body, rear_wheel_s->num_vertices, rear_wheel_s->vert_arr, rear_wheel_s->col_arr, rear_wheel_s->num_vertices*sizeof(glm::vec4), rear_wheel_s->num_vertices*sizeof(glm::vec4));
+  this->rear_wheel = new HNode(this->body, rear_wheel_s->num_vertices, rear_wheel_s->vert_arr, rear_wheel_s->col_arr, rear_wheel_s->num_vertices*sizeof(glm::vec4), rear_wheel_s->num_vertices*sizeof(glm::vec4), "RearWheel");
   this->rear_wheel->change_parameters(-this->body_w/2, -this->body_h/2, 0.0f, 0.0f, 0.0f, this->rear_rot);
   
-  this->rear_wheel_dot = new HNode(this->rear_wheel, rear_dot_s->num_vertices, rear_dot_s->vert_arr, rear_dot_s->col_arr, rear_dot_s->num_vertices*sizeof(glm::vec4), rear_dot_s->num_vertices*sizeof(glm::vec4));
+  this->rear_wheel_dot = new HNode(this->rear_wheel, rear_dot_s->num_vertices, rear_dot_s->vert_arr, rear_dot_s->col_arr, rear_dot_s->num_vertices*sizeof(glm::vec4), rear_dot_s->num_vertices*sizeof(glm::vec4), "RearWheelDot");
   this->rear_wheel_dot->change_parameters(-this->wheel_r/2, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
   
-  this->front_wheel_dot = new HNode(this->front_wheel, front_dot_s->num_vertices, front_dot_s->vert_arr, front_dot_s->col_arr, front_dot_s->num_vertices*sizeof(glm::vec4), front_dot_s->num_vertices*sizeof(glm::vec4));
+  this->front_wheel_dot = new HNode(this->front_wheel, front_dot_s->num_vertices, front_dot_s->vert_arr, front_dot_s->col_arr, front_dot_s->num_vertices*sizeof(glm::vec4), front_dot_s->num_vertices*sizeof(glm::vec4), "FrontWheelDot");
   this->front_wheel_dot->change_parameters(this->wheel_r/2, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
   return;
 }

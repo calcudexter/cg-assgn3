@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 
 #include <vector>
+#include <string>
 #include "glm/vec3.hpp"
 #include "glm/vec4.hpp"
 #include "glm/mat4x4.hpp"
@@ -22,6 +23,8 @@ namespace csX75	 {
 		//glm::vec4 * vertices;
 		//glm::vec4 * colors;
 		GLfloat tx,ty,tz,rx,ry,rz;
+		GLfloat ptx, pty, ptz;
+		glm::mat4 rot_mat;
 
 		std::size_t vertex_buffer_size;
 		std::size_t color_buffer_size;
@@ -29,6 +32,9 @@ namespace csX75	 {
 		GLuint num_vertices;
 		GLuint vao,vbo;
 
+		glm::mat4 pre_rot;
+		glm::mat4 pre_trans;
+		glm::mat4 inv_trans;
 		glm::mat4 rotation;
 		glm::mat4 translation;
 		
@@ -38,11 +44,14 @@ namespace csX75	 {
 		void update_matrices();
 
 	  public:
-		HNode (HNode*, GLuint, glm::vec4*,  glm::vec4*, std::size_t, std::size_t);
+		std::string name;
+
+		HNode (HNode*, GLuint, glm::vec4*,  glm::vec4*, std::size_t, std::size_t, std::string);
 		//HNode (HNode* , glm::vec4*,  glm::vec4*,GLfloat,GLfloat,GLfloat,GLfloat,GLfloat,GLfloat);
 
 		void add_child(HNode*);
 		void render();
+		void change_parameters(GLfloat,GLfloat,GLfloat,GLfloat,GLfloat,GLfloat,GLfloat,GLfloat,GLfloat);
 		void change_parameters(GLfloat,GLfloat,GLfloat,GLfloat,GLfloat,GLfloat);
 		void render_tree();
 		void inc_rx();
