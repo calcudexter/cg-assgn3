@@ -13,6 +13,7 @@ GLuint uModelViewMatrix;
 
 Human* h;
 Bike* b;
+Track* t;
 float bike_params[] = 
 {
   3.0f, //wheel radius
@@ -27,6 +28,17 @@ float bike_params[] =
 };
 
 float* dof_param;
+
+float track_params[] =
+{
+  1.0f, // scale
+  5.0f, // track thickness
+  30.0f, // track length
+  5.0f, // ramp length
+  2.0f, // ramp height
+  2.0f, // double ramp width
+  3.0f // inner radius of curves
+};
 
 
 void initBuffersGL(void)
@@ -52,6 +64,7 @@ void initBuffersGL(void)
   h = new Human();
   curr_node = h->torso;
   b = new Bike(bike_params);
+  t = new Track(track_params);
 }
 
 void renderGL(void)
@@ -81,9 +94,11 @@ void renderGL(void)
 
   matrixStack.push_back(view_matrix);
 
-  h->torso->render_tree();
-  b->update_bike(dof_param);
-  b->render_bike();
+  // h->torso->render_tree();
+  // b->update_bike(dof_param);
+  //b->render_bike();
+  t->render_track();
+
 }
 
 HNode* getNode(char key)

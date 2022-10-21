@@ -6,8 +6,6 @@
 
   Use the keys 1,2 and 3 to switch between arms.
 
-  Written by - 
-               Harshavardhan Kode
 */
 #ifndef _COLORCUBE_HPP_
 #define _COLORCUBE_HPP_
@@ -28,6 +26,7 @@
 #include "hierarchy_node.hpp"
 #include "rider.hpp"
 #include "bike.hpp"
+#include "track.hpp"
 
 /*// Translation Parameters
 GLfloat xpos=0.0,ypos=0.0,zpos=0.0;
