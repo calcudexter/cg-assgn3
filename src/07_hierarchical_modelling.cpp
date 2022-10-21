@@ -31,7 +31,7 @@ float* dof_param;
 
 float track_params[] =
 {
-  1.0f, // scale
+  0.8f, // scale
   5.0f, // track thickness
   30.0f, // track length
   5.0f, // ramp length
@@ -95,9 +95,9 @@ void renderGL(void)
   matrixStack.push_back(view_matrix);
 
   // h->torso->render_tree();
-  // b->update_bike(dof_param);
-  //b->render_bike();
-  t->render_track();
+  b->update_bike(dof_param);
+  b->render_bike();
+  //t->render_track();
 
 }
 
