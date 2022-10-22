@@ -20,7 +20,8 @@ class Human
 public:
     HNode *left_arm[2], *right_arm[2];
     HNode *left_leg[2], *right_leg[2];
-    HNode *torso, *head, *neck;
+    HNode *torso, *head, *neck, *shoes[2];
+    HNode *cap[2];
     Human();
     ~Human();
 };

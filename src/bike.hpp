@@ -19,18 +19,17 @@ using namespace csX75;
 class Bike
 {
 private:
-    HNode* body;
-    HNode* rear_wheel, *rear_wheel_dot;
-    HNode* front_wheel, *front_wheel_dot;
-    HNode* rod;
-
     float wheel_r, wheel_t, body_w, body_h, body_t;
     float rod_r, rod_l; 
     float rod_hinge_l, rod_body_angle;
     float rear_rot, front_rot, rod_rot;
 
-
 public:
+    HNode* body;
+    HNode* rear_wheel, *rear_wheel_dot;
+    HNode* front_wheel, *front_wheel_dot;
+    HNode* rod;
+
     Bike(float* param);
     void render_bike();
     void update_bike(float* param);

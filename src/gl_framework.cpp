@@ -2,6 +2,7 @@
 #include "hierarchy_node.hpp"
 
 extern GLfloat c_xrot,c_yrot,c_zrot;
+extern GLfloat gtx, gty, gtz;
 extern bool enable_perspective;
 extern csX75::HNode* getNode(char), *curr_node;
 extern float* dof_param;
@@ -72,6 +73,20 @@ namespace csX75
       c_zrot -= 3.0;
     else if (key == GLFW_KEY_E  && action == GLFW_PRESS | GLFW_REPEAT)
       c_zrot += 3.0;
+    else if((key == GLFW_KEY_2 || key == GLFW_KEY_KP_2) && action == GLFW_PRESS | GLFW_REPEAT)
+      gty -= 1.0f;
+    else if((key == GLFW_KEY_8 || key == GLFW_KEY_KP_8) && action == GLFW_PRESS | GLFW_REPEAT)
+      gty += 1.0f;
+    else if((key == GLFW_KEY_4 || key == GLFW_KEY_KP_4) && action == GLFW_PRESS | GLFW_REPEAT)
+      gtx -= 1.0f;
+    else if((key == GLFW_KEY_6 || key == GLFW_KEY_KP_6) && action == GLFW_PRESS | GLFW_REPEAT)
+      gtx += 1.0f;
+    else if((key == GLFW_KEY_5 || key == GLFW_KEY_KP_5) && action == GLFW_PRESS | GLFW_REPEAT) {
+      if(shift_held)
+        gtz -= 1.0f;
+      else
+        gtz += 1.0f;
+    }
     else if (key == GLFW_KEY_C && action == GLFW_PRESS) {
       printf("Press keys to select the part\n");
       char c;
@@ -83,23 +98,23 @@ namespace csX75
     else if (key == GLFW_KEY_F && action == GLFW_PRESS | GLFW_REPEAT)
     {
       if(shift_held)
-        dof_param[1] -= 1.0f;
+        dof_param[1] -= 5.0f;
       else 
-        dof_param[1] += 1.0f;
+        dof_param[1] += 5.0f;
     }
     else if (key == GLFW_KEY_R && action == GLFW_PRESS | GLFW_REPEAT)
     {
       if(shift_held)
-        dof_param[0] -= 1.0f;
+        dof_param[0] -= 5.0f;
       else 
-        dof_param[0] += 1.0f;
+        dof_param[0] += 5.0f;
     }
     else if (key == GLFW_KEY_T && action == GLFW_PRESS | GLFW_REPEAT)
     {
       if(shift_held)
-        dof_param[2] -= 1.0f;
+        dof_param[2] -= 5.0f;
       else 
-        dof_param[2] += 1.0f;
+        dof_param[2] += 5.0f;
     }
     else if ((key == GLFW_KEY_LEFT_SHIFT || key == GLFW_KEY_RIGHT_SHIFT))
     {

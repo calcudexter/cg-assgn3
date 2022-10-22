@@ -13,6 +13,9 @@ GLuint uModelViewMatrix;
 
 Human* h;
 Bike* b;
+
+bool bike = true, rider = false;
+
 float bike_params[] = 
 {
   3.0f, //wheel radius
@@ -50,8 +53,9 @@ void initBuffersGL(void)
 
   //note that the buffers are initialized in the respective constructors
   h = new Human();
-  curr_node = h->torso;
+  if(rider && !bike) curr_node = h->torso;
   b = new Bike(bike_params);
+  if(bike && !rider) curr_node = b->body;
 }
 
 void renderGL(void)
@@ -80,63 +84,27 @@ void renderGL(void)
   view_matrix = projection_matrix*lookat_matrix;
 
   matrixStack.push_back(view_matrix);
-
-  h->torso->render_tree();
-  b->update_bike(dof_param);
-  b->render_bike();
+  
+  if(rider && !bike) {
+    matrixStack.push_back(glm::translate(glm::mat4(1.0f), glm::vec3(gtx, gty, gtz)));
+    matrixStack.push_back(glm::scale(glm::mat4(1.0f), 0.5f * glm::vec3(1.0f, 1.0f, 1.0f)));
+    h->torso->render_tree();
+    matrixStack.pop_back();
+    matrixStack.pop_back();
+  }
+  if(bike && !rider) {
+    matrixStack.push_back(glm::translate(glm::mat4(1.0f), glm::vec3(gtx, gty, gtz)));
+    matrixStack.push_back(glm::scale(glm::mat4(1.0f), 0.5f * glm::vec3(1.0f, 1.0f, 1.0f)));
+    b->update_bike(dof_param);
+    b->render_bike();
+    matrixStack.pop_back();
+    matrixStack.pop_back();
+  }
 }
 
 HNode* getNode(char key)
 {
-  switch(key)
-  {
-    case 'a':
-      printf("Returning Torso\n");
-      return h->torso;
-      
-    case 'b':
-      printf("Returning Left Upper Arm\n");
-      return h->left_arm[0];
-      
-    case 'c':
-      printf("Returning Left Lower Arm\n");
-      return h->left_arm[1];
-      
-    case 'd':
-      printf("Returning Right Upper Arm\n");
-      return h->right_arm[0];
-      
-    case 'e':
-      printf("Returning Right Lower Arm\n");
-      return h->right_arm[1];
-      
-    case 'f':
-      printf("Returning Left Upper Leg\n");
-      return h->left_leg[0];
-      
-    case 'g':
-      printf("Returning Left Lower Leg\n");
-      return h->left_leg[1];
-      
-    case 'h':
-      printf("Returning Right Upper Leg\n");
-      return h->right_leg[0];
-      
-    case 'i':
-      printf("Returning Right Lower Leg\n");
-      return h->right_leg[1];
-      
-    case 'j':
-      printf("Returning Neck\n");
-      return h->neck;
-      
-    case 'k':
-      printf("Returning Head\n");
-      return h->head;
-    
-    default:
-      return h->torso;
-  }
+  return b->body;
 }
 
 int main(int argc, char** argv)

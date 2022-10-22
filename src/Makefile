@@ -7,14 +7,19 @@ LIBS=$(OPENGLLIB) $(GLEWLIB) $(GLFWLIB)
 LDFLAGS=-L/usr/local/lib 
 CPPFLAGS=-I/usr/local/include -I./
 
-BIN=07_hierarchical_modelling
-SRCS=07_hierarchical_modelling.cpp gl_framework.cpp shader_util.cpp hierarchy_node.cpp shapes.cpp rider.cpp bike.cpp
+BIN1=a2-model-rider
+BIN2=a2-model-bike
+SRCS1=rider_file.cpp gl_framework.cpp shader_util.cpp hierarchy_node.cpp shapes.cpp rider.cpp bike.cpp
+SRCS2=bike_file.cpp gl_framework.cpp shader_util.cpp hierarchy_node.cpp shapes.cpp rider.cpp bike.cpp
 INCLUDES=gl_framework.hpp shader_util.hpp 07_hierarchical_modelling.hpp hierarchy_node.hpp shapes.hpp rider.hpp bike.hpp
 
-all: $(BIN)
+all: $(BIN1) $(BIN2)
 
-$(BIN): $(SRCS) $(INCLUDES)
-	g++ $(CPPFLAGS) $(SRCS) -o $(BIN) $(LDFLAGS) $(LIBS)
+$(BIN1): $(SRCS) $(INCLUDES)
+	g++ $(CPPFLAGS) $(SRCS1) -o $(BIN1) $(LDFLAGS) $(LIBS)
+
+$(BIN2): $(SRCS) $(INCLUDES)
+	g++ $(CPPFLAGS) $(SRCS2) -o $(BIN2) $(LDFLAGS) $(LIBS)
 
 clean:
-	rm -f *~ *.o $(BIN)
+	rm -f *~ *.o $(BIN1) $(BIN2)

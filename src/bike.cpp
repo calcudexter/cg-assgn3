@@ -54,7 +54,8 @@ void Bike::initialize_hnode()
   // this->body->change_parameters();
 
   this->rod = new HNode(this->body, rod_s->num_vertices, rod_s->vert_arr, rod_s->col_arr, rod_s->num_vertices*sizeof(glm::vec4), rod_s->num_vertices*sizeof(glm::vec4), "Rod");
-  this->rod->change_parameters(this->body_w/2, this->body_h/2, 0.0f, -90.0f, -(this->rod_body_angle), 90.0f+this->rod_rot);
+  GLfloat delta = -1*(this->body_h/sin(this->rod_body_angle)-this->rod_l/2);
+  this->rod->change_parameters(this->body_w/2+delta*cos(this->rod_body_angle), this->body_h/2-delta*sin(this->rod_body_angle), 0.0f, -90.0f, -(this->rod_body_angle), 90.0f+this->rod_rot);
 
   this->front_wheel = new HNode(this->rod, front_wheel_s->num_vertices, front_wheel_s->vert_arr, front_wheel_s->col_arr, front_wheel_s->num_vertices*sizeof(glm::vec4), front_wheel_s->num_vertices*sizeof(glm::vec4), "FrontWheel");
   this->front_wheel->change_parameters(0.0f, 0.0f, -this->rod_l/2, 0.0f, 90.0f, this->front_rot);
@@ -72,7 +73,8 @@ void Bike::initialize_hnode()
 
 void Bike::update_hnode()
 {
-  this->rod->change_parameters(this->body_w/2, this->body_h/2, 0.0f, -90.0f, -(this->rod_body_angle), 90.0f+this->rod_rot);
+  GLfloat delta = -1*(this->body_h/sin(this->rod_body_angle)-this->rod_l/2);
+  this->rod->change_parameters(this->body_w/2+delta*cos(this->rod_body_angle), this->body_h/2-delta*sin(this->rod_body_angle), 0.0f, -90.0f, -(this->rod_body_angle), 90.0f+this->rod_rot);
   this->front_wheel->change_parameters(0.0f, 0.0f, -this->rod_l/2, 0.0f, 90.0f, this->front_rot);
   this->rear_wheel->change_parameters(-this->body_w/2, -this->body_h/2, 0.0f, 0.0f, 0.0f, this->rear_rot);
 }
