@@ -13,9 +13,6 @@
 #include "glm/gtc/type_ptr.hpp"
 
 
-#include "gl_framework.hpp"
-
-
 namespace csX75	 { 
 
 	// A simple class that represents a node in the hierarchy tree

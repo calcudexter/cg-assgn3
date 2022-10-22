@@ -28,7 +28,7 @@ public:
     HNode* body;
     HNode* rear_wheel, *rear_wheel_dot;
     HNode* front_wheel, *front_wheel_dot;
-    HNode* rod;
+    HNode* rod, *steering;
 
     Bike(float* param);
     void render_bike();

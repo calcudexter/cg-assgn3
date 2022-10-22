@@ -5,6 +5,7 @@ using namespace std;
 
 void Shape::insert_quad(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4 a, glm::vec4 b, glm::vec4 c, glm::vec4 d)
 {
+    // cout<<"Index : "<<this->index<<std::endl;
     vert_arr[this->index] = a; col_arr[this->index] = this->col; this->index++;
     vert_arr[this->index] = b; col_arr[this->index] = this->col; this->index++;
     vert_arr[this->index] = c; col_arr[this->index] = this->col; this->index++;
@@ -163,6 +164,124 @@ Cuboid::Cuboid(float a, float b, float c, glm::vec4 col)
     this->add_vertices(this->vert_arr, this->col_arr);
 }
 Cuboid::~Cuboid()
+{
+    delete this->vert_arr;
+    delete this->col_arr;
+}
+
+Track_curve::Track_curve(float ir, float out_r, int nt, glm::vec4 col)
+{
+    this->inner_r = ir;
+    this->outer_r = out_r;
+    this->num_t = nt;
+    this->col = col;
+    this->num_vertices = 6*num_t;
+    this->vert_arr = new glm::vec4[this->num_vertices];
+    this->col_arr = new glm::vec4[this->num_vertices];
+    this->add_vertices(this->vert_arr, this->col_arr);
+}
+
+void Track_curve::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
+{   
+    float d_theta = M_PI/(this->num_t);
+    float curr_theta1 = 0.0f;
+    float curr_theta2 = 0.0f;
+
+    for(int i=0; i<this->num_t; i++)
+    {
+        curr_theta1 = d_theta*i;
+        curr_theta2 = d_theta*(i+1);
+        float x1 = this->inner_r*cos(curr_theta1);
+        float x2 = this->outer_r*cos(curr_theta1);
+        float x3 = this->outer_r*cos(curr_theta2);
+        float x4 = this->inner_r*cos(curr_theta2);
+
+        float y1 = this->inner_r*sin(curr_theta1);
+        float y2 = this->outer_r*sin(curr_theta1);
+        float y3 = this->outer_r*sin(curr_theta2);
+        float y4 = this->inner_r*sin(curr_theta2);
+
+        glm::vec4 a(x1, y1, 0.0f, 1.0f);
+        glm::vec4 b(x2, y2, 0.0f, 1.0f);
+        glm::vec4 c(x3, y3, 0.0f, 1.0f);
+        glm::vec4 d(x4, y4, 0.0f, 1.0f);
+
+        this->insert_tri(this->vert_arr, this->col_arr, a, b, c);
+        this->insert_tri(this->vert_arr, this->col_arr, a, c, d);
+    }
+    // std::cout<< "Track curve done"<< std::endl;
+}
+
+Track_curve::~Track_curve()
+{
+    delete this->vert_arr;
+    delete this->col_arr;
+}
+
+
+// track plane
+Track_plane::Track_plane(float ph, float pw, glm::vec4 col)
+{
+    this->plane_h = ph;
+    this->plane_w = pw;
+    this->num_vertices = 6;
+    this->col = col;
+    this->vert_arr = new glm::vec4[this->num_vertices];
+    this->col_arr = new glm::vec4[this->num_vertices];
+    this->add_vertices(this->vert_arr, this->col_arr);
+}
+
+void Track_plane::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
+{   
+
+    glm::vec4 a(this->plane_w/2, this->plane_h/2, 0.0f, 1.0f);
+    glm::vec4 b(this->plane_w/2, -this->plane_h/2, 0.0f, 1.0f);
+    glm::vec4 c(-this->plane_w/2, -this->plane_h/2, 0.0f, 1.0f);
+    glm::vec4 d(-this->plane_w/2, this->plane_h/2, 0.0f, 1.0f);
+    // std::cout<<this->plane_w<<" "<<this->plane_h<<std::endl;
+    this->insert_quad(this->vert_arr, this->col_arr, a, b, c, d);
+    
+    // std::cout<< "Track plane done"<< std::endl;
+
+}
+
+Track_plane::~Track_plane()
+{
+    delete this->vert_arr;
+    delete this->col_arr;
+}
+
+// Track ramp
+Track_ramp::Track_ramp(float l, float w, float h, glm::vec4 col)
+{
+    this->ramp_l = l;
+    this->ramp_w = w;
+    this->ramp_h = h;
+    this->col = col;
+    this->num_vertices = 18;
+    this->vert_arr = new glm::vec4[this->num_vertices];
+    this->col_arr = new glm::vec4[this->num_vertices];
+    this->add_vertices(this->vert_arr, this->col_arr);
+}
+
+void Track_ramp::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
+{   
+    glm::vec4 a(0.0f, 0.0f, 0.0f, 1.0f);
+    glm::vec4 b(this->ramp_l, 0.0f, 0.0f, 1.0f);
+    glm::vec4 c(this->ramp_l, this->ramp_w, 0.0f, 1.0f);
+    glm::vec4 d(0.0f, this->ramp_w, 0.0f, 1.0f);
+    glm::vec4 e(this->ramp_l, 0.0f, this->ramp_h, 1.0f);
+    glm::vec4 f(this->ramp_l, this->ramp_w, this->ramp_h, 1.0f);
+
+    this->insert_quad(this->vert_arr, this->col_arr, a, e, f, d);
+    this->insert_quad(this->vert_arr, this->col_arr, e, b, c, f);
+    this->insert_tri(this->vert_arr, this->col_arr, a, b, e);
+    this->insert_tri(this->vert_arr, this->col_arr, c, d, f);
+    // std::cout<< "Track ramp done"<< std::endl;
+
+}
+
+Track_ramp::~Track_ramp()
 {
     delete this->vert_arr;
     delete this->col_arr;

@@ -1,4 +1,5 @@
 #include "hierarchy_node.hpp"
+#include "gl_framework.hpp"
 
 #include <iostream>
 

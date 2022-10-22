@@ -49,6 +49,7 @@ void Bike::initialize_hnode()
   Cylinder* front_wheel_s = new Cylinder(this->wheel_t, this->wheel_r, NUM_T, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
   Cylinder* front_dot_s = new Cylinder(this->wheel_t+0.1f, this->wheel_r/4, NUM_T, glm::vec4(1.0f, 0.0f, 1.0f, 1.0f));
   Cylinder* rear_dot_s = new Cylinder(this->wheel_t+0.1f, this->wheel_r/4, NUM_T, glm::vec4(1.0f, 0.0f, 1.0f, 1.0f));
+  Cylinder* steering_s = new Cylinder(this->rod_l/2, 0.7*this->rod_r, NUM_T, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
   this->body = new HNode(NULL, body_s->num_vertices, body_s->vert_arr, body_s->col_arr, body_s->num_vertices*sizeof(glm::vec4), body_s->num_vertices*sizeof(glm::vec4), "Body");
   // this->body->change_parameters();
@@ -68,6 +69,10 @@ void Bike::initialize_hnode()
   
   this->front_wheel_dot = new HNode(this->front_wheel, front_dot_s->num_vertices, front_dot_s->vert_arr, front_dot_s->col_arr, front_dot_s->num_vertices*sizeof(glm::vec4), front_dot_s->num_vertices*sizeof(glm::vec4), "FrontWheelDot");
   this->front_wheel_dot->change_parameters(this->wheel_r/2, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+  
+  this->steering = new HNode(this->rod, steering_s->num_vertices, steering_s->vert_arr, steering_s->col_arr, steering_s->num_vertices*sizeof(glm::vec4), steering_s->num_vertices*sizeof(glm::vec4), "Steering");
+  this->steering->change_parameters(0.0f, 0.0f, 0.9*this->rod_l/2, 0.0f, 90.0f, 0.0f);
+
   return;
 }
 

@@ -6,8 +6,6 @@
 
   Use the keys 1,2 and 3 to switch between arms.
 
-  Written by - 
-               Harshavardhan Kode
 */
 #ifndef _COLORCUBE_HPP_
 #define _COLORCUBE_HPP_
@@ -28,6 +26,7 @@
 #include "hierarchy_node.hpp"
 #include "rider.hpp"
 #include "bike.hpp"
+#include "track.hpp"
 
 /*// Translation Parameters
 GLfloat xpos=0.0,ypos=0.0,zpos=0.0;
@@ -37,7 +36,8 @@ GLfloat xrot=0.0,yrot=0.0,zrot=0.0;*/
 GLfloat c_xpos = 0.0, c_ypos = 0.0, c_zpos = 2.0;
 GLfloat c_up_x = 0.0, c_up_y = 1.0, c_up_z = 0.0;
 GLfloat c_xrot=0.0,c_yrot=0.0,c_zrot=0.0;
-GLfloat gtx=0.0, gty=0.0, gtz=0.0;
+GLfloat gtx[3]={0.0f, 0.0f, 0.0f}, gty[3]={0.0f, 0.0f, 0.0f}, gtz[3]={0.0f, 0.0f, 0.0f};
+GLfloat scaling[3] = {1.0f, 1.0f, 1.0f};
 
 //Running variable to toggle culling on/off
 bool enable_culling=true;

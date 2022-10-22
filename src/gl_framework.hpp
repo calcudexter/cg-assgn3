@@ -6,6 +6,9 @@
 
 #include <iostream>
 #include <string>
+#include "rider.hpp"
+#include "bike.hpp"
+#include "track.hpp"
 
 // Define a helpful macro for handling offsets into buffer objects
 #define BUFFER_OFFSET( offset )   ((GLvoid*) (offset))

@@ -9,9 +9,9 @@ CPPFLAGS=-I/usr/local/include -I./
 
 BIN1=a2-model-rider
 BIN2=a2-model-bike
-SRCS1=rider_file.cpp gl_framework.cpp shader_util.cpp hierarchy_node.cpp shapes.cpp rider.cpp bike.cpp
-SRCS2=bike_file.cpp gl_framework.cpp shader_util.cpp hierarchy_node.cpp shapes.cpp rider.cpp bike.cpp
-INCLUDES=gl_framework.hpp shader_util.hpp 07_hierarchical_modelling.hpp hierarchy_node.hpp shapes.hpp rider.hpp bike.hpp
+SRCS1=rider_file.cpp gl_framework.cpp shader_util.cpp hierarchy_node.cpp shapes.cpp rider.cpp bike.cpp track.cpp
+SRCS2=bike_file.cpp gl_framework.cpp shader_util.cpp hierarchy_node.cpp shapes.cpp rider.cpp bike.cpp track.cpp
+INCLUDES=gl_framework.hpp shader_util.hpp 07_hierarchical_modelling.hpp hierarchy_node.hpp shapes.hpp rider.hpp bike.hpp track.hpp
 
 all: $(BIN1) $(BIN2)
 

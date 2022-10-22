@@ -2,11 +2,16 @@
 #include "hierarchy_node.hpp"
 
 extern GLfloat c_xrot,c_yrot,c_zrot;
-extern GLfloat gtx, gty, gtz;
+extern GLfloat gtx[3], gty[3], gtz[3];
+extern GLfloat scaling[3];
 extern bool enable_perspective;
 extern csX75::HNode* getNode(char), *curr_node;
 extern float* dof_param;
+extern Track* t;
+extern Bike* b;
 
+extern bool bike, rider, track;
+extern int selected;
 bool shift_held = false;
 namespace csX75
 {
@@ -74,26 +79,30 @@ namespace csX75
     else if (key == GLFW_KEY_E  && action == GLFW_PRESS | GLFW_REPEAT)
       c_zrot += 3.0;
     else if((key == GLFW_KEY_2 || key == GLFW_KEY_KP_2) && action == GLFW_PRESS | GLFW_REPEAT)
-      gty -= 1.0f;
+      gty[selected] -= 1.0f;
     else if((key == GLFW_KEY_8 || key == GLFW_KEY_KP_8) && action == GLFW_PRESS | GLFW_REPEAT)
-      gty += 1.0f;
+      gty[selected] += 1.0f;
     else if((key == GLFW_KEY_4 || key == GLFW_KEY_KP_4) && action == GLFW_PRESS | GLFW_REPEAT)
-      gtx -= 1.0f;
+      gtx[selected] -= 1.0f;
     else if((key == GLFW_KEY_6 || key == GLFW_KEY_KP_6) && action == GLFW_PRESS | GLFW_REPEAT)
-      gtx += 1.0f;
+      gtx[selected] += 1.0f;
     else if((key == GLFW_KEY_5 || key == GLFW_KEY_KP_5) && action == GLFW_PRESS | GLFW_REPEAT) {
       if(shift_held)
-        gtz -= 1.0f;
+        gtz[selected] -= 1.0f;
       else
-        gtz += 1.0f;
+        gtz[selected] += 1.0f;
     }
     else if (key == GLFW_KEY_C && action == GLFW_PRESS) {
-      printf("Press keys to select the part\n");
-      char c;
-      scanf(" %c", &c);
-      printf("Key pressed %c\n", c);
+      if(rider)
+      {
+        selected = 1;
+        printf("Press keys to select the part\n");
+        char c;
+        scanf(" %c", &c);
+        printf("Key pressed %c\n", c);
 
-      curr_node = getNode(c);
+        curr_node = getNode(c);
+      }
     }
     else if (key == GLFW_KEY_F && action == GLFW_PRESS | GLFW_REPEAT)
     {
@@ -123,8 +132,33 @@ namespace csX75
       else if(action == GLFW_RELEASE)
       { shift_held = false;}
     }    
+    else if(key == GLFW_KEY_X && action == GLFW_PRESS) {
+      if(track)
+      {
+        selected = 2;
+        curr_node = t->plane1;
+      }
+    }
+    else if(key == GLFW_KEY_V && action == GLFW_PRESS) {
+      if(bike)
+      {
+        selected = 0;
+        curr_node = b->body;
+      }
+    }
+    else if(key == GLFW_KEY_M && action == GLFW_PRESS | GLFW_REPEAT)
+    {
+      GLfloat* fac = &scaling[selected];
+    
+      if(shift_held) {
+        *fac -= 0.01f;
+        if(*fac <= 0) *fac = 0;
+      }
+      else {
+        *fac += 0.01f;
+      }
+
+      printf("Scaling factor is %f\n", *fac);
+    }
   }
-};  
-  
-
-
+};

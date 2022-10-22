@@ -13,8 +13,10 @@ GLuint uModelViewMatrix;
 
 Human* h;
 Bike* b;
+Track *t;
 
-bool bike = true, rider = false;
+bool bike = true, rider = false, track = true;
+int selected;
 
 float bike_params[] = 
 {
@@ -31,6 +33,16 @@ float bike_params[] =
 
 float* dof_param;
 
+float track_params[] =
+{
+  0.8f, // scale
+  5.0f, // track thickness
+  30.0f, // track length
+  5.0f, // ramp length
+  2.0f, // ramp height
+  2.0f, // double ramp width
+  3.0f // inner radius of curves
+};
 
 void initBuffersGL(void)
 {
@@ -56,6 +68,10 @@ void initBuffersGL(void)
   if(rider && !bike) curr_node = h->torso;
   b = new Bike(bike_params);
   if(bike && !rider) curr_node = b->body;
+  t = new Track(track_params);
+
+  curr_node = b->body;
+  selected = 0;
 }
 
 void renderGL(void)
@@ -86,17 +102,24 @@ void renderGL(void)
   matrixStack.push_back(view_matrix);
   
   if(rider && !bike) {
-    matrixStack.push_back(glm::translate(glm::mat4(1.0f), glm::vec3(gtx, gty, gtz)));
-    matrixStack.push_back(glm::scale(glm::mat4(1.0f), 0.5f * glm::vec3(1.0f, 1.0f, 1.0f)));
+    matrixStack.push_back(glm::translate(glm::mat4(1.0f), glm::vec3(gtx[1], gty[1], gtz[1])));
+    matrixStack.push_back(glm::scale(glm::mat4(1.0f), scaling[1] * glm::vec3(1.0f, 1.0f, 1.0f)));
     h->torso->render_tree();
     matrixStack.pop_back();
     matrixStack.pop_back();
   }
   if(bike && !rider) {
-    matrixStack.push_back(glm::translate(glm::mat4(1.0f), glm::vec3(gtx, gty, gtz)));
-    matrixStack.push_back(glm::scale(glm::mat4(1.0f), 0.5f * glm::vec3(1.0f, 1.0f, 1.0f)));
+    matrixStack.push_back(glm::translate(glm::mat4(1.0f), glm::vec3(gtx[0], gty[0], gtz[0])));
+    matrixStack.push_back(glm::scale(glm::mat4(1.0f), scaling[0] * glm::vec3(1.0f, 1.0f, 1.0f)));
     b->update_bike(dof_param);
     b->render_bike();
+    matrixStack.pop_back();
+    matrixStack.pop_back();
+  }
+  if(track) {
+    matrixStack.push_back(glm::translate(glm::mat4(1.0f), glm::vec3(gtx[2], gty[2], gtz[2])));
+    matrixStack.push_back(glm::scale(glm::mat4(1.0f), scaling[2] * glm::vec3(1.0f, 1.0f, 1.0f)));
+    t->render_track();
     matrixStack.pop_back();
     matrixStack.pop_back();
   }

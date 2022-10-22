@@ -23,6 +23,7 @@ public:
     int num_vertices;
 
     virtual void add_vertices(glm::vec4*, glm::vec4*) = 0;
+    Shape(){this->index = 0;} 
     void insert_quad(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4 a, glm::vec4 b, glm::vec4 c, glm::vec4 d);
     void insert_tri(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4 a, glm::vec4 b, glm::vec4 c);
     int get_index();
@@ -60,4 +61,35 @@ public:
     ~Cuboid();
     void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr);
 };
+
+class Track_curve : public Shape
+{   
+    float inner_r, outer_r;
+    int num_t;
+
+public:
+    Track_curve(float ir, float out_r, int nt, glm::vec4 col);
+    ~Track_curve();
+    void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr);
+};
+
+class Track_ramp : public Shape
+{   
+    float ramp_l, ramp_h, ramp_w;
+public:
+    Track_ramp(float ramp_l, float ramp_w, float ramp_h, glm::vec4 col);
+    ~Track_ramp();
+    void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr);
+};
+
+
+class Track_plane : public Shape
+{   
+    float plane_h, plane_w;
+public:
+    Track_plane(float ph, float pw, glm::vec4 col);
+    ~Track_plane();
+    void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr);
+};
+
 #endif
