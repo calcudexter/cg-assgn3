@@ -200,7 +200,7 @@ int main(int argc, char** argv)
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 
 
   //! Create a windowed mode window and its OpenGL context
-  window = glfwCreateWindow(512, 512, "CS475/CS675 Tutorial 7: Hierarchical Modelling", NULL, NULL);
+  window = glfwCreateWindow(512, 512, "CS475 Assignment 2 Rider", NULL, NULL);
   if (!window)
     {
       glfwTerminate();
