@@ -22,7 +22,7 @@ float bike_params[] =
 {
   3.0f, //wheel radius
   0.8f, //wheel thickness
-  6.0f, //body width
+  10.0f, //body width
   4.0f, //body height
   1.0f, //body thickness
   1.0f, //rod radius
@@ -73,6 +73,9 @@ void initBuffersGL(void)
 
   curr_node = t->plane1;
   selected = 2;
+
+  h->init_arrange();
+  b->init_arrange();
 }
 
 void renderGL(void)

@@ -22,6 +22,8 @@ public:
     HNode *left_leg[2], *right_leg[2];
     HNode *torso, *head, *neck, *shoes[2];
     HNode *cap[2];
+    void print_rot();
+    void init_arrange();
     Human();
     ~Human();
 };

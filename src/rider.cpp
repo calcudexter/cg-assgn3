@@ -19,7 +19,7 @@ Human::Human()
     left_arm[1]->change_parameters(0.0, 0.0, 6.0, 0.0, 0.0, 0.0, 0.0, 0.0, -3.0);
 
     right_arm[0] = new HNode(torso, limb.num_vertices, limb.vert_arr, limb.col_arr, limb.num_vertices*sizeof(glm::vec4), limb.num_vertices*sizeof(glm::vec4), "UArmR");
-    right_arm[0]->change_parameters(-5.0, 2.0, 0.0, 90.0, 0.0, 0.0, 5.0, -5.0, 3.0);
+    right_arm[0]->change_parameters(-5.0, 2.0, 0.0, 90.0, 0.0, 0.0, 5.0, -5.0, 0.0);
 
     right_arm[1] = new HNode(right_arm[0], limb.num_vertices, limb.vert_arr, limb.col_arr, limb.num_vertices*sizeof(glm::vec4), limb.num_vertices*sizeof(glm::vec4), "LArmR");
     right_arm[1]->change_parameters(0.0, 0.0, 6.0, 0.0, 0.0, 0.0, 0.0, 0.0, -3.0);
@@ -68,4 +68,30 @@ Human::~Human() {
     delete this->right_leg[0], this->right_leg[1];
     delete this->torso, this->neck, this->head;
     delete this->cap[0], this->cap[1];
+}
+
+void Human::print_rot()
+{
+    this->torso->print_rot();
+    this->left_arm[0]->print_rot();
+    this->left_arm[1]->print_rot();
+    this->right_arm[0]->print_rot();
+    this->right_arm[1]->print_rot();
+    this->left_leg[0]->print_rot();
+    this->left_leg[1]->print_rot();
+    this->right_leg[0]->print_rot();
+    this->right_leg[1]->print_rot();
+}
+
+void Human::init_arrange()
+{
+    torso->init_rot(3.036873, 0.942478, -1.570796);
+    left_arm[0]->init_rot(-0.733038, -0.000000, 0.000000);
+    left_arm[1]->init_rot(-1.884956, -0.000000, 0.000000);
+    right_arm[0]->init_rot(-0.733038, -0.000000, 0.000000);
+    right_arm[1]->init_rot(-1.780236, -0.000000, 0.000000);
+    left_leg[0]->init_rot(-1.361357, -0.000000, 0.000000);
+    left_leg[1]->init_rot(1.884956, -0.000000, 0.000000);
+    right_leg[0]->init_rot(-1.361357, -0.000000, 0.000000);
+    right_leg[1]->init_rot(1.884956, -0.000000, 0.000000);
 }

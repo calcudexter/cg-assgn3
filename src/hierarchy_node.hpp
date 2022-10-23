@@ -21,7 +21,6 @@ namespace csX75	 {
 		//glm::vec4 * colors;
 		GLfloat tx,ty,tz,rx,ry,rz;
 		GLfloat ptx, pty, ptz;
-		glm::mat4 rot_mat;
 
 		std::size_t vertex_buffer_size;
 		std::size_t color_buffer_size;
@@ -42,6 +41,7 @@ namespace csX75	 {
 
 	  public:
 		std::string name;
+		glm::mat4 rot_mat;
 
 		HNode (HNode*, GLuint, glm::vec4*,  glm::vec4*, std::size_t, std::size_t, std::string);
 		//HNode (HNode* , glm::vec4*,  glm::vec4*,GLfloat,GLfloat,GLfloat,GLfloat,GLfloat,GLfloat);
@@ -57,6 +57,8 @@ namespace csX75	 {
 		void dec_rx();
 		void dec_ry();
 		void dec_rz();
+		void print_rot();
+		void init_rot(GLfloat rx, GLfloat ry, GLfloat rz);
 	};
 
 	glm::mat4* multiply_stack(std::vector <glm::mat4> );

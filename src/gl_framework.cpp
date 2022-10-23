@@ -9,6 +9,7 @@ extern csX75::HNode* getNode(char), *curr_node;
 extern float* dof_param;
 extern Track* t;
 extern Bike* b;
+extern Human* h;
 
 extern bool bike, rider, track;
 extern int selected;
@@ -65,7 +66,20 @@ namespace csX75
     else if (key == GLFW_KEY_PAGE_DOWN && action == GLFW_PRESS | GLFW_REPEAT)
       {if(!cond) curr_node->dec_rz();}
     else if (key == GLFW_KEY_P && action == GLFW_PRESS)
-      enable_perspective = !enable_perspective;   
+    {
+      // Rotations
+
+      printf("Scaling factor (bike) %f\n", scaling[0]);
+      printf("Scaling factor (rider) %f\n", scaling[1]);
+      printf("Scaling factor (track) %f\n", scaling[2]);
+
+      printf("Translations (bike): {%f, %f, %f}\n", gtx[0], gty[0], gtz[0]);
+      printf("Translations (rider): {%f, %f, %f}\n", gtx[1], gty[1], gtz[1]);
+      printf("Translations (track): {%f, %f, %f}\n", gtx[2], gty[2], gtz[2]);
+
+      b->print_rot();
+      h->print_rot();
+    }
     else if (key == GLFW_KEY_A  && action == GLFW_PRESS | GLFW_REPEAT)
       c_yrot -= 3.0;
     else if (key == GLFW_KEY_D  && action == GLFW_PRESS | GLFW_REPEAT)
@@ -188,17 +202,36 @@ namespace csX75
     }
     else if(key == GLFW_KEY_M && action == GLFW_PRESS | GLFW_REPEAT)
     {
-      GLfloat* fac = &scaling[selected];
+      GLfloat *fac;
+      if(selected <= 2)
+      {
+        fac = &scaling[selected];
     
-      if(shift_held) {
-        *fac -= 0.01f;
-        if(*fac <= 0) *fac = 0;
+        if(shift_held) {
+          *fac -= 0.01f;
+          if(*fac <= 0) *fac = 0;
+        }
+        else {
+          *fac += 0.01f;
+        }
       }
       else {
-        *fac += 0.01f;
+        for(int i = 0; i < 3; i++) {
+          fac = &scaling[i];
+    
+          if(shift_held) {
+            *fac -= 0.01f;
+            if(*fac <= 0) *fac = 0;
+          }
+          else {
+            *fac += 0.01f;
+          }
+        }
       }
 
-      printf("Scaling factor is %f\n", *fac);
+      printf("Scaling factor (bike) %f\n", fac[0]);
+      printf("Scaling factor (rider) %f\n", fac[1]);
+      printf("Scaling factor (track) %f\n", fac[2]);
     }
   }
 };

@@ -83,3 +83,13 @@ void Bike::update_hnode()
   this->front_wheel->change_parameters(0.0f, 0.0f, -this->rod_l/2, 0.0f, 90.0f, this->front_rot);
   this->rear_wheel->change_parameters(-this->body_w/2, -this->body_h/2, 0.0f, 0.0f, 0.0f, this->rear_rot);
 }
+
+void Bike::print_rot()
+{
+  this->body->print_rot();
+}
+
+void Bike::init_arrange()
+{
+  this->body->init_rot(1.570796, 0.0, 0.0);
+}

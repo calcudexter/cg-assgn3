@@ -35,6 +35,8 @@ public:
     void update_bike(float* param);
     void initialize_hnode();
     void update_hnode();
+    void print_rot();
+    void init_arrange();
 };
 
 #endif

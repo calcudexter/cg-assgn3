@@ -164,6 +164,21 @@ namespace csX75
 		update_matrices();
 	}
 
+	void HNode::print_rot() {
+		GLfloat rx = atan2(rot_mat[2][1], rot_mat[2][2]), ry = atan2(-rot_mat[2][0], sqrt(rot_mat[2][1]*rot_mat[2][1] + rot_mat[2][2]*rot_mat[2][2]));
+		GLfloat rz = atan2(rot_mat[1][0], rot_mat[0][0]);
+
+		printf("Rotations of %s {%f, %f, %f}\n", this->name.c_str(), rx, ry, rz);
+	}
+
+	void HNode::init_rot(GLfloat rx, GLfloat ry, GLfloat rz)
+	{
+		glm::mat4 mat = glm::rotate(glm::mat4(1.0f), rx, glm::vec3(1.0f, 0.0f, 0.0f));
+		mat = glm::rotate(mat, ry, glm::vec3(0.0f, 1.0f, 0.0f));
+		mat = glm::rotate(mat, rz, glm::vec3(0.0f, 0.0f, 1.0f));
+
+		rot_mat = mat;
+	}
 
 	glm::mat4* multiply_stack(std::vector<glm::mat4> matStack){
 		glm::mat4* mult;
