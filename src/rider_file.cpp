@@ -15,7 +15,7 @@ Human* h;
 Bike* b;
 Track* t;
 
-bool bike = false, rider = true, track = true;
+bool bike = false, rider = true, track = false;
 int selected;
 
 float bike_params[] = 
@@ -35,7 +35,7 @@ float* dof_param;
 
 float track_params[] =
 {
-  0.8f, // scale
+  0.16f, // scale
   5.0f, // track thickness
   30.0f, // track length
   5.0f, // ramp length
@@ -102,14 +102,14 @@ void renderGL(void)
 
   matrixStack.push_back(view_matrix);
   
-  if(rider && !bike) {
+  if(rider) {
     matrixStack.push_back(glm::translate(glm::mat4(1.0f), glm::vec3(gtx[1], gty[1], gtz[1])));
     matrixStack.push_back(glm::scale(glm::mat4(1.0f), scaling[1] * glm::vec3(1.0f, 1.0f, 1.0f)));
     h->torso->render_tree();
     matrixStack.pop_back();
     matrixStack.pop_back();
   }
-  if(bike && !rider) {
+  if(bike) {
     matrixStack.push_back(glm::translate(glm::mat4(1.0f), glm::vec3(gtx[0], gty[0], gtz[0])));
     matrixStack.push_back(glm::scale(glm::mat4(1.0f), scaling[0] * glm::vec3(1.0f, 1.0f, 1.0f)));
     b->update_bike(dof_param);

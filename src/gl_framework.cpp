@@ -78,19 +78,57 @@ namespace csX75
       c_zrot -= 3.0;
     else if (key == GLFW_KEY_E  && action == GLFW_PRESS | GLFW_REPEAT)
       c_zrot += 3.0;
-    else if((key == GLFW_KEY_2 || key == GLFW_KEY_KP_2) && action == GLFW_PRESS | GLFW_REPEAT)
-      gty[selected] -= 1.0f;
+    else if((key == GLFW_KEY_2 || key == GLFW_KEY_KP_2) && action == GLFW_PRESS | GLFW_REPEAT) {
+      if(selected == 3) {
+        gty[0] -= 0.1f;
+        gty[1] -= 0.1f;
+        gty[2] -= 0.1f;
+      }
+      else
+        gty[selected] -= 0.1f;
+    }
     else if((key == GLFW_KEY_8 || key == GLFW_KEY_KP_8) && action == GLFW_PRESS | GLFW_REPEAT)
-      gty[selected] += 1.0f;
+      if(selected == 3) {
+        gty[0] += 0.1f;
+        gty[1] += 0.1f;
+        gty[2] += 0.1f;
+      }
+      else
+        gty[selected] += 0.1f;
     else if((key == GLFW_KEY_4 || key == GLFW_KEY_KP_4) && action == GLFW_PRESS | GLFW_REPEAT)
-      gtx[selected] -= 1.0f;
+      if(selected == 3) {
+        gtx[0] -= 0.1f;
+        gtx[1] -= 0.1f;
+        gtx[2] -= 0.1f;
+      }
+      else
+        gtx[selected] -= 0.1f;
     else if((key == GLFW_KEY_6 || key == GLFW_KEY_KP_6) && action == GLFW_PRESS | GLFW_REPEAT)
-      gtx[selected] += 1.0f;
+      if(selected == 3) {
+        gtx[0] += 0.1f;
+        gtx[1] += 0.1f;
+        gtx[2] += 0.1f;
+      }
+      else
+        gtx[selected] += 0.1f;
     else if((key == GLFW_KEY_5 || key == GLFW_KEY_KP_5) && action == GLFW_PRESS | GLFW_REPEAT) {
       if(shift_held)
-        gtz[selected] -= 1.0f;
-      else
-        gtz[selected] += 1.0f;
+        if(selected == 3) {
+          gtz[0] -= 0.1f;
+          gtz[1] -= 0.1f;
+          gtz[2] -= 0.1f;
+        }
+        else
+          gtz[selected] -= 0.1f;
+      else {
+        if(selected == 3) {
+          gtz[0] += 0.1f;
+          gtz[1] += 0.1f;
+          gtz[2] += 0.1f;
+        }
+        else
+          gtz[selected] += 0.1f;
+      }
     }
     else if (key == GLFW_KEY_C && action == GLFW_PRESS) {
       if(rider)
@@ -131,7 +169,9 @@ namespace csX75
       {  shift_held = true;}
       else if(action == GLFW_RELEASE)
       { shift_held = false;}
-    }    
+    }
+    else if(key == GLFW_KEY_Z && action == GLFW_PRESS)
+      selected = 3;
     else if(key == GLFW_KEY_X && action == GLFW_PRESS) {
       if(track)
       {

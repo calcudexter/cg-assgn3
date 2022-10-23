@@ -26,9 +26,12 @@ private:
     float scale;
 
 public:
-    HNode* plane1, *plane2;
-    HNode* curve1, *curve2;
+    HNode* plane1, *plane2, *plane3, *plane4, *plane5;
+    HNode* curve1, *curve2, *curve3, *curve4, *curve5;
     HNode* double_ramp1, *double_ramp2, *ramp;
+    HNode* two_ramp1, *two_ramp2;
+
+    HNode* bump1[4], *bump2[4];
 
     Track(float* param);
     void render_track();

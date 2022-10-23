@@ -169,10 +169,11 @@ Cuboid::~Cuboid()
     delete this->col_arr;
 }
 
-Track_curve::Track_curve(float ir, float out_r, int nt, glm::vec4 col)
+Track_curve::Track_curve(float ir, float out_r, int nt, float ang, glm::vec4 col)
 {
     this->inner_r = ir;
     this->outer_r = out_r;
+    this->angle = ang;
     this->num_t = nt;
     this->col = col;
     this->num_vertices = 6*num_t;
@@ -183,7 +184,7 @@ Track_curve::Track_curve(float ir, float out_r, int nt, glm::vec4 col)
 
 void Track_curve::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
 {   
-    float d_theta = M_PI/(this->num_t);
+    float d_theta = glm::radians(this->angle)/(this->num_t);
     float curr_theta1 = 0.0f;
     float curr_theta2 = 0.0f;
 

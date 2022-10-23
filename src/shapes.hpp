@@ -64,11 +64,11 @@ public:
 
 class Track_curve : public Shape
 {   
-    float inner_r, outer_r;
+    float inner_r, outer_r, angle;
     int num_t;
 
 public:
-    Track_curve(float ir, float out_r, int nt, glm::vec4 col);
+    Track_curve(float ir, float out_r, int nt, float ang, glm::vec4 col);
     ~Track_curve();
     void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr);
 };
@@ -81,7 +81,6 @@ public:
     ~Track_ramp();
     void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr);
 };
-
 
 class Track_plane : public Shape
 {   

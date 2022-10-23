@@ -13,9 +13,9 @@ GLuint uModelViewMatrix;
 
 Human* h;
 Bike* b;
-Track *t;
+Track* t;
 
-bool bike = true, rider = false, track = false;
+bool bike = true, rider = true, track = true;
 int selected;
 
 float bike_params[] = 
@@ -44,6 +44,7 @@ float track_params[] =
   3.0f // inner radius of curves
 };
 
+
 void initBuffersGL(void)
 {
 
@@ -70,8 +71,8 @@ void initBuffersGL(void)
   if(bike && !rider) curr_node = b->body;
   t = new Track(track_params);
 
-  curr_node = b->body;
-  selected = 0;
+  curr_node = t->plane1;
+  selected = 2;
 }
 
 void renderGL(void)
@@ -127,7 +128,55 @@ void renderGL(void)
 
 HNode* getNode(char key)
 {
-  return b->body;
+  switch(key)
+  {
+    case 'a':
+      printf("Returning Torso\n");
+      return h->torso;
+      
+    case 'b':
+      printf("Returning Left Upper Arm\n");
+      return h->left_arm[0];
+      
+    case 'c':
+      printf("Returning Left Lower Arm\n");
+      return h->left_arm[1];
+      
+    case 'd':
+      printf("Returning Right Upper Arm\n");
+      return h->right_arm[0];
+      
+    case 'e':
+      printf("Returning Right Lower Arm\n");
+      return h->right_arm[1];
+      
+    case 'f':
+      printf("Returning Left Upper Leg\n");
+      return h->left_leg[0];
+      
+    case 'g':
+      printf("Returning Left Lower Leg\n");
+      return h->left_leg[1];
+      
+    case 'h':
+      printf("Returning Right Upper Leg\n");
+      return h->right_leg[0];
+      
+    case 'i':
+      printf("Returning Right Lower Leg\n");
+      return h->right_leg[1];
+      
+    case 'j':
+      printf("Returning Neck\n");
+      return h->neck;
+      
+    case 'k':
+      printf("Returning Head\n");
+      return h->head;
+    
+    default:
+      return h->torso;
+  }
 }
 
 int main(int argc, char** argv)
@@ -210,4 +259,3 @@ int main(int argc, char** argv)
 }
 
 //-------------------------------------------------------------------------
-
