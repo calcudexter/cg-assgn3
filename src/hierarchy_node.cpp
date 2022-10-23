@@ -135,32 +135,32 @@ namespace csX75
 
 	void HNode::inc_rx(){
 		// rx++;
-		rot_mat = glm::rotate(glm::mat4(1.0f), glm::radians(3.0f), glm::vec3(1.0f, 0.0f, 0.0f)) * rot_mat;
+		rot_mat =  rot_mat * glm::rotate(glm::mat4(1.0f), glm::radians(3.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		update_matrices();
 	}
 
 	void HNode::inc_ry(){
-		rot_mat = glm::rotate(glm::mat4(1.0f), glm::radians(3.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * rot_mat;
+		rot_mat = rot_mat * glm::rotate(glm::mat4(1.0f), glm::radians(3.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		update_matrices();
 	}
 
 	void HNode::inc_rz(){
-		rot_mat = glm::rotate(glm::mat4(1.0f), glm::radians(3.0f), glm::vec3(0.0f, 0.0f, 1.0f)) * rot_mat;
+		rot_mat = rot_mat * glm::rotate(glm::mat4(1.0f), glm::radians(3.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 		update_matrices();
 	}
 
 	void HNode::dec_rx(){
-		rot_mat = glm::rotate(glm::mat4(1.0f), glm::radians(-3.0f), glm::vec3(1.0f, 0.0f, 0.0f)) * rot_mat;
+		rot_mat = rot_mat * glm::rotate(glm::mat4(1.0f), glm::radians(-3.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		update_matrices();
 	}
 
 	void HNode::dec_ry(){
-		rot_mat = glm::rotate(glm::mat4(1.0f), glm::radians(-3.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * rot_mat;
+		rot_mat = rot_mat * glm::rotate(glm::mat4(1.0f), glm::radians(-3.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		update_matrices();
 	}
 
 	void HNode::dec_rz(){
-		rot_mat = glm::rotate(glm::mat4(1.0f), glm::radians(-3.0f), glm::vec3(0.0f, 0.0f, 1.0f)) * rot_mat;
+		rot_mat = rot_mat * glm::rotate(glm::mat4(1.0f), glm::radians(-3.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 		update_matrices();
 	}
 

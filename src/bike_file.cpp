@@ -22,7 +22,7 @@ float bike_params[] =
 {
   3.0f, //wheel radius
   0.8f, //wheel thickness
-  6.0f, //body width
+  10.0f, //body width
   4.0f, //body height
   1.0f, //body thickness
   1.0f, //rod radius
@@ -48,8 +48,8 @@ void initBuffersGL(void)
 {
 
   // Load shaders and use the resulting shader program
-  std::string vertex_shader_file("07_vshader.glsl");
-  std::string fragment_shader_file("07_fshader.glsl");
+  std::string vertex_shader_file("../src/07_vshader.glsl");
+  std::string fragment_shader_file("../src/07_fshader.glsl");
 
   std::vector<GLuint> shaderList;
   shaderList.push_back(csX75::LoadShaderGL(GL_VERTEX_SHADER, vertex_shader_file));
