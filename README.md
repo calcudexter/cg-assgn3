@@ -5,9 +5,9 @@
 ### Rider
 ![Rider Hierarchy](./rider_hierarchy.png)
 ### Bike
-![Bike Hierarchy](./bike_hierarchy.png)
+![Bike Hierarchy](./hierarchy_bike.png)
 ### Track
-![Track Hierarchy](./hierarchy_track.png)
+![Track Hierarchy](./track_hierarchical.png)
 
 # Key bindings :  
 ## Global rotation
