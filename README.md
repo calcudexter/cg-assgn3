@@ -3,9 +3,11 @@
 
 ## Hierarchy of models
 ### Rider
-[Rider Hierarchy]()
+[Rider Hierarchy](./rider_hierarchy.png)
 ### Bike
+[Bike Hierarchy](./bike_hierarchy.png)
 ### Track
+[Track Hierarchy](./hierarchy_track.png)
 
 # Key bindings :  
 ## Global rotation
