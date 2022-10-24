@@ -74,3 +74,6 @@ Pressing X selects the track.
 Pressing Z selects all objects.
 ## Scaling the objects
 Pressing M and Shift + M scales up and down the selected object respectively.
+
+# Undertaking
+We, Harsh Shah and Neeraj Jadhav, swear on river styx, that we have not copied the code for assignment 2 present in the repository, nor have we indulged in any kind of plagiarism. We have coded all the scripts by ourselves.
