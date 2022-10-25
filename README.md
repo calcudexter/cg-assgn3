@@ -1,6 +1,20 @@
 # CS475 : Assignment 2(Modelling FMX)
 ### By Harsh Shah(200050049), Neeraj Jadhav(200050086)
 
+## Run instructions
+Clone the repository and in the root directory,
+```
+make
+```
+This would create binaries in `bin` folder. To run the binary, change the current working directory to `bin`
+```
+cd bin 
+``` 
+and then run the required file.
+```
+./<name-of-file>
+```
+
 ## Hierarchy of models
 ### Rider
 ![Rider Hierarchy](./rider_hierarchy.png)
@@ -71,9 +85,10 @@ terminal for part selection.
 Pressing V selects the bike.
 ### Track
 Pressing X selects the track.
+### All objects
 Pressing Z selects all objects.
 ## Scaling the objects
 Pressing M and Shift + M scales up and down the selected object respectively.
 
 # Undertaking
-We, Harsh Shah and Neeraj Jadhav, swear on river styx, that we have not copied the code for assignment 2 present in the repository, nor have we indulged in any kind of plagiarism. We have coded all the scripts by ourselves.
+We, Harsh Shah and Neeraj Jadhav, swear on river Styx, that we have not copied the code for assignment 2 present in the repository, nor have we indulged in any kind of plagiarism. We have coded all the scripts by ourselves.
