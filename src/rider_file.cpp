@@ -171,8 +171,8 @@ HNode* getNode(char key)
       return h->head;
     
     default:
-      return h->torso;
       printf("No such key binding. Default selection Torso\n");
+      return h->torso;
 
   }
 }
