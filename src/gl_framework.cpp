@@ -4,7 +4,6 @@
 extern GLfloat c_xrot,c_yrot,c_zrot;
 extern GLfloat gtx[3], gty[3], gtz[3];
 extern GLfloat scaling[3];
-extern bool enable_perspective;
 extern csX75::HNode* getNode(char), *curr_node;
 extern float* dof_param;
 extern Track* t;
@@ -151,7 +150,7 @@ namespace csX75
         printf("Press keys to select the part\n");
         char c;
         scanf(" %c", &c);
-        printf("Key pressed %c\n", c);
+        // printf("Key pressed %c\n", c);
 
         curr_node = getNode(c);
       }
@@ -229,9 +228,9 @@ namespace csX75
         }
       }
 
-      printf("Scaling factor (bike) %f\n", fac[0]);
-      printf("Scaling factor (rider) %f\n", fac[1]);
-      printf("Scaling factor (track) %f\n", fac[2]);
+      // printf("Scaling factor (bike) %f\n", fac[0]);
+      // printf("Scaling factor (rider) %f\n", fac[1]);
+      // printf("Scaling factor (track) %f\n", fac[2]);
     }
   }
 };

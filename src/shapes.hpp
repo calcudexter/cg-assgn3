@@ -41,6 +41,18 @@ public:
     void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr);
 };
 
+class CylinderRim : public Shape
+{   
+    float height;
+    float inRadius, outRadius;
+    int num_tesselations;
+
+public:
+    CylinderRim(float h, float iR, float oR, int n, glm::vec4 col);
+    ~CylinderRim();
+    void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr);
+};
+
 class Sphere : public Shape
 {   
     float radius;

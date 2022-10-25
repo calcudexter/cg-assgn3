@@ -69,7 +69,7 @@ terminal for part selection.
 11. k : Select the head
 ### Bike
 Pressing V selects the bike.
-Track
+### Track
 Pressing X selects the track.
 Pressing Z selects all objects.
 ## Scaling the objects

@@ -91,11 +91,7 @@ void renderGL(void)
   lookat_matrix = glm::lookAt(glm::vec3(c_pos),glm::vec3(0.0),glm::vec3(c_up));
 
   //creating the projection matrix
-  if(enable_perspective)
-    projection_matrix = glm::frustum(-7.0, 7.0, -7.0, 7.0, 1.0, 7.0);
-    //projection_matrix = glm::perspective(glm::radians(90.0),1.0,0.1,5.0);
-  else
-    projection_matrix = glm::ortho(-20.0, 20.0, -20.0, 20.0, -500.0, 500.0);
+  projection_matrix = glm::ortho(-20.0, 20.0, -20.0, 20.0, -500.0, 500.0);
 
   view_matrix = projection_matrix*lookat_matrix;
 

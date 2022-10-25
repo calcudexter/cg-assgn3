@@ -5,19 +5,15 @@
 
 Track::Track(float* param)
 {
-    // float track_w, track_l, ramp_l, ramp_h, double_ramp_w;
-    // float inner_r;
-    // float scale;
-
-    int i = 0;
-    this->scale = param[i]; i++;
-    this->track_t = param[i]*this->scale; i++;
-    this->track_l = param[i]*this->scale; i++;
-    this->ramp_l = param[i]*this->scale; i++;
-    this->ramp_h = param[i]*this->scale; i++;
-    this->double_ramp_w = param[i]*this->scale; i++;
-    this->inner_r = param[i]*this->scale;
-    this->initialize_hnode();
+  int i = 0;
+  this->scale = param[i]; i++;
+  this->track_t = param[i]*this->scale; i++;
+  this->track_l = param[i]*this->scale; i++;
+  this->ramp_l = param[i]*this->scale; i++;
+  this->ramp_h = param[i]*this->scale; i++;
+  this->double_ramp_w = param[i]*this->scale; i++;
+  this->inner_r = param[i]*this->scale;
+  this->initialize_hnode();
 }
 
 void Track::render_track()
@@ -56,7 +52,6 @@ void Track::initialize_hnode()
   Track_ramp bump1_s(this->ramp_l/3, this->track_t, this->ramp_h/2, tmp_color);
 
   this->plane1 = new HNode(NULL, plane1_s.num_vertices, plane1_s.vert_arr, plane1_s.col_arr, plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), "Plane1");
-  //this->plane1->change_parameters();
   
   this->plane2 = new HNode(this->plane1, plane1_s.num_vertices, plane1_s.vert_arr, plane1_s.col_arr, plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), "Plane2");
   this->plane2->change_parameters(del*cosR(36), del*sinR(36), 0.0f, 0.0f, 0.0f, 72.0f);

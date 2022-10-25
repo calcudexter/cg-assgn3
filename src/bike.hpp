@@ -26,8 +26,8 @@ private:
 
 public:
     HNode* body;
-    HNode* rear_wheel, *rear_wheel_dot;
-    HNode* front_wheel, *front_wheel_dot;
+    HNode* rear_wheel, *rear_spoke[20];
+    HNode* front_wheel, *front_spoke[20];
     HNode* rod, *steering;
 
     Bike(float* param);

@@ -17,8 +17,6 @@ namespace csX75	 {
 
 	// A simple class that represents a node in the hierarchy tree
 	class HNode {
-		//glm::vec4 * vertices;
-		//glm::vec4 * colors;
 		GLfloat tx,ty,tz,rx,ry,rz;
 		GLfloat ptx, pty, ptz;
 
@@ -44,7 +42,6 @@ namespace csX75	 {
 		glm::mat4 rot_mat;
 
 		HNode (HNode*, GLuint, glm::vec4*,  glm::vec4*, std::size_t, std::size_t, std::string);
-		//HNode (HNode* , glm::vec4*,  glm::vec4*,GLfloat,GLfloat,GLfloat,GLfloat,GLfloat,GLfloat);
 
 		void add_child(HNode*);
 		void render();

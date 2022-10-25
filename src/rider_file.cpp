@@ -92,11 +92,7 @@ void renderGL(void)
   lookat_matrix = glm::lookAt(glm::vec3(c_pos),glm::vec3(0.0),glm::vec3(c_up));
 
   //creating the projection matrix
-  if(enable_perspective)
-    projection_matrix = glm::frustum(-7.0, 7.0, -7.0, 7.0, 1.0, 7.0);
-    //projection_matrix = glm::perspective(glm::radians(90.0),1.0,0.1,5.0);
-  else
-    projection_matrix = glm::ortho(-20.0, 20.0, -20.0, 20.0, -500.0, 500.0);
+  projection_matrix = glm::ortho(-20.0, 20.0, -20.0, 20.0, -500.0, 500.0);
 
   view_matrix = projection_matrix*lookat_matrix;
 
@@ -131,47 +127,47 @@ HNode* getNode(char key)
   switch(key)
   {
     case 'a':
-      printf("Returning Torso\n");
+      // printf("Returning Torso\n");
       return h->torso;
       
     case 'b':
-      printf("Returning Left Upper Arm\n");
+      // printf("Returning Left Upper Arm\n");
       return h->left_arm[0];
       
     case 'c':
-      printf("Returning Left Lower Arm\n");
+      // printf("Returning Left Lower Arm\n");
       return h->left_arm[1];
       
     case 'd':
-      printf("Returning Right Upper Arm\n");
+      // printf("Returning Right Upper Arm\n");
       return h->right_arm[0];
       
     case 'e':
-      printf("Returning Right Lower Arm\n");
+      // printf("Returning Right Lower Arm\n");
       return h->right_arm[1];
       
     case 'f':
-      printf("Returning Left Upper Leg\n");
+      // printf("Returning Left Upper Leg\n");
       return h->left_leg[0];
       
     case 'g':
-      printf("Returning Left Lower Leg\n");
+      // printf("Returning Left Lower Leg\n");
       return h->left_leg[1];
       
     case 'h':
-      printf("Returning Right Upper Leg\n");
+      // printf("Returning Right Upper Leg\n");
       return h->right_leg[0];
       
     case 'i':
-      printf("Returning Right Lower Leg\n");
+      // printf("Returning Right Lower Leg\n");
       return h->right_leg[1];
       
     case 'j':
-      printf("Returning Neck\n");
+      // printf("Returning Neck\n");
       return h->neck;
       
     case 'k':
-      printf("Returning Head\n");
+      // printf("Returning Head\n");
       return h->head;
     
     default:

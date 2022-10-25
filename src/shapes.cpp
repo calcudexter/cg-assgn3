@@ -1,11 +1,8 @@
 #include "shapes.hpp"
 using namespace std;
 
-// const double PI = 3.141592653589793238463;
-
 void Shape::insert_quad(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4 a, glm::vec4 b, glm::vec4 c, glm::vec4 d)
 {
-    // cout<<"Index : "<<this->index<<std::endl;
     vert_arr[this->index] = a; col_arr[this->index] = this->col; this->index++;
     vert_arr[this->index] = b; col_arr[this->index] = this->col; this->index++;
     vert_arr[this->index] = c; col_arr[this->index] = this->col; this->index++;
@@ -76,6 +73,68 @@ Cylinder::~Cylinder()
     delete this->col_arr;
 }
 
+void CylinderRim::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
+{   
+    double theta = 2*M_PI/(this->num_tesselations);
+    for(int i=0; i<(this->num_tesselations); i++)
+    {
+        float iR = this->inRadius;
+        float oR = this->outRadius;
+        float h = this->height;
+        double curr_theta1 = i*theta;
+        double curr_theta2 = (i+1)*theta;
+
+        double ix1 = iR*cos(curr_theta1);
+        double ix2 = iR*cos(curr_theta2);
+
+        double iy1 = iR*sin(curr_theta1);
+        double iy2 = iR*sin(curr_theta2);
+
+        double z1 = -h/2;
+        double z2 = h/2;
+
+        glm::vec4 a(ix1, iy1, z1, 1.0f);
+        glm::vec4 b(ix2, iy2, z1, 1.0f);
+        glm::vec4 c(ix2, iy2, z2, 1.0f);
+        glm::vec4 d(ix1, iy1, z2, 1.0f);
+
+        this->insert_quad(vert_arr, col_arr, a, b, c, d);
+
+        double ox1 = oR*cos(curr_theta1);
+        double ox2 = oR*cos(curr_theta2);
+
+        double oy1 = oR*sin(curr_theta1);
+        double oy2 = oR*sin(curr_theta2);
+
+        glm::vec4 p(ox1, oy1, z1, 1.0f);
+        glm::vec4 q(ox2, oy2, z1, 1.0f);
+        glm::vec4 r(ox2, oy2, z2, 1.0f);
+        glm::vec4 s(ox1, oy1, z2, 1.0f);
+
+        this->insert_quad(vert_arr, col_arr, p, q, r, s);
+        this->insert_quad(vert_arr, col_arr, a, b, q, p);
+        this->insert_quad(vert_arr, col_arr, d, c, r, s);
+    }   
+}
+
+CylinderRim::CylinderRim(float h, float iR, float oR, int n, glm::vec4 col)
+{
+    this->height = h;
+    this->inRadius = iR;
+    this->outRadius = oR;
+    this->index = 0;
+    this->col = col;
+    this->num_tesselations = n;
+    this->num_vertices = 24*n;
+    this->vert_arr = new glm::vec4[24*n];
+    this->col_arr = new glm::vec4[24*n];
+    this->add_vertices(this->vert_arr, this->col_arr);
+}
+CylinderRim::~CylinderRim()
+{
+    delete this->vert_arr;
+    delete this->col_arr;
+}
 
 void Sphere::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
 {
@@ -210,7 +269,6 @@ void Track_curve::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
         this->insert_tri(this->vert_arr, this->col_arr, a, b, c);
         this->insert_tri(this->vert_arr, this->col_arr, a, c, d);
     }
-    // std::cout<< "Track curve done"<< std::endl;
 }
 
 Track_curve::~Track_curve()
@@ -239,11 +297,8 @@ void Track_plane::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
     glm::vec4 b(this->plane_w/2, -this->plane_h/2, 0.0f, 1.0f);
     glm::vec4 c(-this->plane_w/2, -this->plane_h/2, 0.0f, 1.0f);
     glm::vec4 d(-this->plane_w/2, this->plane_h/2, 0.0f, 1.0f);
-    // std::cout<<this->plane_w<<" "<<this->plane_h<<std::endl;
-    this->insert_quad(this->vert_arr, this->col_arr, a, b, c, d);
-    
-    // std::cout<< "Track plane done"<< std::endl;
 
+    this->insert_quad(this->vert_arr, this->col_arr, a, b, c, d);
 }
 
 Track_plane::~Track_plane()
@@ -278,7 +333,6 @@ void Track_ramp::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
     this->insert_quad(this->vert_arr, this->col_arr, e, b, c, f);
     this->insert_tri(this->vert_arr, this->col_arr, a, b, e);
     this->insert_tri(this->vert_arr, this->col_arr, c, d, f);
-    // std::cout<< "Track ramp done"<< std::endl;
 
 }
 

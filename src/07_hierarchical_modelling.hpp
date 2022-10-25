@@ -28,10 +28,6 @@
 #include "bike.hpp"
 #include "track.hpp"
 
-/*// Translation Parameters
-GLfloat xpos=0.0,ypos=0.0,zpos=0.0;
-// Rotation Parameters
-GLfloat xrot=0.0,yrot=0.0,zrot=0.0;*/
 // Camera position and rotation Parameters
 GLfloat c_xpos = 0.0, c_ypos = 0.0, c_zpos = 2.0;
 GLfloat c_up_x = 0.0, c_up_y = 1.0, c_up_z = 0.0;
@@ -39,12 +35,6 @@ GLfloat c_xrot=0.0,c_yrot=0.0,c_zrot=0.0;
 GLfloat gtx[3]={-5.90f, -6.70f, 0.0f}, gty[3]={-15.4f, -15.2f, -15.2f}, gtz[3]={1.60f, 3.20f, 0.0f};
 GLfloat scaling[3] = {0.31f, 0.17f, 3.52f};
 
-//Running variable to toggle culling on/off
-bool enable_culling=true;
-//Running variable to toggle wireframe/solid modelling
-bool solid=true;
-//Enable/Disable perspective view
-bool enable_perspective=false;
 //Shader program attribs
 GLuint vPosition,vColor;
 

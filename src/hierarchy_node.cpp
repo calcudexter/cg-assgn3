@@ -134,7 +134,6 @@ namespace csX75
 	}
 
 	void HNode::inc_rx(){
-		// rx++;
 		rot_mat =  rot_mat * glm::rotate(glm::mat4(1.0f), glm::radians(3.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		update_matrices();
 	}
