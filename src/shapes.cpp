@@ -23,8 +23,9 @@ int Shape::get_index()
     return this->index;
 }
 
-void Cylinder::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
+void Cylinder::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4* norm_arr)
 {   
+    int ind = 0;
     double theta = 2*M_PI/(this->num_tesselations);
     for(int i=0; i<(this->num_tesselations); i++)
     {
@@ -50,8 +51,22 @@ void Cylinder::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
         glm::vec4 f(0.0f, 0.0f, z2, 1.0f);
 
         this->insert_quad(vert_arr, col_arr, a, b, c, d);
+        norm_arr[ind++] = (a-e);
+        norm_arr[ind++] = (b-e);
+        norm_arr[ind++] = (c-f);
+        norm_arr[ind++] = (a-e);
+        norm_arr[ind++] = (c-f);
+        norm_arr[ind++] = (d-f);
+
         this->insert_tri(vert_arr, col_arr, a, b, e);
+        norm_arr[ind++] = e;
+        norm_arr[ind++] = e;
+        norm_arr[ind++] = e;
+
         this->insert_tri(vert_arr, col_arr, c, d, f);
+        norm_arr[ind++] = f;
+        norm_arr[ind++] = f;
+        norm_arr[ind++] = f;
     }   
 }
 
@@ -65,16 +80,19 @@ Cylinder::Cylinder(float h, float r, int n, glm::vec4 col)
     this->num_vertices = 12*n;
     this->vert_arr = new glm::vec4[12*n];
     this->col_arr = new glm::vec4[12*n];
-    this->add_vertices(this->vert_arr, this->col_arr);
+    this->norm_arr = new glm::vec4[12*n];
+    this->add_vertices(this->vert_arr, this->col_arr, this->norm_arr);
 }
 Cylinder::~Cylinder()
 {
     delete this->vert_arr;
     delete this->col_arr;
+    delete this->norm_arr;
 }
 
-void CylinderRim::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
+void CylinderRim::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4* norm_arr)
 {   
+    int ind = 0;
     double theta = 2*M_PI/(this->num_tesselations);
     for(int i=0; i<(this->num_tesselations); i++)
     {
@@ -98,7 +116,16 @@ void CylinderRim::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
         glm::vec4 c(ix2, iy2, z2, 1.0f);
         glm::vec4 d(ix1, iy1, z2, 1.0f);
 
+        glm::vec4 e(0.0f, 0.0f, z1, 1.0f);
+        glm::vec4 f(0.0f, 0.0f, z2, 1.0f);
+
         this->insert_quad(vert_arr, col_arr, a, b, c, d);
+        norm_arr[ind++] = -(a-e);
+        norm_arr[ind++] = -(b-e);
+        norm_arr[ind++] = -(c-f);
+        norm_arr[ind++] = -(a-e);
+        norm_arr[ind++] = -(c-f);
+        norm_arr[ind++] = -(d-f);
 
         double ox1 = oR*cos(curr_theta1);
         double ox2 = oR*cos(curr_theta2);
@@ -112,8 +139,28 @@ void CylinderRim::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
         glm::vec4 s(ox1, oy1, z2, 1.0f);
 
         this->insert_quad(vert_arr, col_arr, p, q, r, s);
+        norm_arr[ind++] = (p-e);
+        norm_arr[ind++] = (q-e);
+        norm_arr[ind++] = (r-f);
+        norm_arr[ind++] = (p-e);
+        norm_arr[ind++] = (r-f);
+        norm_arr[ind++] = (s-f);
+
         this->insert_quad(vert_arr, col_arr, a, b, q, p);
+        norm_arr[ind++] = e;
+        norm_arr[ind++] = e;
+        norm_arr[ind++] = e;
+        norm_arr[ind++] = e;
+        norm_arr[ind++] = e;
+        norm_arr[ind++] = e;
+
         this->insert_quad(vert_arr, col_arr, d, c, r, s);
+        norm_arr[ind++] = f;
+        norm_arr[ind++] = f;
+        norm_arr[ind++] = f;
+        norm_arr[ind++] = f;
+        norm_arr[ind++] = f;
+        norm_arr[ind++] = f;
     }   
 }
 
@@ -128,16 +175,20 @@ CylinderRim::CylinderRim(float h, float iR, float oR, int n, glm::vec4 col)
     this->num_vertices = 24*n;
     this->vert_arr = new glm::vec4[24*n];
     this->col_arr = new glm::vec4[24*n];
-    this->add_vertices(this->vert_arr, this->col_arr);
+    this->norm_arr = new glm::vec4[24*n];
+    this->add_vertices(this->vert_arr, this->col_arr, this->norm_arr);
 }
 CylinderRim::~CylinderRim()
 {
     delete this->vert_arr;
     delete this->col_arr;
+    delete this->norm_arr;
 }
 
-void Sphere::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
+void Sphere::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4* norm_arr)
 {
+    int ind = 0;
+
     double theta_z = M_PI/(this->num_tesselations);
     double theta_x = (2*M_PI)/(this->num_tesselations);
     for(int i=0; i<(this->num_tesselations); i++)
@@ -170,6 +221,12 @@ void Sphere::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
             glm::vec4 d(x1_z2, y1_z2, z2, 1.0f);
 
             this->insert_quad(vert_arr, col_arr, a, b, c, d);
+            norm_arr[ind++] = a;
+            norm_arr[ind++] = b;
+            norm_arr[ind++] = c;
+            norm_arr[ind++] = a;
+            norm_arr[ind++] = c;
+            norm_arr[ind++] = d;
         }
     }   
 }
@@ -183,16 +240,19 @@ Sphere::Sphere(float r, int n, glm::vec4 col)
     this->num_vertices = 6*n*n;
     this->vert_arr = new glm::vec4[6*n*n];
     this->col_arr = new glm::vec4[6*n*n];
-    this->add_vertices(this->vert_arr, this->col_arr);
+    this->norm_arr = new glm::vec4[6*n*n];
+    this->add_vertices(this->vert_arr, this->col_arr, this->norm_arr);
 }
 Sphere::~Sphere()
 {
     delete this->vert_arr;
     delete this->col_arr;
+    delete this->norm_arr;
 }
 
-void Cuboid::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
-{     
+void Cuboid::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4* norm_arr)
+{   
+    int ind = 0;
     glm::vec4 a_v(a/2, b/2, c/2, 1.0f);
     glm::vec4 b_v(a/2, -b/2, c/2, 1.0f);
     glm::vec4 c_v(-a/2, -b/2, c/2, 1.0f);
@@ -202,12 +262,61 @@ void Cuboid::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
     glm::vec4 g_v(-a/2, -b/2, -c/2, 1.0f);
     glm::vec4 h_v(-a/2, b/2, -c/2, 1.0f);  
 
+    glm::vec4 normal[6];
+    normal[0] = glm::vec4(triangleNormal(glm::vec3(a_v), glm::vec3(b_v), glm::vec3(c_v)), 1.0f);
+    normal[1] = glm::vec4(triangleNormal(glm::vec3(a_v), glm::vec3(b_v), glm::vec3(f_v)), 1.0f);
+    normal[2] = glm::vec4(triangleNormal(glm::vec3(a_v), glm::vec3(e_v), glm::vec3(h_v)), 1.0f);
+    normal[3] = glm::vec4(triangleNormal(glm::vec3(b_v), glm::vec3(c_v), glm::vec3(g_v)), 1.0f);
+    normal[4] = glm::vec4(triangleNormal(glm::vec3(d_v), glm::vec3(h_v), glm::vec3(g_v)), 1.0f);
+    normal[5] = glm::vec4(triangleNormal(glm::vec3(h_v), glm::vec3(e_v), glm::vec3(f_v)), 1.0f);
+
     this->insert_quad(vert_arr, col_arr, a_v, b_v, c_v, d_v);
+    norm_arr[ind++] = normal[0];
+    norm_arr[ind++] = normal[0];
+    norm_arr[ind++] = normal[0];
+    norm_arr[ind++] = normal[0];
+    norm_arr[ind++] = normal[0];
+    norm_arr[ind++] = normal[0];
+
     this->insert_quad(vert_arr, col_arr, a_v, b_v, f_v, e_v);
+    norm_arr[ind++] = normal[1];
+    norm_arr[ind++] = normal[1];
+    norm_arr[ind++] = normal[1];
+    norm_arr[ind++] = normal[1];
+    norm_arr[ind++] = normal[1];
+    norm_arr[ind++] = normal[1];
+
     this->insert_quad(vert_arr, col_arr, a_v, e_v, h_v, d_v);
+    norm_arr[ind++] = normal[2];
+    norm_arr[ind++] = normal[2];
+    norm_arr[ind++] = normal[2];
+    norm_arr[ind++] = normal[2];
+    norm_arr[ind++] = normal[2];
+    norm_arr[ind++] = normal[2];
+    
     this->insert_quad(vert_arr, col_arr, b_v, c_v, g_v, f_v);
+    norm_arr[ind++] = normal[3];
+    norm_arr[ind++] = normal[3];
+    norm_arr[ind++] = normal[3];
+    norm_arr[ind++] = normal[3];
+    norm_arr[ind++] = normal[3];
+    norm_arr[ind++] = normal[3];
+
     this->insert_quad(vert_arr, col_arr, d_v, h_v, g_v, c_v);
+    norm_arr[ind++] = normal[4];
+    norm_arr[ind++] = normal[4];
+    norm_arr[ind++] = normal[4];
+    norm_arr[ind++] = normal[4];
+    norm_arr[ind++] = normal[4];
+    norm_arr[ind++] = normal[4];
+
     this->insert_quad(vert_arr, col_arr, h_v, e_v, f_v, g_v);
+    norm_arr[ind++] = normal[5];
+    norm_arr[ind++] = normal[5];
+    norm_arr[ind++] = normal[5];
+    norm_arr[ind++] = normal[5];
+    norm_arr[ind++] = normal[5];
+    norm_arr[ind++] = normal[5];
 }
 
 Cuboid::Cuboid(float a, float b, float c, glm::vec4 col)
@@ -220,12 +329,14 @@ Cuboid::Cuboid(float a, float b, float c, glm::vec4 col)
     this->num_vertices = 36;
     this->vert_arr = new glm::vec4[36];
     this->col_arr = new glm::vec4[36];
-    this->add_vertices(this->vert_arr, this->col_arr);
+    this->norm_arr = new glm::vec4[36];
+    this->add_vertices(this->vert_arr, this->col_arr, this->norm_arr);
 }
 Cuboid::~Cuboid()
 {
     delete this->vert_arr;
     delete this->col_arr;
+    delete this->norm_arr;
 }
 
 Track_curve::Track_curve(float ir, float out_r, int nt, float ang, glm::vec4 col)
@@ -238,11 +349,14 @@ Track_curve::Track_curve(float ir, float out_r, int nt, float ang, glm::vec4 col
     this->num_vertices = 6*num_t;
     this->vert_arr = new glm::vec4[this->num_vertices];
     this->col_arr = new glm::vec4[this->num_vertices];
-    this->add_vertices(this->vert_arr, this->col_arr);
+    this->norm_arr = new glm::vec4[this->num_vertices];
+    this->add_vertices(this->vert_arr, this->col_arr, this->norm_arr);
 }
 
-void Track_curve::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
+void Track_curve::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4* norm_arr)
 {   
+
+    int ind = 0;
     float d_theta = glm::radians(this->angle)/(this->num_t);
     float curr_theta1 = 0.0f;
     float curr_theta2 = 0.0f;
@@ -266,8 +380,16 @@ void Track_curve::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
         glm::vec4 c(x3, y3, 0.0f, 1.0f);
         glm::vec4 d(x4, y4, 0.0f, 1.0f);
 
-        this->insert_tri(this->vert_arr, this->col_arr, a, b, c);
-        this->insert_tri(this->vert_arr, this->col_arr, a, c, d);
+        // this->insert_tri(this->vert_arr, this->col_arr, a, b, c);
+        // this->insert_tri(this->vert_arr, this->col_arr, a, c, d);
+        this->insert_quad(this->vert_arr, this->col_arr, a, b, c, d);
+        glm::vec4 normal = glm::vec4(triangleNormal(glm::vec3(a), glm::vec3(b), glm::vec3(c)), 1.0f);
+        norm_arr[ind++] = normal;
+        norm_arr[ind++] = normal;
+        norm_arr[ind++] = normal;
+        norm_arr[ind++] = normal;
+        norm_arr[ind++] = normal;
+        norm_arr[ind++] = normal;
     }
 }
 
@@ -275,6 +397,7 @@ Track_curve::~Track_curve()
 {
     delete this->vert_arr;
     delete this->col_arr;
+    delete this->norm_arr;
 }
 
 
@@ -287,10 +410,11 @@ Track_plane::Track_plane(float ph, float pw, glm::vec4 col)
     this->col = col;
     this->vert_arr = new glm::vec4[this->num_vertices];
     this->col_arr = new glm::vec4[this->num_vertices];
-    this->add_vertices(this->vert_arr, this->col_arr);
+    this->norm_arr = new glm::vec4[this->num_vertices];
+    this->add_vertices(this->vert_arr, this->col_arr, this->norm_arr);
 }
 
-void Track_plane::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
+void Track_plane::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4* norm_arr)
 {   
 
     glm::vec4 a(this->plane_w/2, this->plane_h/2, 0.0f, 1.0f);
@@ -299,12 +423,23 @@ void Track_plane::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
     glm::vec4 d(-this->plane_w/2, this->plane_h/2, 0.0f, 1.0f);
 
     this->insert_quad(this->vert_arr, this->col_arr, a, b, c, d);
+    
+    // The order of insertion in this case is a bit different, leave it for now
+    int ind = 0;
+    glm::vec4 normal = glm::vec4(triangleNormal(glm::vec3(a), glm::vec3(b), glm::vec3(c)), 1.0f);
+    norm_arr[ind++] = -normal;
+    norm_arr[ind++] = -normal;
+    norm_arr[ind++] = -normal;
+    norm_arr[ind++] = -normal;
+    norm_arr[ind++] = -normal;
+    norm_arr[ind++] = -normal;
 }
 
 Track_plane::~Track_plane()
 {
     delete this->vert_arr;
     delete this->col_arr;
+    delete this->norm_arr;
 }
 
 // Track ramp
@@ -317,10 +452,11 @@ Track_ramp::Track_ramp(float l, float w, float h, glm::vec4 col)
     this->num_vertices = 18;
     this->vert_arr = new glm::vec4[this->num_vertices];
     this->col_arr = new glm::vec4[this->num_vertices];
-    this->add_vertices(this->vert_arr, this->col_arr);
+    this->norm_arr = new glm::vec4[this->num_vertices];
+    this->add_vertices(this->vert_arr, this->col_arr, this->norm_arr);
 }
 
-void Track_ramp::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
+void Track_ramp::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4* norm_arr)
 {   
     glm::vec4 a(0.0f, 0.0f, 0.0f, 1.0f);
     glm::vec4 b(this->ramp_l, 0.0f, 0.0f, 1.0f);
@@ -329,15 +465,41 @@ void Track_ramp::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr)
     glm::vec4 e(this->ramp_l, 0.0f, this->ramp_h, 1.0f);
     glm::vec4 f(this->ramp_l, this->ramp_w, this->ramp_h, 1.0f);
 
+    int ind = 0;
     this->insert_quad(this->vert_arr, this->col_arr, a, e, f, d);
-    this->insert_quad(this->vert_arr, this->col_arr, e, b, c, f);
-    this->insert_tri(this->vert_arr, this->col_arr, a, b, e);
-    this->insert_tri(this->vert_arr, this->col_arr, c, d, f);
+    glm::vec4 normal = glm::vec4(triangleNormal(glm::vec3(a), glm::vec3(b), glm::vec3(c)), 1.0f);
+    norm_arr[ind++] = normal;
+    norm_arr[ind++] = normal;
+    norm_arr[ind++] = normal;
+    norm_arr[ind++] = normal;
+    norm_arr[ind++] = normal;
+    norm_arr[ind++] = normal;
 
+    this->insert_quad(this->vert_arr, this->col_arr, e, b, c, f);
+    normal = glm::vec4(triangleNormal(glm::vec3(e), glm::vec3(b), glm::vec3(c)), 1.0f);
+    norm_arr[ind++] = normal;
+    norm_arr[ind++] = normal;
+    norm_arr[ind++] = normal;
+    norm_arr[ind++] = normal;
+    norm_arr[ind++] = normal;
+    norm_arr[ind++] = normal;
+
+    this->insert_tri(this->vert_arr, this->col_arr, a, b, e);
+    normal = glm::vec4(triangleNormal(glm::vec3(a), glm::vec3(b), glm::vec3(e)), 1.0f);
+    norm_arr[ind++] = normal;
+    norm_arr[ind++] = normal;
+    norm_arr[ind++] = normal;
+
+    this->insert_tri(this->vert_arr, this->col_arr, c, d, f);
+    normal = glm::vec4(triangleNormal(glm::vec3(c), glm::vec3(d), glm::vec3(f)), 1.0f);
+    norm_arr[ind++] = normal;
+    norm_arr[ind++] = normal;
+    norm_arr[ind++] = normal;
 }
 
 Track_ramp::~Track_ramp()
 {
     delete this->vert_arr;
     delete this->col_arr;
+    delete this->norm_arr;
 }

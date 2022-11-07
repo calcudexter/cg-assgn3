@@ -6,14 +6,23 @@ glm::mat4 rotation_matrix;
 glm::mat4 projection_matrix;
 glm::mat4 c_rotation_matrix;
 glm::mat4 lookat_matrix;
+
+
 glm::mat4 model_matrix;
 glm::mat4 view_matrix;
+
+
 glm::mat4 modelview_matrix;
+glm::mat3 normal_matrix;
+
 GLuint uModelViewMatrix;
+GLuint viewMatrix;
+GLuint normalMatrix;
+GLuint lPos;
 
 Human* h;
 Bike* b;
-Track *t;
+Track* t;
 
 bool bike = true, rider = false, track = false;
 int selected;
@@ -60,8 +69,11 @@ void initBuffersGL(void)
 
   // getting the attributes from the shader program
   vPosition = glGetAttribLocation( shaderProgram, "vPosition" );
-  vColor = glGetAttribLocation( shaderProgram, "vColor" ); 
-  uModelViewMatrix = glGetUniformLocation( shaderProgram, "uModelViewMatrix");
+  vColor = glGetAttribLocation( shaderProgram, "vColor" );
+  vNormal = glGetAttribLocation( shaderProgram, "vNormal" );
+  uModelViewMatrix = glGetUniformLocation( shaderProgram, "uModelViewMatrix" );
+  normalMatrix = glGetUniformLocation( shaderProgram, "normalMatrix" );
+  viewMatrix = glGetUniformLocation( shaderProgram, "viewMatrix" );
 
   //note that the buffers are initialized in the respective constructors
   h = new Human();
@@ -94,6 +106,10 @@ void renderGL(void)
   projection_matrix = glm::ortho(-20.0, 20.0, -20.0, 20.0, -500.0, 500.0);
 
   view_matrix = projection_matrix*lookat_matrix;
+  glUniformMatrix4fv(viewMatrix, 1, GL_FALSE, glm::value_ptr(view_matrix));
+
+  glm::vec3 lightPos = glm::vec3(lxPos, lyPos, lzPos);
+  glUniform3fv(lPos, 1, glm::value_ptr(lightPos));
 
   matrixStack.push_back(view_matrix);
   

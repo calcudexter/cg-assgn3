@@ -22,6 +22,7 @@ namespace csX75	 {
 
 		std::size_t vertex_buffer_size;
 		std::size_t color_buffer_size;
+		std::size_t normal_buffer_size;
 
 		GLuint num_vertices;
 		GLuint vao,vbo;
@@ -41,7 +42,7 @@ namespace csX75	 {
 		std::string name;
 		glm::mat4 rot_mat;
 
-		HNode (HNode*, GLuint, glm::vec4*,  glm::vec4*, std::size_t, std::size_t, std::string);
+		HNode (HNode*, GLuint, glm::vec4*,  glm::vec4*, glm::vec4*, std::size_t, std::size_t, std::size_t, std::string);
 
 		void add_child(HNode*);
 		void render();

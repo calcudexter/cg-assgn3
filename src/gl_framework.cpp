@@ -2,6 +2,7 @@
 #include "hierarchy_node.hpp"
 
 extern GLfloat c_xrot,c_yrot,c_zrot;
+extern GLfloat lxPos, lyPos, lzPos;
 extern GLfloat gtx[3], gty[3], gtz[3];
 extern GLfloat scaling[3];
 extern csX75::HNode* getNode(char), *curr_node;
@@ -231,6 +232,18 @@ namespace csX75
       // printf("Scaling factor (bike) %f\n", fac[0]);
       // printf("Scaling factor (rider) %f\n", fac[1]);
       // printf("Scaling factor (track) %f\n", fac[2]);
+    }
+    else if(key == GLFW_KEY_J && action == GLFW_PRESS | GLFW_REPEAT) {
+      if(shift_held) lxPos -= 1.0f;
+      else lxPos += 1.0f;
+    }
+    else if(key == GLFW_KEY_K && action == GLFW_PRESS | GLFW_REPEAT) {
+      if(shift_held) lyPos -= 1.0f;
+      else lyPos += 1.0f;
+    }
+    else if(key == GLFW_KEY_L && action == GLFW_PRESS | GLFW_REPEAT) {
+      if(shift_held) lzPos -= 1.0f;
+      else lzPos += 1.0f;
     }
   }
 };

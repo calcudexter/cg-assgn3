@@ -6,6 +6,7 @@
 #include "glm/mat4x4.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
+#include "glm/gtx/normal.hpp"
 #include <vector>
 #include <cmath>
 #include "gl_framework.hpp"
@@ -20,9 +21,10 @@ public:
     glm::vec4 col;
     glm::vec4* vert_arr;
     glm::vec4* col_arr;
+    glm::vec4* norm_arr;
     int num_vertices;
 
-    virtual void add_vertices(glm::vec4*, glm::vec4*) = 0;
+    virtual void add_vertices(glm::vec4*, glm::vec4*, glm::vec4*) = 0;
     Shape(){this->index = 0;} 
     void insert_quad(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4 a, glm::vec4 b, glm::vec4 c, glm::vec4 d);
     void insert_tri(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4 a, glm::vec4 b, glm::vec4 c);
@@ -38,7 +40,7 @@ class Cylinder : public Shape
 public:
     Cylinder(float h, float r, int n, glm::vec4 col);
     ~Cylinder();
-    void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr);
+    void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4* norm_arr);
 };
 
 class CylinderRim : public Shape
@@ -50,7 +52,7 @@ class CylinderRim : public Shape
 public:
     CylinderRim(float h, float iR, float oR, int n, glm::vec4 col);
     ~CylinderRim();
-    void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr);
+    void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4* norm_arr);
 };
 
 class Sphere : public Shape
@@ -61,7 +63,7 @@ class Sphere : public Shape
 public:
     Sphere(float r, int n, glm::vec4 col);
     ~Sphere();
-    void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr);
+    void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4* norm_arr);
 };
 
 class Cuboid : public Shape
@@ -71,7 +73,7 @@ class Cuboid : public Shape
 public:
     Cuboid(float a, float b, float c, glm::vec4 col);
     ~Cuboid();
-    void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr);
+    void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4* norm_arr);
 };
 
 class Track_curve : public Shape
@@ -82,7 +84,7 @@ class Track_curve : public Shape
 public:
     Track_curve(float ir, float out_r, int nt, float ang, glm::vec4 col);
     ~Track_curve();
-    void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr);
+    void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4* norm_arr);
 };
 
 class Track_ramp : public Shape
@@ -91,7 +93,7 @@ class Track_ramp : public Shape
 public:
     Track_ramp(float ramp_l, float ramp_w, float ramp_h, glm::vec4 col);
     ~Track_ramp();
-    void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr);
+    void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4* norm_arr);
 };
 
 class Track_plane : public Shape
@@ -100,7 +102,7 @@ class Track_plane : public Shape
 public:
     Track_plane(float ph, float pw, glm::vec4 col);
     ~Track_plane();
-    void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr);
+    void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4* norm_arr);
 };
 
 #endif

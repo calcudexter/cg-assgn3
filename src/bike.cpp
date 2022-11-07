@@ -52,16 +52,16 @@ void Bike::initialize_hnode()
   Cylinder* spoke = new Cylinder(0.7*this->wheel_r, 0.2f, NUM_T, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
   Cylinder* steering_s = new Cylinder(this->rod_l/2, 0.7*this->rod_r, NUM_T, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
-  this->body = new HNode(NULL, body_s->num_vertices, body_s->vert_arr, body_s->col_arr, body_s->num_vertices*sizeof(glm::vec4), body_s->num_vertices*sizeof(glm::vec4), "Body");
+  this->body = new HNode(NULL, body_s->num_vertices, body_s->vert_arr, body_s->col_arr, body_s->norm_arr, body_s->num_vertices*sizeof(glm::vec4), body_s->num_vertices*sizeof(glm::vec4), body_s->num_vertices*sizeof(glm::vec4), "Body");
 
-  this->rod = new HNode(this->body, rod_s->num_vertices, rod_s->vert_arr, rod_s->col_arr, rod_s->num_vertices*sizeof(glm::vec4), rod_s->num_vertices*sizeof(glm::vec4), "Rod");
+  this->rod = new HNode(this->body, rod_s->num_vertices, rod_s->vert_arr, rod_s->col_arr, rod_s->norm_arr, rod_s->num_vertices*sizeof(glm::vec4), rod_s->num_vertices*sizeof(glm::vec4), rod_s->num_vertices*sizeof(glm::vec4), "Rod");
   GLfloat delta = -1*(this->body_h/sin(this->rod_body_angle)-this->rod_l/2);
   this->rod->change_parameters(this->body_w/2+delta*cos(this->rod_body_angle), this->body_h/2-delta*sin(this->rod_body_angle), 0.0f, -90.0f, -(this->rod_body_angle), 90.0f+this->rod_rot);
 
-  this->front_wheel = new HNode(this->rod, front_wheel_s->num_vertices, front_wheel_s->vert_arr, front_wheel_s->col_arr, front_wheel_s->num_vertices*sizeof(glm::vec4), front_wheel_s->num_vertices*sizeof(glm::vec4), "FrontWheel");
+  this->front_wheel = new HNode(this->rod, front_wheel_s->num_vertices, front_wheel_s->vert_arr, front_wheel_s->col_arr, front_wheel_s->norm_arr, front_wheel_s->num_vertices*sizeof(glm::vec4), front_wheel_s->num_vertices*sizeof(glm::vec4), front_wheel_s->num_vertices*sizeof(glm::vec4), "FrontWheel");
   this->front_wheel->change_parameters(0.0f, 0.0f, -this->rod_l/2, 0.0f, 90.0f, this->front_rot);
 
-  this->rear_wheel = new HNode(this->body, rear_wheel_s->num_vertices, rear_wheel_s->vert_arr, rear_wheel_s->col_arr, rear_wheel_s->num_vertices*sizeof(glm::vec4), rear_wheel_s->num_vertices*sizeof(glm::vec4), "RearWheel");
+  this->rear_wheel = new HNode(this->body, rear_wheel_s->num_vertices, rear_wheel_s->vert_arr, rear_wheel_s->col_arr, rear_wheel_s->norm_arr, rear_wheel_s->num_vertices*sizeof(glm::vec4), rear_wheel_s->num_vertices*sizeof(glm::vec4), rear_wheel_s->num_vertices*sizeof(glm::vec4), "RearWheel");
   this->rear_wheel->change_parameters(-this->body_w/2, -this->body_h/2, 0.0f, 0.0f, 0.0f, this->rear_rot);
   
   // this->rear_wheel_dot = new HNode(this->rear_wheel, rear_dot_s->num_vertices, rear_dot_s->vert_arr, rear_dot_s->col_arr, rear_dot_s->num_vertices*sizeof(glm::vec4), rear_dot_s->num_vertices*sizeof(glm::vec4), "RearWheelDot");
@@ -84,15 +84,15 @@ void Bike::initialize_hnode()
 
   for(int i = 0; i < 20; i++)
   {
-    this->front_spoke[i] = new HNode(this->front_wheel, spoke->num_vertices, spoke->vert_arr, spoke->col_arr, spoke->num_vertices*sizeof(glm::vec4), spoke->num_vertices*sizeof(glm::vec4), "FrontSpoke"+std::to_string(i));
+    this->front_spoke[i] = new HNode(this->front_wheel, spoke->num_vertices, spoke->vert_arr, spoke->col_arr, spoke->norm_arr, spoke->num_vertices*sizeof(glm::vec4), spoke->num_vertices*sizeof(glm::vec4), spoke->num_vertices*sizeof(glm::vec4), "FrontSpoke"+std::to_string(i));
     
     this->front_spoke[i]->change_parameters(0.35*this->wheel_r*cosR(90+18.0f*i), 0.35*this->wheel_r*sinR(90+18.0f*i), 0.0f, rots[i][0], rots[i][1], rots[i][2]);
 
-    this->rear_spoke[i] = new HNode(this->rear_wheel, spoke->num_vertices, spoke->vert_arr, spoke->col_arr, spoke->num_vertices*sizeof(glm::vec4), spoke->num_vertices*sizeof(glm::vec4), "RearSpoke"+std::to_string(i));
+    this->rear_spoke[i] = new HNode(this->rear_wheel, spoke->num_vertices, spoke->vert_arr, spoke->col_arr, spoke->norm_arr, spoke->num_vertices*sizeof(glm::vec4), spoke->num_vertices*sizeof(glm::vec4), spoke->num_vertices*sizeof(glm::vec4), "RearSpoke"+std::to_string(i));
     this->rear_spoke[i]->change_parameters(0.35*this->wheel_r*cosR(90+18.0f*i), 0.35*this->wheel_r*sinR(90+18.0f*i), 0.0f, rots[i][0], rots[i][1], rots[i][2]);
   }
   
-  this->steering = new HNode(this->rod, steering_s->num_vertices, steering_s->vert_arr, steering_s->col_arr, steering_s->num_vertices*sizeof(glm::vec4), steering_s->num_vertices*sizeof(glm::vec4), "Steering");
+  this->steering = new HNode(this->rod, steering_s->num_vertices, steering_s->vert_arr, steering_s->col_arr, steering_s->norm_arr, steering_s->num_vertices*sizeof(glm::vec4), steering_s->num_vertices*sizeof(glm::vec4), steering_s->num_vertices*sizeof(glm::vec4), "Steering");
   this->steering->change_parameters(0.0f, 0.0f, 0.9*this->rod_l/2, 0.0f, 90.0f, 0.0f);
 
   return;
