@@ -12,7 +12,7 @@ extern Bike* b;
 extern Human* h;
 
 extern bool bike, rider, track;
-extern int selected;
+extern int selected, source1;
 bool shift_held = false;
 namespace csX75
 {
@@ -69,16 +69,17 @@ namespace csX75
     {
       // Rotations
 
-      printf("Scaling factor (bike) %f\n", scaling[0]);
-      printf("Scaling factor (rider) %f\n", scaling[1]);
-      printf("Scaling factor (track) %f\n", scaling[2]);
+      // printf("Scaling factor (bike) %f\n", scaling[0]);
+      // printf("Scaling factor (rider) %f\n", scaling[1]);
+      // printf("Scaling factor (track) %f\n", scaling[2]);
 
-      printf("Translations (bike): {%f, %f, %f}\n", gtx[0], gty[0], gtz[0]);
-      printf("Translations (rider): {%f, %f, %f}\n", gtx[1], gty[1], gtz[1]);
-      printf("Translations (track): {%f, %f, %f}\n", gtx[2], gty[2], gtz[2]);
+      // printf("Translations (bike): {%f, %f, %f}\n", gtx[0], gty[0], gtz[0]);
+      // printf("Translations (rider): {%f, %f, %f}\n", gtx[1], gty[1], gtz[1]);
+      // printf("Translations (track): {%f, %f, %f}\n", gtx[2], gty[2], gtz[2]);
 
-      b->print_rot();
-      h->print_rot();
+      // b->print_rot();
+      // h->print_rot();
+      source1 = (1-source1);
     }
     else if (key == GLFW_KEY_A  && action == GLFW_PRESS | GLFW_REPEAT)
       c_yrot -= 3.0;

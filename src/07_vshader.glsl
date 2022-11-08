@@ -13,38 +13,43 @@ uniform mat4 viewMatrix;
 in int perPixel;
 uniform vec3 lPos;
 
+uniform int l1On;
+
 void main (void) 
 {
   // gl_Position = uModelViewMatrix * vPosition;
   // color = vColor;
-
-  // Defining Materials
-  vec4 diffuse = vec4(0.5, 0.0, 0.0, 1.0); 
-  vec4 ambient = vec4(0.1, 0.0, 0.0, 1.0);
-  vec4 specular = vec4(1.0, 0.5, 0.5, 1.0);
-  float shininess = 0.05;
-  vec4 spec = vec4(0.0); 
-  
-  // Defining Light 
-  vec4 lightPos = vec4(lPos, 0.0);
-  vec3 lightDir = vec3(viewMatrix * lightPos); 
-  lightDir = normalize(lightDir);  
-
   gl_Position = uModelViewMatrix * vPosition;
-  
-  vec3 n = normalize(normalMatrix * normalize(vNormal));
-  float dotProduct = dot(n, lightDir);
-  float intensity =  max( dotProduct, 0.0);
+  if(l1On == 1) {
+    // Defining Materials
+    vec4 diffuse = vec4(0.5, 0.0, 0.0, 1.0); 
+    vec4 ambient = vec4(0.1, 0.0, 0.0, 1.0);
+    vec4 specular = vec4(1.0, 0.5, 0.5, 1.0);
+    float shininess = 0.05;
+    vec4 spec = vec4(0.0); 
+    
+    // Defining Light 
+    vec4 lightPos = vec4(lPos, 0.0);
+    vec3 lightDir = vec3(viewMatrix * lightPos); 
+    lightDir = normalize(lightDir);  
+    
+    vec3 n = normalize(normalMatrix * normalize(vNormal));
+    float dotProduct = dot(n, lightDir);
+    float intensity =  max( dotProduct, 0.0);
 
-  // Compute specular component only if light falls on vertex
-  if(intensity > 0.0)
-  {
-	vec3 eye = normalize( vec3(-gl_Position));
-	vec3 h = normalize(lightDir + eye );
-   	float intSpec = max(dot(h,n), 0.0);	
-        spec = specular * pow(intSpec, shininess);
-  }  	
-  
-  color = max((intensity * diffuse  + spec)*vColor, ambient); // All
-      
+    // Compute specular component only if light falls on vertex
+    if(intensity > 0.0)
+    {
+    vec3 eye = normalize( vec3(-gl_Position));
+    vec3 h = normalize(lightDir + eye );
+      float intSpec = max(dot(h,n), 0.0);	
+          spec = specular * pow(intSpec, shininess);
+    }  	
+    
+    color = max((intensity * diffuse  + spec)*vColor, ambient); // All
+  }
+  else if(l1On == 0) {
+    // color = vColor;
+    color = vec4(0.0, 0.0, 0.0, 1.0);
+  }
 }

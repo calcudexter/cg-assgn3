@@ -1,6 +1,6 @@
 #include "07_hierarchical_modelling.hpp"
 
-GLuint shaderProgram;
+GLuint worldShaderProgram, lightShaderProgram;
 
 glm::mat4 rotation_matrix;
 glm::mat4 projection_matrix;
@@ -18,11 +18,16 @@ glm::mat3 normal_matrix;
 GLuint uModelViewMatrix;
 GLuint viewMatrix;
 GLuint normalMatrix;
-GLuint lPos;
+GLuint lPos, l1On;
+
+int lightVertices;
 
 Human* h;
 Bike* b;
 Track* t;
+
+// Buffers for light source
+GLuint vbo, vao;
 
 bool bike = true, rider = true, track = true;
 int selected;
@@ -58,26 +63,28 @@ void initBuffersGL(void)
 {
 
   // Load shaders and use the resulting shader program
-  std::string vertex_shader_file("../src/07_vshader.glsl");
+  std::string world_vertex_shader_file("../src/07_vshader.glsl");
+  std::string lightSource_vertex_shader_file("../src/light_vshader.glsl");
   std::string fragment_shader_file("../src/07_fshader.glsl");
 
-  std::vector<GLuint> shaderList;
-  shaderList.push_back(csX75::LoadShaderGL(GL_VERTEX_SHADER, vertex_shader_file));
-  shaderList.push_back(csX75::LoadShaderGL(GL_FRAGMENT_SHADER, fragment_shader_file));
+  std::vector<GLuint> worldShaderList;
+  worldShaderList.push_back(csX75::LoadShaderGL(GL_VERTEX_SHADER, world_vertex_shader_file));
+  worldShaderList.push_back(csX75::LoadShaderGL(GL_FRAGMENT_SHADER, fragment_shader_file));
 
-  shaderProgram = csX75::CreateProgramGL(shaderList);
-  glUseProgram( shaderProgram );
+  worldShaderProgram = csX75::CreateProgramGL(worldShaderList);
+  glUseProgram( worldShaderProgram );
 
   // getting the attributes from the shader program
-  vPosition = glGetAttribLocation( shaderProgram, "vPosition" );
-  vColor = glGetAttribLocation( shaderProgram, "vColor" );
-  vNormal = glGetAttribLocation( shaderProgram, "vNormal" );
+  vPosition = glGetAttribLocation( worldShaderProgram, "vPosition" );
+  vColor = glGetAttribLocation( worldShaderProgram, "vColor" );
+  vNormal = glGetAttribLocation( worldShaderProgram, "vNormal" );
 
-  uModelViewMatrix = glGetUniformLocation( shaderProgram, "uModelViewMatrix" );
-  normalMatrix = glGetUniformLocation( shaderProgram, "normalMatrix" );
-  viewMatrix = glGetUniformLocation( shaderProgram, "viewMatrix" );
+  uModelViewMatrix = glGetUniformLocation( worldShaderProgram, "uModelViewMatrix" );
+  normalMatrix = glGetUniformLocation( worldShaderProgram, "normalMatrix" );
+  viewMatrix = glGetUniformLocation( worldShaderProgram, "viewMatrix" );
   
-  lPos = glGetUniformLocation( shaderProgram, "lPos" );
+  lPos = glGetUniformLocation( worldShaderProgram, "lPos" );
+  l1On = glGetUniformLocation( worldShaderProgram, "l1On" );
 
   //note that the buffers are initialized in the respective constructors
   h = new Human();
@@ -91,6 +98,38 @@ void initBuffersGL(void)
 
   h->init_arrange();
   b->init_arrange();
+
+  // Initialising the buffers to render the light sources
+  std::vector<GLuint> lightSourceShaderList;
+  lightSourceShaderList.push_back(csX75::LoadShaderGL(GL_VERTEX_SHADER, lightSource_vertex_shader_file));
+  lightSourceShaderList.push_back(csX75::LoadShaderGL(GL_FRAGMENT_SHADER, fragment_shader_file));
+
+  lightShaderProgram = csX75::CreateProgramGL(lightSourceShaderList);
+  glUseProgram(lightShaderProgram);
+
+  // getting the attributes from the shader program
+  vPosition = glGetAttribLocation( lightShaderProgram, "vPosition" );
+  vColor = glGetAttribLocation( lightShaderProgram, "vColor" );
+  uModelViewMatrix = glGetUniformLocation( lightShaderProgram, "uModelViewMatrix" );
+
+  glGenVertexArrays(1, &vao);
+  glGenBuffers(1, &vbo);
+
+  glBindVertexArray(vao);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+  Sphere light(0.5, 20, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+  lightVertices = light.num_vertices;
+
+  glBufferData(GL_ARRAY_BUFFER, lightVertices*sizeof(glm::vec4) + lightVertices*sizeof(glm::vec4), NULL, GL_STATIC_DRAW);
+  glBufferSubData(GL_ARRAY_BUFFER, 0, lightVertices*sizeof(glm::vec4), light.vert_arr);
+  glBufferSubData(GL_ARRAY_BUFFER, lightVertices*sizeof(glm::vec4), lightVertices*sizeof(glm::vec4), light.col_arr);
+
+  glEnableVertexAttribArray(vPosition);
+  glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+
+  glEnableVertexAttribArray(vColor);
+  glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(lightVertices*sizeof(glm::vec4)));
 }
 
 void renderGL(void)
@@ -114,10 +153,16 @@ void renderGL(void)
   // projection_matrix = glm::frustum(-20.0, 20.0, -20.0, 20.0, -500.0, 500.0);
 
   view_matrix = projection_matrix*lookat_matrix;
+
+  glUseProgram(worldShaderProgram);
   glUniformMatrix4fv(viewMatrix, 1, GL_FALSE, glm::value_ptr(view_matrix));
   
   glm::vec3 lightPos = glm::vec3(lxPos, lyPos, lzPos);
+
+  // printf("Light pos is %f, %f, %f\n", lxPos, lyPos, lzPos);
   glUniform3fv(lPos, 1, glm::value_ptr(lightPos));
+
+  glUniform1i(l1On, source1);
 
   matrixStack.push_back(view_matrix);
   
@@ -143,6 +188,16 @@ void renderGL(void)
     matrixStack.pop_back();
     matrixStack.pop_back();
   }
+
+  // Rendering the light sources
+  glUseProgram(lightShaderProgram);
+  
+  glm::mat4 model_matrix = glm::translate(glm::mat4(1.0f), lightPos);
+  glm::mat4 modelViewProjectionMatrix = view_matrix * model_matrix;
+
+  glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelViewProjectionMatrix));
+  glBindVertexArray(vao);
+  glDrawArrays(GL_TRIANGLES, 0, lightVertices);
 }
 
 HNode* getNode(char key)
