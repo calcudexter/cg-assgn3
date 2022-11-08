@@ -25,5 +25,6 @@ namespace csX75
   //!GLFW keyboard callback
   void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 };
+enum Camera{GLOBAL, RIDER, FPV};
 
 #endif

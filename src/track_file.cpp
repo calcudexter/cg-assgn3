@@ -32,6 +32,50 @@ GLuint vbo, vao;
 bool bike = true, rider = true, track = true;
 int selected;
 
+Camera chosen_cam = GLOBAL;
+
+glm::mat4 getCameraMatrix(Camera cam = GLOBAL)
+{
+  if(cam == GLOBAL)
+  {
+    //Creating the lookat and the up vectors for the camera
+    // std::cout<<"htg"<<std::endl;
+    glm::mat4 global_cam_mat = glm::rotate(glm::mat4(1.0f), glm::radians(c_xrot), glm::vec3(1.0f,0.0f,0.0f));
+    global_cam_mat = glm::rotate(global_cam_mat, glm::radians(c_yrot), glm::vec3(0.0f,1.0f,0.0f));
+    global_cam_mat = glm::rotate(global_cam_mat, glm::radians(c_zrot), glm::vec3(0.0f,0.0f,1.0f));
+    glm::vec4 c_pos = glm::vec4(c_xpos,c_ypos,c_zpos, 1.0)*global_cam_mat;
+    glm::vec4 c_up = glm::vec4(c_up_x,c_up_y,c_up_z, 1.0)*global_cam_mat;
+
+    return glm::lookAt(glm::vec3(c_pos),glm::vec3(0.0),glm::vec3(c_up));
+  }
+  else if(cam == RIDER)
+  {
+    glm::mat4 rider_cam_mat = h->torso->rot_mat;
+    glm::mat4 rider_trans = glm::translate(glm::mat4(1.0f), glm::vec3(gtx[1], gty[1], gtz[1]));
+    glm::vec4 c_up = rider_cam_mat*glm::vec4(0.0, 1.0, 0.0, 1.0);
+    glm::vec4 c_pos = rider_trans*rider_cam_mat*glm::vec4(0.0, 0.0, -5.0, 1.0);
+    glm::vec4 origin(0.0, 0.0, 1.0, 1.0);
+    // std::cout<<((h->torso->translation)*origin).w<<std::endl;
+    return glm::lookAt(glm::vec3(c_pos),glm::vec3(rider_trans*rider_cam_mat*origin),glm::vec3(c_up));
+  }
+  else if(cam == FPV)
+  {
+    glm::mat4 rider_cam_mat = h->torso->rot_mat;
+    glm::mat4 neck_trans = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 0.0));
+    glm::mat4 rider_trans = glm::translate(neck_trans, glm::vec3(gtx[1], gty[1], gtz[1]));
+    //glm::mat4 rider_trans = glm::translate(glm::mat4(1.0f), glm::vec3(gtx[1], gty[1], gtz[1]));
+    glm::vec4 c_up = rider_cam_mat*glm::vec4(0.0, 2.0, 0.0, 1.0);
+    glm::vec4 c_pos = rider_trans*rider_cam_mat*glm::vec4(0.0, 2.5, -0.1, 1.0);
+    glm::vec4 origin(0.0, 2.5, 1.0, 1.0);
+    // std::cout<<((h->torso->translation)*origin).w<<std::endl;
+    return glm::lookAt(glm::vec3(c_pos),glm::vec3(rider_trans*rider_cam_mat*origin),glm::vec3(c_up));
+  }
+  else
+  {
+    throw std::invalid_argument("Invalid Camera");
+  }
+}
+
 float bike_params[] = 
 {
   3.0f, //wheel radius
@@ -57,7 +101,6 @@ float track_params[] =
   2.0f, // double ramp width
   3.0f // inner radius of curves
 };
-
 
 void initBuffersGL(void)
 {
@@ -138,18 +181,20 @@ void renderGL(void)
 
   matrixStack.clear();
 
-  //Creating the lookat and the up vectors for the camera
-  c_rotation_matrix = glm::rotate(glm::mat4(1.0f), glm::radians(c_xrot), glm::vec3(1.0f,0.0f,0.0f));
-  c_rotation_matrix = glm::rotate(c_rotation_matrix, glm::radians(c_yrot), glm::vec3(0.0f,1.0f,0.0f));
-  c_rotation_matrix = glm::rotate(c_rotation_matrix, glm::radians(c_zrot), glm::vec3(0.0f,0.0f,1.0f));
+  // Creating the lookat and the up vectors for the camera
+  // c_rotation_matrix = glm::rotate(glm::mat4(1.0f), glm::radians(c_xrot), glm::vec3(1.0f,0.0f,0.0f));
+  // c_rotation_matrix = glm::rotate(c_rotation_matrix, glm::radians(c_yrot), glm::vec3(0.0f,1.0f,0.0f));
+  // c_rotation_matrix = glm::rotate(c_rotation_matrix, glm::radians(c_zrot), glm::vec3(0.0f,0.0f,1.0f));
 
-  glm::vec4 c_pos = glm::vec4(c_xpos,c_ypos,c_zpos, 1.0)*c_rotation_matrix;
-  glm::vec4 c_up = glm::vec4(c_up_x,c_up_y,c_up_z, 1.0)*c_rotation_matrix;
-  //Creating the lookat matrix
-  lookat_matrix = glm::lookAt(glm::vec3(c_pos),glm::vec3(0.0),glm::vec3(c_up));
+  // glm::vec4 c_pos = glm::vec4(c_xpos,c_ypos,c_zpos, 1.0)*c_rotation_matrix;
+  // glm::vec4 c_up = glm::vec4(c_up_x,c_up_y,c_up_z, 1.0)*c_rotation_matrix;
+  // Creating the lookat matrix
+  lookat_matrix = getCameraMatrix(chosen_cam);
 
   //creating the projection matrix
-  projection_matrix = glm::ortho(-20.0, 20.0, -20.0, 20.0, -500.0, 500.0);
+
+  // projection_matrix = glm::ortho(-20.0, 20.0, -20.0, 20.0, -500.0, 500.0);
+  projection_matrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 500.0f);
   // projection_matrix = glm::frustum(-20.0, 20.0, -20.0, 20.0, -500.0, 500.0);
 
   view_matrix = projection_matrix*lookat_matrix;
@@ -274,7 +319,7 @@ int main(int argc, char** argv)
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 
 
   //! Create a windowed mode window and its OpenGL context
-  window = glfwCreateWindow(512, 512, "CS475 Assignment 2 Track", NULL, NULL);
+  window = glfwCreateWindow(800, 800, "CS475 Assignment 2 Track", NULL, NULL);
   if (!window)
     {
       glfwTerminate();
