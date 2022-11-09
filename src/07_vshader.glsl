@@ -14,6 +14,7 @@ in int perPixel;
 uniform vec3 lPos;
 
 uniform int l1On;
+uniform int texOn;
 
 void main (void) 
 {

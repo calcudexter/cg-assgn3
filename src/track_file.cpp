@@ -1,6 +1,6 @@
 #include "07_hierarchical_modelling.hpp"
 
-GLuint worldShaderProgram, lightShaderProgram;
+GLuint worldShaderProgram, lightShaderProgram, texShaderProgram;
 
 glm::mat4 rotation_matrix;
 glm::mat4 projection_matrix;
@@ -67,7 +67,6 @@ glm::mat4 getCameraMatrix(Camera cam = GLOBAL)
     glm::vec4 c_up = rider_cam_mat*glm::vec4(0.0, 2.0, 0.0, 1.0);
     glm::vec4 c_pos = rider_trans*rider_cam_mat*glm::vec4(0.0, 2.5, -0.1, 1.0);
     glm::vec4 origin(0.0, 2.5, 1.0, 1.0);
-    // std::cout<<((h->torso->translation)*origin).w<<std::endl;
     return glm::lookAt(glm::vec3(c_pos),glm::vec3(rider_trans*rider_cam_mat*origin),glm::vec3(c_up));
   }
   else
@@ -129,6 +128,10 @@ void initBuffersGL(void)
   lPos = glGetUniformLocation( worldShaderProgram, "lPos" );
   l1On = glGetUniformLocation( worldShaderProgram, "l1On" );
 
+  // For texture mapping
+  // Initialising the buffers to render the light sources
+
+
   //note that the buffers are initialized in the respective constructors
   h = new Human();
   if(rider && !bike) curr_node = h->torso;
@@ -173,6 +176,7 @@ void initBuffersGL(void)
 
   glEnableVertexAttribArray(vColor);
   glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(lightVertices*sizeof(glm::vec4)));
+
 }
 
 void renderGL(void)

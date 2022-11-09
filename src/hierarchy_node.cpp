@@ -4,6 +4,7 @@
 #include <iostream>
 
 extern GLuint vPosition,vColor,vNormal,uModelViewMatrix,normalMatrix;
+extern GLuint worldShaderProgram, lightShaderProgram, texShaderProgram;
 extern std::vector<glm::mat4> matrixStack;
 
 namespace csX75
@@ -66,6 +67,79 @@ namespace csX75
 		this->name = name;
 	}
 
+	HNode::HNode(HNode* a_parent, GLuint num_v, glm::vec4* a_vertices, glm::vec2* a_textures, glm::vec4* a_normals, std::size_t v_size, std::size_t tex_size, std::size_t n_size, std::string name){
+		num_vertices = num_v;
+		
+		// tex files
+		this->tex_vertex_shader_file = std::string("../src/tex_vshader.glsl");
+  		this->tex_fragment_shader_file = std::string("../src/tex_fshader.glsl");
+		
+		std::vector<GLuint> texShaderList;
+		texShaderList.push_back(csX75::LoadShaderGL(GL_VERTEX_SHADER, tex_vertex_shader_file));
+		texShaderList.push_back(csX75::LoadShaderGL(GL_FRAGMENT_SHADER, tex_fragment_shader_file));
+
+		this->texShaderProgram = csX75::CreateProgramGL(texShaderList);
+		glUseProgram(this->texShaderProgram);
+		
+		this->vtexPos = glGetAttribLocation(this->texShaderProgram, "vPosition" );
+		this->vtexCoord = glGetAttribLocation(this->texShaderProgram, "texCoord" );
+  		this->utexModelViewMatrix = glGetUniformLocation(this->texShaderProgram, "uModelViewMatrix" );
+		
+		  // Load Textures 
+		this->tex = LoadTexture("../images/all1.bmp",256,256);
+		
+		// sizes in bytes
+		vertex_buffer_size = v_size;
+		texture_buffer_size = tex_size;
+		normal_buffer_size = n_size;
+		// initialize vao and vbo of the object;
+
+		//Ask GL for a Vertex Attribute Objects (vao)
+		glGenVertexArrays (1, &vao);
+		//Ask GL for aVertex Buffer Object (vbo)
+		glGenBuffers (1, &vbo);
+
+		//bind them
+		glBindVertexArray (vao);
+		glBindBuffer (GL_ARRAY_BUFFER, vbo);
+
+		
+		glBufferData (GL_ARRAY_BUFFER, vertex_buffer_size + texture_buffer_size + normal_buffer_size, NULL, GL_STATIC_DRAW);
+		glBufferSubData( GL_ARRAY_BUFFER, 0, vertex_buffer_size, a_vertices );
+		glBufferSubData( GL_ARRAY_BUFFER, vertex_buffer_size, color_buffer_size, a_textures);
+		glBufferSubData( GL_ARRAY_BUFFER, vertex_buffer_size + color_buffer_size, normal_buffer_size, a_normals );
+
+		//setup the vertex array as per the shader
+		glEnableVertexAttribArray( this->vtexPos );
+		glVertexAttribPointer( this->vtexPos, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0) );
+
+		glEnableVertexAttribArray( this->vtexCoord );
+		glVertexAttribPointer( this->vtexCoord, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(vertex_buffer_size));
+
+		glEnableVertexAttribArray( this->vtexNormal );
+		glVertexAttribPointer( this->vtexNormal, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(vertex_buffer_size + texture_buffer_size));
+
+		// set parent
+
+		if(a_parent == NULL){
+			parent = NULL;
+		}
+		else{
+			parent = a_parent;
+			parent->add_child(this);
+		}
+
+		//initial parameters are set to 0;
+
+		tx=ty=tz=rx=ry=rz=ptx=pty=ptz=0;
+
+		update_matrices();
+		rot_mat = glm::mat4(1.0f);	
+
+		this->name = name;
+		this->render_texture = true;
+	}
+
 	void HNode::update_matrices(){
 
 		pre_rot = glm::rotate(glm::mat4(1.0f), glm::radians(rx), glm::vec3(1.0f,0.0f,0.0f));
@@ -107,10 +181,25 @@ namespace csX75
 
 	void HNode::render(){
 
+		if(this->render_texture)
+		{
+			glUseProgram(texShaderProgram);
+			glBindTexture(GL_TEXTURE_2D, this->tex);
+			glm::mat4* ms_mult = multiply_stack(matrixStack);
+
+			glUniformMatrix4fv(this->utexModelViewMatrix, 1, GL_FALSE, glm::value_ptr(*ms_mult));
+
+			glBindVertexArray (vao);
+			glDrawArrays(GL_TRIANGLES, 0, num_vertices);
+			
+			delete ms_mult;
+			glUseProgram(worldShaderProgram);
+			return;
+		}
 		//matrixStack multiply
 		glm::mat4* ms_mult = multiply_stack(matrixStack);
 
-		glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(*ms_mult));
+		glUniformMatrix4fv(this->utexModelViewMatrix, 1, GL_FALSE, glm::value_ptr(*ms_mult));
 
 		glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(*ms_mult)));
 		glUniformMatrix3fv(normalMatrix, 1, GL_FALSE, glm::value_ptr(normal_matrix));
@@ -120,7 +209,6 @@ namespace csX75
 
 		// for memory 
 		delete ms_mult;
-
 	}
 
 	void HNode::render_tree(){
