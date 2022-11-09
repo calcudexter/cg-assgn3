@@ -51,7 +51,7 @@ namespace csX75	 {
 		GLfloat ptx, pty, ptz;
 
 		HNode (HNode*, GLuint, glm::vec4*,  glm::vec4*, glm::vec4*, std::size_t, std::size_t, std::size_t, std::string);
-		HNode (HNode*, GLuint, glm::vec4*,  glm::vec2*, glm::vec4*, std::size_t, std::size_t, std::size_t, std::string);
+		HNode (HNode*, GLuint, glm::vec4*,  glm::vec2*, glm::vec4*, std::size_t, std::size_t, std::size_t, std::string, std::string, uint, uint);
 		
 		void add_child(HNode*);
 		void render();

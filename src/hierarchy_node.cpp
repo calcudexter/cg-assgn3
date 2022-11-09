@@ -67,7 +67,7 @@ namespace csX75
 		this->name = name;
 	}
 
-	HNode::HNode(HNode* a_parent, GLuint num_v, glm::vec4* a_vertices, glm::vec2* a_textures, glm::vec4* a_normals, std::size_t v_size, std::size_t tex_size, std::size_t n_size, std::string name){
+	HNode::HNode(HNode* a_parent, GLuint num_v, glm::vec4* a_vertices, glm::vec2* a_textures, glm::vec4* a_normals, std::size_t v_size, std::size_t tex_size, std::size_t n_size, std::string name, std::string filename,uint w=256, uint h=256){
 		num_vertices = num_v;
 		
 		// tex files
@@ -80,14 +80,22 @@ namespace csX75
 
 		this->texShaderProgram = csX75::CreateProgramGL(texShaderList);
 		glUseProgram(this->texShaderProgram);
-		
+		//std::cout<<"shader "<<this->texShaderProgram<<std::endl;
 		this->vtexPos = glGetAttribLocation(this->texShaderProgram, "vPosition" );
 		this->vtexCoord = glGetAttribLocation(this->texShaderProgram, "texCoord" );
+		this->vtexNormal = glGetAttribLocation(this->texShaderProgram, "vNormal" );
   		this->utexModelViewMatrix = glGetUniformLocation(this->texShaderProgram, "uModelViewMatrix" );
-		
+		// std::cout<<"p: "<<vPosition << "coord : "<<this->vtexCoord<<"umatrix : "<<this->utexModelViewMatrix<<std::endl;
 		  // Load Textures 
-		this->tex = LoadTexture("../images/all1.bmp",256,256);
-		
+		this->tex = LoadTexture((std::string("../src/images/")+filename).c_str(),w,h);
+		if(this->tex <= 0)
+		{
+			std::cout<<"Invalid file\n";
+			exit(1);
+		}
+		glBindTexture(GL_TEXTURE_2D, this->tex);
+		std::cout<<"tex loaded : "<<this->tex<<std::endl;
+
 		// sizes in bytes
 		vertex_buffer_size = v_size;
 		texture_buffer_size = tex_size;
@@ -106,8 +114,8 @@ namespace csX75
 		
 		glBufferData (GL_ARRAY_BUFFER, vertex_buffer_size + texture_buffer_size + normal_buffer_size, NULL, GL_STATIC_DRAW);
 		glBufferSubData( GL_ARRAY_BUFFER, 0, vertex_buffer_size, a_vertices );
-		glBufferSubData( GL_ARRAY_BUFFER, vertex_buffer_size, color_buffer_size, a_textures);
-		glBufferSubData( GL_ARRAY_BUFFER, vertex_buffer_size + color_buffer_size, normal_buffer_size, a_normals );
+		glBufferSubData( GL_ARRAY_BUFFER, vertex_buffer_size, texture_buffer_size, a_textures);
+		glBufferSubData( GL_ARRAY_BUFFER, vertex_buffer_size + texture_buffer_size, normal_buffer_size, a_normals );
 
 		//setup the vertex array as per the shader
 		glEnableVertexAttribArray( this->vtexPos );
@@ -183,7 +191,8 @@ namespace csX75
 
 		if(this->render_texture)
 		{
-			glUseProgram(texShaderProgram);
+			glUseProgram(this->texShaderProgram);
+			// std::cout<<"tex" << this->texShaderProgram<<std::endl;
 			glBindTexture(GL_TEXTURE_2D, this->tex);
 			glm::mat4* ms_mult = multiply_stack(matrixStack);
 
