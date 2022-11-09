@@ -2,7 +2,7 @@
 #include "hierarchy_node.hpp"
 
 extern GLfloat c_xrot,c_yrot,c_zrot;
-extern GLfloat lxPos, lyPos, lzPos;
+extern GLfloat lxPos[2], lyPos[2], lzPos[2];
 extern GLfloat gtx[3], gty[3], gtz[3];
 extern GLfloat scaling[3];
 extern csX75::HNode* getNode(char), *curr_node;
@@ -12,7 +12,7 @@ extern Bike* b;
 extern Human* h;
 
 extern bool bike, rider, track;
-extern int selected, source1;
+extern int selected, sourceStat[4], sourceSelected;
 bool shift_held = false;
 namespace csX75
 {
@@ -79,7 +79,12 @@ namespace csX75
 
       // b->print_rot();
       // h->print_rot();
-      source1 = (1-source1);
+      // if(sourceSelected == 2) return;
+      sourceStat[sourceSelected] = (1-sourceStat[sourceSelected]);
+    }
+    else if (key == GLFW_KEY_O  && action == GLFW_PRESS) {
+      sourceSelected += 1;
+      sourceSelected %= 4;
     }
     else if (key == GLFW_KEY_A  && action == GLFW_PRESS | GLFW_REPEAT)
       c_yrot -= 3.0;
@@ -235,16 +240,22 @@ namespace csX75
       // printf("Scaling factor (track) %f\n", fac[2]);
     }
     else if(key == GLFW_KEY_J && action == GLFW_PRESS | GLFW_REPEAT) {
-      if(shift_held) lxPos -= 1.0f;
-      else lxPos += 1.0f;
+      if(sourceSelected > 1) return;
+
+      if(shift_held) lxPos[sourceSelected] -= 1.0f;
+      else lxPos[sourceSelected] += 1.0f;
     }
     else if(key == GLFW_KEY_K && action == GLFW_PRESS | GLFW_REPEAT) {
-      if(shift_held) lyPos -= 1.0f;
-      else lyPos += 1.0f;
+      if(sourceSelected > 1) return;
+      
+      if(shift_held) lyPos[sourceSelected] -= 1.0f;
+      else lyPos[sourceSelected] += 1.0f;
     }
     else if(key == GLFW_KEY_L && action == GLFW_PRESS | GLFW_REPEAT) {
-      if(shift_held) lzPos -= 1.0f;
-      else lzPos += 1.0f;
+      if(sourceSelected > 1) return;
+      
+      if(shift_held) lzPos[sourceSelected] -= 1.0f;
+      else lzPos[sourceSelected] += 1.0f;
     }
   }
 };

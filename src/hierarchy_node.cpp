@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-extern GLuint vPosition,vColor,vNormal,uModelViewMatrix,normalMatrix;
+extern GLuint vPosition,vColor,vNormal,uModelViewMatrix,normalMatrix,modelMatrix;
 extern std::vector<glm::mat4> matrixStack;
 
 namespace csX75
@@ -111,9 +111,19 @@ namespace csX75
 		glm::mat4* ms_mult = multiply_stack(matrixStack);
 
 		glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(*ms_mult));
+		
+		// Need the model matrix in shaders too
+		glm::mat4 model_matrix = glm::inverse(matrixStack[0] * matrixStack[1]) * (*ms_mult);
+		glUniformMatrix4fv(modelMatrix, 1, GL_FALSE, glm::value_ptr(model_matrix));
 
-		glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(*ms_mult)));
+		// ms_mult is the product of complete matrix stack
+		// It contains the projection and viewing transformations too
+
+		// So, just to keep lighting in the WCS, I am removing the projection component
+		// in the normal matrix
+		glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(model_matrix)));
 		glUniformMatrix3fv(normalMatrix, 1, GL_FALSE, glm::value_ptr(normal_matrix));
+
 
 		glBindVertexArray (vao);
 		glDrawArrays(GL_TRIANGLES, 0, num_vertices);
@@ -197,6 +207,22 @@ namespace csX75
 		}	
 
 		return mult;
+	}
+
+	glm::vec3 HNode::getWCSPos() {
+		glm::vec4 OCSPos = glm::vec4(6.0f, 3.0f, 0.0f, 1.0f);
+
+		OCSPos = matrixStack[2] * matrixStack[3] * inv_trans * rot_mat * pre_trans * translation * pre_rot * OCSPos;
+
+		return glm::vec3(OCSPos);
+	}
+
+	glm::vec3 HNode::getWCSDir() {
+		glm::vec4 OCSDir = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+
+		OCSDir = matrixStack[2] * matrixStack[3] * inv_trans * rot_mat * pre_trans * translation * pre_rot * OCSDir;
+
+		return glm::vec3(OCSDir);
 	}
 
 }

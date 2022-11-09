@@ -263,7 +263,7 @@ void Cuboid::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4* no
     glm::vec4 h_v(-a/2, b/2, -c/2, 1.0f);  
 
     glm::vec4 normal[6];
-    normal[0] = glm::vec4(triangleNormal(glm::vec3(a_v), glm::vec3(b_v), glm::vec3(c_v)), 1.0f);
+    normal[0] = -glm::vec4(triangleNormal(glm::vec3(a_v), glm::vec3(b_v), glm::vec3(c_v)), 1.0f);
     normal[1] = glm::vec4(triangleNormal(glm::vec3(a_v), glm::vec3(b_v), glm::vec3(f_v)), 1.0f);
     normal[2] = glm::vec4(triangleNormal(glm::vec3(a_v), glm::vec3(e_v), glm::vec3(h_v)), 1.0f);
     normal[3] = glm::vec4(triangleNormal(glm::vec3(b_v), glm::vec3(c_v), glm::vec3(g_v)), 1.0f);
@@ -467,7 +467,7 @@ void Track_ramp::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4
 
     int ind = 0;
     this->insert_quad(this->vert_arr, this->col_arr, a, e, f, d);
-    glm::vec4 normal = glm::vec4(triangleNormal(glm::vec3(a), glm::vec3(b), glm::vec3(c)), 1.0f);
+    glm::vec4 normal = glm::vec4(triangleNormal(glm::vec3(a), glm::vec3(e), glm::vec3(f)), 1.0f);
     norm_arr[ind++] = normal;
     norm_arr[ind++] = normal;
     norm_arr[ind++] = normal;

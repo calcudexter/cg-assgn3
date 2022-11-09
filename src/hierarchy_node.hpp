@@ -57,6 +57,8 @@ namespace csX75	 {
 		void dec_rz();
 		void print_rot();
 		void init_rot(GLfloat rx, GLfloat ry, GLfloat rz);
+		glm::vec3 getWCSPos();
+		glm::vec3 getWCSDir();
 	};
 
 	glm::mat4* multiply_stack(std::vector <glm::mat4> );
