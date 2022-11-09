@@ -10,6 +10,7 @@ extern float* dof_param;
 extern Track* t;
 extern Bike* b;
 extern Human* h;
+extern Camera chosen_cam;
 
 extern bool bike, rider, track;
 extern int selected, sourceStat[4], sourceSelected;
@@ -256,6 +257,14 @@ namespace csX75
       
       if(shift_held) lzPos[sourceSelected] -= 1.0f;
       else lzPos[sourceSelected] += 1.0f;
+    }
+    else if(key == GLFW_KEY_N && action == GLFW_PRESS) {
+      if(chosen_cam == GLOBAL)
+        chosen_cam = RIDER;
+      else if(chosen_cam == RIDER)
+        chosen_cam = FPV;
+      else if(chosen_cam == FPV)
+        chosen_cam = GLOBAL;
     }
   }
 };

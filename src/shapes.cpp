@@ -1,6 +1,13 @@
 #include "shapes.hpp"
 using namespace std;
 
+glm::vec2 t_coords[4] = {
+    glm::vec2( 0.0, 0.0),
+    glm::vec2( 0.0, 1.0),
+    glm::vec2( 1.0, 0.0),
+    glm::vec2( 1.0, 1.0)
+};
+
 void Shape::insert_quad(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4 a, glm::vec4 b, glm::vec4 c, glm::vec4 d)
 {
     vert_arr[this->index] = a; col_arr[this->index] = this->col; this->index++;
@@ -250,9 +257,22 @@ Sphere::~Sphere()
     delete this->norm_arr;
 }
 
+// void Cuboid::insert_quad(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4 a, glm::vec4 b, glm::vec4 c, glm::vec4 d)
+// {
+//     vert_arr[this->index] = a; col_arr[this->index] = this->col; this->index++;
+//     vert_arr[this->index] = b; col_arr[this->index] = this->col; this->index++;
+//     vert_arr[this->index] = c; col_arr[this->index] = this->col; this->index++;
+//     vert_arr[this->index] = a; col_arr[this->index] = this->col; this->index++;
+//     vert_arr[this->index] = c; col_arr[this->index] = this->col; this->index++;
+//     vert_arr[this->index] = d; col_arr[this->index] = this->col; this->index++;
+// }
+
+
+
 void Cuboid::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4* norm_arr)
 {   
     int ind = 0;
+    
     glm::vec4 a_v(a/2, b/2, c/2, 1.0f);
     glm::vec4 b_v(a/2, -b/2, c/2, 1.0f);
     glm::vec4 c_v(-a/2, -b/2, c/2, 1.0f);
@@ -332,12 +352,124 @@ Cuboid::Cuboid(float a, float b, float c, glm::vec4 col)
     this->norm_arr = new glm::vec4[36];
     this->add_vertices(this->vert_arr, this->col_arr, this->norm_arr);
 }
+
 Cuboid::~Cuboid()
 {
     delete this->vert_arr;
     delete this->col_arr;
     delete this->norm_arr;
 }
+
+void TexCuboid::insert_tex_quad(glm::vec4* vert_arr, glm::vec2* tex_arr, glm::vec4 a, glm::vec4 b, glm::vec4 c, glm::vec4 d)
+{
+    vert_arr[this->index] = a; tex_arr[this->index] = this->tex_coords[0]; this->index++;
+    vert_arr[this->index] = b; tex_arr[this->index] = this->tex_coords[1]; this->index++;
+    vert_arr[this->index] = c; tex_arr[this->index] = this->tex_coords[3]; this->index++;
+    vert_arr[this->index] = a; tex_arr[this->index] = this->tex_coords[0]; this->index++;
+    vert_arr[this->index] = c; tex_arr[this->index] = this->tex_coords[3]; this->index++;
+    vert_arr[this->index] = d; tex_arr[this->index] = this->tex_coords[2]; this->index++;
+}
+
+TexCuboid::TexCuboid(float a, float b, float c, glm::vec4 col)
+{
+    this->a = a;
+    this->b = b;
+    this->c = c;
+    this->col = col;
+    this->index = 0;
+    this->num_vertices = 36;
+    this->vert_arr = new glm::vec4[36];
+    this->norm_arr = new glm::vec4[36];
+    this->col_arr = new glm::vec4[36];
+    this->tex_arr = new glm::vec2[36];
+    this->tex_coords = {
+        glm::vec2(0.0, 0.0),
+        glm::vec2(0.0, 1.0),
+        glm::vec2(1.0, 0.0),
+        glm::vec2(1.0, 1.0)
+        };
+    this->add_vertices(this->vert_arr, this->tex_arr, this->norm_arr);
+}
+
+void TexCuboid::add_vertices(glm::vec4* vert_arr, glm::vec2* col_arr, glm::vec4* norm_arr)
+{   
+    int ind = 0;
+    
+    glm::vec4 a_v(a/2, b/2, c/2, 1.0f);
+    glm::vec4 b_v(a/2, -b/2, c/2, 1.0f);
+    glm::vec4 c_v(-a/2, -b/2, c/2, 1.0f);
+    glm::vec4 d_v(-a/2, b/2, c/2, 1.0f); 
+    glm::vec4 e_v(a/2, b/2, -c/2, 1.0f);
+    glm::vec4 f_v(a/2, -b/2, -c/2, 1.0f);  
+    glm::vec4 g_v(-a/2, -b/2, -c/2, 1.0f);
+    glm::vec4 h_v(-a/2, b/2, -c/2, 1.0f);  
+
+    glm::vec4 normal[6];
+    normal[0] = glm::vec4(triangleNormal(glm::vec3(a_v), glm::vec3(b_v), glm::vec3(c_v)), 1.0f);
+    normal[1] = glm::vec4(triangleNormal(glm::vec3(a_v), glm::vec3(b_v), glm::vec3(f_v)), 1.0f);
+    normal[2] = glm::vec4(triangleNormal(glm::vec3(a_v), glm::vec3(e_v), glm::vec3(h_v)), 1.0f);
+    normal[3] = glm::vec4(triangleNormal(glm::vec3(b_v), glm::vec3(c_v), glm::vec3(g_v)), 1.0f);
+    normal[4] = glm::vec4(triangleNormal(glm::vec3(d_v), glm::vec3(h_v), glm::vec3(g_v)), 1.0f);
+    normal[5] = glm::vec4(triangleNormal(glm::vec3(h_v), glm::vec3(e_v), glm::vec3(f_v)), 1.0f);
+
+    this->insert_tex_quad(vert_arr, tex_arr, a_v, b_v, c_v, d_v);
+    norm_arr[ind++] = normal[0];
+    norm_arr[ind++] = normal[0];
+    norm_arr[ind++] = normal[0];
+    norm_arr[ind++] = normal[0];
+    norm_arr[ind++] = normal[0];
+    norm_arr[ind++] = normal[0];
+
+    this->insert_tex_quad(vert_arr, tex_arr, a_v, b_v, f_v, e_v);
+    norm_arr[ind++] = normal[1];
+    norm_arr[ind++] = normal[1];
+    norm_arr[ind++] = normal[1];
+    norm_arr[ind++] = normal[1];
+    norm_arr[ind++] = normal[1];
+    norm_arr[ind++] = normal[1];
+
+    this->insert_tex_quad(vert_arr, tex_arr, a_v, e_v, h_v, d_v);
+    norm_arr[ind++] = normal[2];
+    norm_arr[ind++] = normal[2];
+    norm_arr[ind++] = normal[2];
+    norm_arr[ind++] = normal[2];
+    norm_arr[ind++] = normal[2];
+    norm_arr[ind++] = normal[2];
+    
+    this->insert_tex_quad(vert_arr, tex_arr, b_v, c_v, g_v, f_v);
+    norm_arr[ind++] = normal[3];
+    norm_arr[ind++] = normal[3];
+    norm_arr[ind++] = normal[3];
+    norm_arr[ind++] = normal[3];
+    norm_arr[ind++] = normal[3];
+    norm_arr[ind++] = normal[3];
+
+    this->insert_tex_quad(vert_arr, tex_arr, d_v, h_v, g_v, c_v);
+    norm_arr[ind++] = normal[4];
+    norm_arr[ind++] = normal[4];
+    norm_arr[ind++] = normal[4];
+    norm_arr[ind++] = normal[4];
+    norm_arr[ind++] = normal[4];
+    norm_arr[ind++] = normal[4];
+
+    this->insert_tex_quad(vert_arr, tex_arr, h_v, e_v, f_v, g_v);
+    norm_arr[ind++] = normal[5];
+    norm_arr[ind++] = normal[5];
+    norm_arr[ind++] = normal[5];
+    norm_arr[ind++] = normal[5];
+    norm_arr[ind++] = normal[5];
+    norm_arr[ind++] = normal[5];
+}
+
+
+TexCuboid::~TexCuboid()
+{
+    delete this->vert_arr;
+    delete this->col_arr;
+    delete this->norm_arr;
+    delete this->tex_arr;
+}
+
 
 Track_curve::Track_curve(float ir, float out_r, int nt, float ang, glm::vec4 col)
 {

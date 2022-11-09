@@ -32,7 +32,8 @@
 GLfloat c_xpos = 0.0, c_ypos = 0.0, c_zpos = 2.0;
 GLfloat c_up_x = 0.0, c_up_y = 1.0, c_up_z = 0.0;
 GLfloat c_xrot=0.0,c_yrot=0.0,c_zrot=0.0;
-GLfloat gtx[3]={-5.90f, -6.70f, 0.0f}, gty[3]={-15.4f, -15.2f, -15.2f}, gtz[3]={1.60f, 3.20f, 0.0f};
+float dis = 20.0f;
+GLfloat gtx[3]={-5.90f, -6.70f, 0.0f}, gty[3]={-15.4f, -15.2f, -15.2f}, gtz[3]={1.60f-dis, 3.20f-dis, 0.0f-dis};
 GLfloat scaling[3] = {0.31f, 0.17f, 3.52f};
 
 GLfloat lxPos[2]={20.0, -20.0}, lyPos[2]={20.0, -20.0}, lzPos[2]={20.0, 20.0};

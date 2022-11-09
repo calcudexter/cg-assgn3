@@ -69,11 +69,25 @@ public:
 class Cuboid : public Shape
 {   
     float a, b, c;
-
 public:
     Cuboid(float a, float b, float c, glm::vec4 col);
     ~Cuboid();
     void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4* norm_arr);
+};
+
+class TexCuboid : public Shape
+{
+    float a, b, c;
+    std::vector<glm::vec2> tex_coords;
+
+public:
+    glm::vec2* tex_arr;
+    TexCuboid(float a, float b, float c, glm::vec4 col);
+    ~TexCuboid();
+    void insert_tex_quad(glm::vec4* vert_arr, glm::vec2* tex_arr, glm::vec4 a, glm::vec4 b, glm::vec4 c, glm::vec4 d);
+    void add_vertices(glm::vec4* vert_arr, glm::vec2* tex_arr, glm::vec4* norm_arr);
+    // overriden function call for add_vertices does nothing
+    void add_vertices(glm::vec4* vert_arr, glm::vec4* tex_arr, glm::vec4* norm_arr){;};
 };
 
 class Track_curve : public Shape

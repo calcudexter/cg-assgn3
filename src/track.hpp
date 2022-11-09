@@ -11,6 +11,7 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "hierarchy_node.hpp"
 #include "shapes.hpp"
+#include "texture.hpp"
 
 using namespace csX75;
 
