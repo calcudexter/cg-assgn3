@@ -6,8 +6,8 @@ using namespace csX75;
 Human::Human()
 {
     // Creating the torso
-    Cuboid cuboid(7, 10, 3, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
-    torso = new HNode(NULL, cuboid.num_vertices, cuboid.vert_arr, cuboid.col_arr, cuboid.norm_arr, cuboid.num_vertices*sizeof(glm::vec4), cuboid.num_vertices*sizeof(glm::vec4), cuboid.num_vertices*sizeof(glm::vec4), "Torso");
+    TexCuboid cuboid(7, 10, 3, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
+    torso = new HNode(NULL, cuboid.num_vertices, cuboid.vert_arr, cuboid.tex_arr, cuboid.norm_arr, cuboid.num_vertices*sizeof(glm::vec4), cuboid.num_vertices*sizeof(glm::vec2), cuboid.num_vertices*sizeof(glm::vec4), "Torso", "all1.bmp", 256, 256);
 
     // Creating the limbs
     Cylinder limb(6, 1, 10, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));   

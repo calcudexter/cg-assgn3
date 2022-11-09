@@ -5,7 +5,7 @@ GLEWLIB= -lGLEW
 GLFWLIB = -lglfw
 LIBS=$(OPENGLLIB) $(GLEWLIB) $(GLFWLIB)
 LDFLAGS=-L/usr/local/lib 
-CPPFLAGS=-I/usr/local/include -I./src/
+CPPFLAGS=-I/usr/local/include -I./src/ -g
 
 BIN_DIR=./bin/*
 BIN3=./bin/a2-model-track

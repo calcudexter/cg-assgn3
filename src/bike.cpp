@@ -45,14 +45,14 @@ void Bike::update_bike(float* param)
 
 void Bike::initialize_hnode()
 {
-  Cuboid* body_s = new Cuboid(this->body_w, this->body_h, this->body_t, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
+  TexCuboid* body_s = new TexCuboid(this->body_w, this->body_h, this->body_t, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
   Cylinder* rod_s = new Cylinder(this->rod_l, this->rod_r, NUM_T, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
   CylinderRim* rear_wheel_s = new CylinderRim(this->wheel_t, 0.7*this->wheel_r, this->wheel_r, NUM_T, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
   CylinderRim* front_wheel_s = new CylinderRim(this->wheel_t, 0.7*this->wheel_r, this->wheel_r, NUM_T, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
   Cylinder* spoke = new Cylinder(0.7*this->wheel_r, 0.2f, NUM_T, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
   Cylinder* steering_s = new Cylinder(this->rod_l/2, 0.7*this->rod_r, NUM_T, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
-  this->body = new HNode(NULL, body_s->num_vertices, body_s->vert_arr, body_s->col_arr, body_s->norm_arr, body_s->num_vertices*sizeof(glm::vec4), body_s->num_vertices*sizeof(glm::vec4), body_s->num_vertices*sizeof(glm::vec4), "Body");
+  this->body = new HNode(NULL, body_s->num_vertices, body_s->vert_arr, body_s->tex_arr, body_s->norm_arr, body_s->num_vertices*sizeof(glm::vec4), body_s->num_vertices*sizeof(glm::vec2), body_s->num_vertices*sizeof(glm::vec4), "Body", "darth.bmp", 256, 256);
 
   this->rod = new HNode(this->body, rod_s->num_vertices, rod_s->vert_arr, rod_s->col_arr, rod_s->norm_arr, rod_s->num_vertices*sizeof(glm::vec4), rod_s->num_vertices*sizeof(glm::vec4), rod_s->num_vertices*sizeof(glm::vec4), "Rod");
   GLfloat delta = -1*(this->body_h/sin(this->rod_body_angle)-this->rod_l/2);

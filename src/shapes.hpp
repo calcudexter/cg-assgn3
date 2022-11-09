@@ -119,4 +119,20 @@ public:
     void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4* norm_arr);
 };
 
+class SkyBox: public Shape
+{
+    float a, b, c;
+    std::vector<glm::vec2> tex_coords;
+
+public:
+    glm::vec2* tex_arr;
+    SkyBox(float a, float b, float c, glm::vec4 col);
+    ~SkyBox();
+    void insert_tex_quad(glm::vec4* vert_arr, glm::vec2* tex_arr, glm::vec4 a, glm::vec4 b, glm::vec4 c, glm::vec4 d, float, float);
+    void add_vertices(glm::vec4* vert_arr, glm::vec2* tex_arr, glm::vec4* norm_arr);
+    // overriden function call for add_vertices does nothing
+    void add_vertices(glm::vec4* vert_arr, glm::vec4* tex_arr, glm::vec4* norm_arr){;};
+};
+
+
 #endif
