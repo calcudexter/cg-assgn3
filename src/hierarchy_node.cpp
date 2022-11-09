@@ -5,7 +5,10 @@
 
 extern GLuint vPosition,vColor,vNormal,uModelViewMatrix,normalMatrix,modelMatrix;
 extern GLuint worldShaderProgram, lightShaderProgram, texShaderProgram;
+extern GLuint lPos[4], l1On;
+extern glm::vec3 lightPos[4], headlightDir, spotDir[2];
 extern std::vector<glm::mat4> matrixStack;
+extern int sourceStat[4];
 
 namespace csX75
 {
@@ -85,6 +88,19 @@ namespace csX75
 		this->vtexCoord = glGetAttribLocation(this->texShaderProgram, "texCoord" );
 		this->vtexNormal = glGetAttribLocation(this->texShaderProgram, "vNormal" );
   		this->utexModelViewMatrix = glGetUniformLocation(this->texShaderProgram, "uModelViewMatrix" );
+		this->vtexNormalMatrix = glGetUniformLocation(this->texShaderProgram, "normalMatrix" );
+		this->vtexModelMatrix = glGetUniformLocation(this->texShaderProgram, "modelMatrix");
+
+		this->lPos[0] = glGetUniformLocation( this->texShaderProgram, "lPos[0]" );
+		this->lPos[1] = glGetUniformLocation( this->texShaderProgram, "lPos[1]" );
+		this->lPos[2] = glGetUniformLocation( this->texShaderProgram, "lPos[2]" );
+		this->lPos[3] = glGetUniformLocation( this->texShaderProgram, "lPos[3]" );
+
+		this->l1On = glGetUniformLocation( this->texShaderProgram, "l1On" );
+
+		this->spotDir[0] = glGetUniformLocation( this->texShaderProgram, "spotDir[0]" );
+		this->spotDir[1] = glGetUniformLocation( this->texShaderProgram, "spotDir[1]" );
+
 		// std::cout<<"p: "<<vPosition << "coord : "<<this->vtexCoord<<"umatrix : "<<this->utexModelViewMatrix<<std::endl;
 		  // Load Textures 
 		this->tex = LoadTexture((std::string("../src/images/")+filename).c_str(),w,h);
@@ -197,6 +213,22 @@ namespace csX75
 			glm::mat4* ms_mult = multiply_stack(matrixStack);
 
 			glUniformMatrix4fv(this->utexModelViewMatrix, 1, GL_FALSE, glm::value_ptr(*ms_mult));
+
+			glm::mat4 model_matrix = glm::inverse(matrixStack[0] * matrixStack[1]) * (*ms_mult);
+			glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(model_matrix)));
+
+			glUniformMatrix4fv(this->vtexModelMatrix, 1, GL_FALSE, glm::value_ptr(model_matrix));
+			glUniformMatrix4fv(this->vtexNormalMatrix, 1, GL_FALSE, glm::value_ptr(normal_matrix));
+
+			glUniform3fv(this->lPos[0], 1, glm::value_ptr(lightPos[0]));
+			glUniform3fv(this->lPos[1], 1, glm::value_ptr(lightPos[1]));
+			glUniform3fv(this->lPos[2], 1, glm::value_ptr(lightPos[2]));
+
+			glUniform1iv(this->l1On, 4, sourceStat);
+			glUniform3fv(this->spotDir[0], 1, glm::value_ptr(glm::vec3(0.0f, 0.0f, -1.0f)));
+
+			glUniform3fv(this->lPos[3], 1, glm::value_ptr(lightPos[3]));
+			glUniform3fv(this->spotDir[1], 1, glm::value_ptr(headlightDir));
 
 			glBindVertexArray (vao);
 			glDrawArrays(GL_TRIANGLES, 0, num_vertices);

@@ -30,6 +30,7 @@ namespace csX75	 {
 		GLuint num_vertices;
 		GLuint vao,vbo;
 		GLuint vtexPos, vtexCoord, vtexNormal, utexModelViewMatrix;
+		GLuint vtexNormalMatrix, vtexModelMatrix, l1On, lPos[4], spotDir[2];
 		GLuint texShaderProgram;
 		GLuint tex;
 

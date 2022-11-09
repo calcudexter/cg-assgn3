@@ -56,6 +56,7 @@ void Track::initialize_hnode()
   Track_ramp bump1_s(this->ramp_l/3, this->track_t, this->ramp_h/2, tmp_color);
 
   this->plane1 = new HNode(NULL, plane1_s.num_vertices, plane1_s.vert_arr, plane1_s.col_arr, plane1_s.norm_arr, plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), "Plane1");
+  
   this->skybox = new HNode(this->plane1, sb.num_vertices, sb.vert_arr, sb.tex_arr, sb.norm_arr, sb.num_vertices*sizeof(glm::vec4), sb.num_vertices*sizeof(glm::vec2), sb.num_vertices*sizeof(glm::vec4), "SkyBox", "skybox.bmp", 1024, 768);
   this->skybox->change_parameters(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 

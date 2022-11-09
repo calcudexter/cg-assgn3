@@ -25,6 +25,8 @@ GLuint modelMatrix;
 // lPos = {Global light 1, Global light 2, Spotlight, Headlight}
 GLuint lPos[4], l1On;
 
+glm::vec3 lightPos[4], headlightDir;
+
 // The structure of spotDir is as follows :
 // spotDir = {Spotlight, Headlight}
 GLuint spotDir[2];
@@ -277,10 +279,10 @@ void renderGL(void)
   glUniformMatrix4fv(viewMatrix, 1, GL_FALSE, glm::value_ptr(view_matrix));
   
   // These are the positions of light in the world coordinate system
-  glm::vec3 lightPos[4] = {glm::vec3(lxPos[0], lyPos[0], lzPos[0]),
-                           glm::vec3(lxPos[1], lyPos[1], lzPos[1]),
-                           glm::vec3(gtx[1], gty[1], 10.0f),
-                           glm::vec3(0.0f)};
+  lightPos[0] = glm::vec3(lxPos[0], lyPos[0], lzPos[0]);
+  lightPos[1] = glm::vec3(lxPos[1], lyPos[1], lzPos[1]);
+  lightPos[2] = glm::vec3(gtx[1], gty[1], 10.0f);
+  lightPos[3] = glm::vec3(0.0f);
 
   glUniform3fv(lPos[0], 1, glm::value_ptr(lightPos[0]));
   glUniform3fv(lPos[1], 1, glm::value_ptr(lightPos[1]));
@@ -310,7 +312,7 @@ void renderGL(void)
     lightPos[3] = b->body->getWCSPos();
     glUniform3fv(lPos[3], 1, glm::value_ptr(lightPos[3]));
 
-    glm::vec3 headlightDir = b->body->getWCSDir();
+    headlightDir = b->body->getWCSDir();
     glUniform3fv(spotDir[1], 1, glm::value_ptr(headlightDir));
 
     matrixStack.pop_back();
