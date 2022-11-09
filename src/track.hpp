@@ -31,6 +31,7 @@ public:
     HNode* curve1, *curve2, *curve3, *curve4, *curve5;
     HNode* double_ramp1, *double_ramp2, *ramp;
     HNode* two_ramp1, *two_ramp2;
+    HNode* skybox;
 
     HNode* bump1[4], *bump2[4];
 

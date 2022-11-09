@@ -641,11 +641,18 @@ Track_ramp::~Track_ramp()
 void SkyBox::insert_tex_quad(glm::vec4* vert_arr, glm::vec2* tex_arr, glm::vec4 a, glm::vec4 b, glm::vec4 c, glm::vec4 d, float s_x, float s_y)
 {
     vert_arr[this->index] = a; tex_arr[this->index] = glm::vec2(s_x, s_y); this->index++;
-    vert_arr[this->index] = b; tex_arr[this->index] = glm::vec2(s_x+0.25, s_y+0.33); this->index++;
-    vert_arr[this->index] = c; tex_arr[this->index] = glm::vec2(s_x+0.25, s_y+0.33); this->index++;
+    vert_arr[this->index] = b; tex_arr[this->index] = glm::vec2(s_x, s_y+1.0/3); this->index++;
+    vert_arr[this->index] = c; tex_arr[this->index] = glm::vec2(s_x+1.0/4, s_y+1.0/3); this->index++;
     vert_arr[this->index] = a; tex_arr[this->index] = glm::vec2(s_x, s_y); this->index++;
-    vert_arr[this->index] = c; tex_arr[this->index] = glm::vec2(s_x+0.25, s_y+0.33); this->index++;
-    vert_arr[this->index] = d; tex_arr[this->index] = glm::vec2(s_x+0.25, s_y); this->index++;
+    vert_arr[this->index] = c; tex_arr[this->index] = glm::vec2(s_x+1.0/4, s_y+1.0/3); this->index++;
+    vert_arr[this->index] = d; tex_arr[this->index] = glm::vec2(s_x+1.0/4, s_y); this->index++;
+//    vert_arr[this->index] = a; tex_arr[this->index] = this->tex_coords[1]; this->index++;
+//     vert_arr[this->index] = b; tex_arr[this->index] = this->tex_coords[0]; this->index++;
+//     vert_arr[this->index] = c; tex_arr[this->index] = this->tex_coords[2]; this->index++;
+//     vert_arr[this->index] = a; tex_arr[this->index] = this->tex_coords[1]; this->index++;
+//     vert_arr[this->index] = c; tex_arr[this->index] = this->tex_coords[2]; this->index++;
+//     vert_arr[this->index] = d; tex_arr[this->index] = this->tex_coords[3]; this->index++;
+
 }
 
 SkyBox::SkyBox(float a, float b, float c, glm::vec4 col)
@@ -690,7 +697,8 @@ void SkyBox::add_vertices(glm::vec4* vert_arr, glm::vec2* col_arr, glm::vec4* no
     normal[4] = glm::vec4(triangleNormal(glm::vec3(d_v), glm::vec3(h_v), glm::vec3(g_v)), 1.0f);
     normal[5] = glm::vec4(triangleNormal(glm::vec3(h_v), glm::vec3(e_v), glm::vec3(f_v)), 1.0f);
 
-    this->insert_tex_quad(vert_arr, tex_arr, a_v, b_v, c_v, d_v, 0.0, 0.33);
+    float eps = 0.01;
+    this->insert_tex_quad(vert_arr, tex_arr, c_v, d_v, a_v, b_v, 0.25, 2.0/3);//
     norm_arr[ind++] = normal[0];
     norm_arr[ind++] = normal[0];
     norm_arr[ind++] = normal[0];
@@ -698,7 +706,7 @@ void SkyBox::add_vertices(glm::vec4* vert_arr, glm::vec2* col_arr, glm::vec4* no
     norm_arr[ind++] = normal[0];
     norm_arr[ind++] = normal[0];
 
-    this->insert_tex_quad(vert_arr, tex_arr, a_v, b_v, f_v, e_v, 0.25,0.0);
+    this->insert_tex_quad(vert_arr, tex_arr, g_v, c_v, b_v, f_v, 0.25, 1.0/3);//
     norm_arr[ind++] = normal[1];
     norm_arr[ind++] = normal[1];
     norm_arr[ind++] = normal[1];
@@ -706,7 +714,7 @@ void SkyBox::add_vertices(glm::vec4* vert_arr, glm::vec2* col_arr, glm::vec4* no
     norm_arr[ind++] = normal[1];
     norm_arr[ind++] = normal[1];
 
-    this->insert_tex_quad(vert_arr, tex_arr, a_v, e_v, h_v, d_v, 0.25, 0.33);
+    this->insert_tex_quad(vert_arr, tex_arr, h_v, d_v, c_v, g_v, 0.0+eps, 1.0/3);//
     norm_arr[ind++] = normal[2];
     norm_arr[ind++] = normal[2];
     norm_arr[ind++] = normal[2];
@@ -714,7 +722,7 @@ void SkyBox::add_vertices(glm::vec4* vert_arr, glm::vec2* col_arr, glm::vec4* no
     norm_arr[ind++] = normal[2];
     norm_arr[ind++] = normal[2];
     
-    this->insert_tex_quad(vert_arr, tex_arr, b_v, c_v, g_v, f_v, 0.25, 0.66);
+    this->insert_tex_quad(vert_arr, tex_arr, h_v, g_v, f_v, e_v, 1.0/4, 0.0);//
     norm_arr[ind++] = normal[3];
     norm_arr[ind++] = normal[3];
     norm_arr[ind++] = normal[3];
@@ -722,7 +730,7 @@ void SkyBox::add_vertices(glm::vec4* vert_arr, glm::vec2* col_arr, glm::vec4* no
     norm_arr[ind++] = normal[3];
     norm_arr[ind++] = normal[3];
 
-    this->insert_tex_quad(vert_arr, tex_arr, d_v, h_v, g_v, c_v, 0.5, 0.33);
+    this->insert_tex_quad(vert_arr, tex_arr, f_v, b_v, a_v, e_v, 0.5, 1.0/3);//
     norm_arr[ind++] = normal[4];
     norm_arr[ind++] = normal[4];
     norm_arr[ind++] = normal[4];
@@ -730,7 +738,7 @@ void SkyBox::add_vertices(glm::vec4* vert_arr, glm::vec2* col_arr, glm::vec4* no
     norm_arr[ind++] = normal[4];
     norm_arr[ind++] = normal[4];
 
-    this->insert_tex_quad(vert_arr, tex_arr, h_v, e_v, f_v, g_v, 0.75, 0.33);
+    this->insert_tex_quad(vert_arr, tex_arr, e_v, a_v, d_v, h_v, 0.75, 1.0/3);//
     norm_arr[ind++] = normal[5];
     norm_arr[ind++] = normal[5];
     norm_arr[ind++] = normal[5];
