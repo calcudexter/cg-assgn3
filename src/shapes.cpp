@@ -532,6 +532,15 @@ Track_curve::~Track_curve()
     delete this->norm_arr;
 }
 
+void Track_plane::insert_tex_quad(glm::vec4* vert_arr, glm::vec2* tex_arr, glm::vec4 a, glm::vec4 b, glm::vec4 c, glm::vec4 d) {
+    vert_arr[this->index] = a; tex_arr[this->index] = this->tex_coords[0]; this->index++;
+    vert_arr[this->index] = b; tex_arr[this->index] = this->tex_coords[1]+glm::vec2(0.0, 0.02); this->index++;
+    float fac = this->plane_w/this->plane_h;
+    vert_arr[this->index] = c; tex_arr[this->index] = fac*this->tex_coords[2] + this->tex_coords[1]+glm::vec2(0.0, 0.02); this->index++;
+    vert_arr[this->index] = a; tex_arr[this->index] = this->tex_coords[0]; this->index++;
+    vert_arr[this->index] = c; tex_arr[this->index] = fac*this->tex_coords[2] + this->tex_coords[1]+glm::vec2(0.0, 0.02); this->index++;
+    vert_arr[this->index] = d; tex_arr[this->index] = fac*this->tex_coords[2]; this->index++;
+}
 
 // track plane
 Track_plane::Track_plane(float ph, float pw, glm::vec4 col)
@@ -540,10 +549,40 @@ Track_plane::Track_plane(float ph, float pw, glm::vec4 col)
     this->plane_w = pw;
     this->num_vertices = 6;
     this->col = col;
+    this->index = 0;
     this->vert_arr = new glm::vec4[this->num_vertices];
     this->col_arr = new glm::vec4[this->num_vertices];
     this->norm_arr = new glm::vec4[this->num_vertices];
-    this->add_vertices(this->vert_arr, this->col_arr, this->norm_arr);
+    this->tex_arr = new glm::vec2[this->num_vertices];
+    this->tex_coords = {
+        glm::vec2(0.0, 0.0),
+        glm::vec2(0.0, 1.0),
+        glm::vec2(1.0, 0.0),
+        glm::vec2(1.0, 1.0)
+    };
+    this->add_vertices(this->vert_arr, this->tex_arr, this->norm_arr);
+}
+
+void Track_plane::add_vertices(glm::vec4* vert_arr, glm::vec2* tex_arr, glm::vec4* norm_arr)
+{   
+    // Assuming h < w
+
+    glm::vec4 a(this->plane_w/2, this->plane_h/2, 0.0f, 1.0f);
+    glm::vec4 b(this->plane_w/2, -this->plane_h/2, 0.0f, 1.0f);
+    glm::vec4 c(-this->plane_w/2, -this->plane_h/2, 0.0f, 1.0f);
+    glm::vec4 d(-this->plane_w/2, this->plane_h/2, 0.0f, 1.0f);
+
+    this->insert_tex_quad(this->vert_arr, this->tex_arr, c, d, a, b);
+    
+    // The order of insertion in this case is a bit different, leave it for now
+    int ind = 0;
+    glm::vec4 normal = glm::vec4(triangleNormal(glm::vec3(a), glm::vec3(b), glm::vec3(c)), 1.0f);
+    norm_arr[ind++] = -normal;
+    norm_arr[ind++] = -normal;
+    norm_arr[ind++] = -normal;
+    norm_arr[ind++] = -normal;
+    norm_arr[ind++] = -normal;
+    norm_arr[ind++] = -normal;
 }
 
 void Track_plane::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4* norm_arr)

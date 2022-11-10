@@ -55,21 +55,31 @@ void Track::initialize_hnode()
 
   Track_ramp bump1_s(this->ramp_l/3, this->track_t, this->ramp_h/2, tmp_color);
 
-  this->plane1 = new HNode(NULL, plane1_s.num_vertices, plane1_s.vert_arr, plane1_s.col_arr, plane1_s.norm_arr, plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), "Plane1");
+  // this->plane1 = new HNode(NULL, plane1_s.num_vertices, plane1_s.vert_arr, plane1_s.col_arr, plane1_s.norm_arr, plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), "Plane1");
+
+  this->plane1 = new HNode(NULL, plane1_s.num_vertices, plane1_s.vert_arr, plane1_s.tex_arr, plane1_s.norm_arr, plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec2), plane1_s.num_vertices*sizeof(glm::vec4), "Plane1", "road.bmp", 800, 800);
   
   this->skybox = new HNode(this->plane1, sb.num_vertices, sb.vert_arr, sb.tex_arr, sb.norm_arr, sb.num_vertices*sizeof(glm::vec4), sb.num_vertices*sizeof(glm::vec2), sb.num_vertices*sizeof(glm::vec4), "SkyBox", "skybox.bmp", 1024, 768);
   this->skybox->change_parameters(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
-  this->plane2 = new HNode(this->plane1, plane1_s.num_vertices, plane1_s.vert_arr, plane1_s.col_arr, plane1_s.norm_arr, plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), "Plane2");
+  // this->plane2 = new HNode(this->plane1, plane1_s.num_vertices, plane1_s.vert_arr, plane1_s.col_arr, plane1_s.norm_arr, plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), "Plane2");
+
+  this->plane2 = new HNode(this->plane1, plane1_s.num_vertices, plane1_s.vert_arr, plane1_s.tex_arr, plane1_s.norm_arr, plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec2), plane1_s.num_vertices*sizeof(glm::vec4), "Plane2", "road.bmp", 800, 800);
   this->plane2->change_parameters(del*cosR(36), del*sinR(36), 0.0f, 0.0f, 0.0f, 72.0f);
 
-  this->plane3 = new HNode(this->plane2, plane1_s.num_vertices, plane1_s.vert_arr, plane1_s.col_arr, plane1_s.norm_arr, plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), "Plane3");
+  // this->plane3 = new HNode(this->plane2, plane1_s.num_vertices, plane1_s.vert_arr, plane1_s.col_arr, plane1_s.norm_arr, plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), "Plane3");
+
+  this->plane3 = new HNode(this->plane2, plane1_s.num_vertices, plane1_s.vert_arr, plane1_s.tex_arr, plane1_s.norm_arr, plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec2), plane1_s.num_vertices*sizeof(glm::vec4), "Plane3", "road.bmp", 800, 800);
   this->plane3->change_parameters(del*cosR(36), del*sinR(36), 0.0f, 0.0f, 0.0f, 72.0f);
 
-  this->plane4 = new HNode(this->plane3, plane1_s.num_vertices, plane1_s.vert_arr, plane1_s.col_arr, plane1_s.norm_arr, plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), "Plane4");
+  // this->plane4 = new HNode(this->plane3, plane1_s.num_vertices, plane1_s.vert_arr, plane1_s.col_arr, plane1_s.norm_arr, plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), "Plane4");
+
+  this->plane4 = new HNode(this->plane3, plane1_s.num_vertices, plane1_s.vert_arr, plane1_s.tex_arr, plane1_s.norm_arr, plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec2), plane1_s.num_vertices*sizeof(glm::vec4), "Plane4", "road.bmp", 800, 800);
   this->plane4->change_parameters(del*cosR(36), del*sinR(36), 0.0f, 0.0f, 0.0f, 72.0f);
 
-  this->plane5 = new HNode(this->plane4, plane1_s.num_vertices, plane1_s.vert_arr, plane1_s.col_arr, plane1_s.norm_arr, plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), "Plane5");
+  // this->plane5 = new HNode(this->plane4, plane1_s.num_vertices, plane1_s.vert_arr, plane1_s.col_arr, plane1_s.norm_arr, plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), "Plane5");
+
+  this->plane5 = new HNode(this->plane4, plane1_s.num_vertices, plane1_s.vert_arr, plane1_s.tex_arr, plane1_s.norm_arr, plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec2), plane1_s.num_vertices*sizeof(glm::vec4), "Plane5", "road.bmp", 800, 800);
   this->plane5->change_parameters(del*cosR(36), del*sinR(36), 0.0f, 0.0f, 0.0f, 72.0f);
   
 
