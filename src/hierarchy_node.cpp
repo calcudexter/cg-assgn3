@@ -218,7 +218,7 @@ namespace csX75
 			glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(model_matrix)));
 
 			glUniformMatrix4fv(this->vtexModelMatrix, 1, GL_FALSE, glm::value_ptr(model_matrix));
-			glUniformMatrix4fv(this->vtexNormalMatrix, 1, GL_FALSE, glm::value_ptr(normal_matrix));
+			glUniformMatrix3fv(this->vtexNormalMatrix, 1, GL_FALSE, glm::value_ptr(normal_matrix));
 
 			glUniform3fv(this->lPos[0], 1, glm::value_ptr(lightPos[0]));
 			glUniform3fv(this->lPos[1], 1, glm::value_ptr(lightPos[1]));

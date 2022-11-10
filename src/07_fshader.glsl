@@ -94,7 +94,7 @@ vec4 spotLight(vec3 lightPos, vec3 spotDir, float cutOff, float outCutOff) {
 
     return max((intensity * diffuse + spec)*color, ambient);
   }
-  else if (theta < outCutOff) {
+  else if (theta > outCutOff) {
     vec3 n = normalize(normalMatrix * normalize(norm));
     float dotProduct = dot(n, lightDir);
     float intensity = max(dotProduct, 0.0);

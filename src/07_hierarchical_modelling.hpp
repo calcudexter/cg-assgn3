@@ -39,7 +39,7 @@ GLfloat scaling[3] = {0.31f, 0.17f, 3.52f};
 GLfloat lxPos[2]={20.0, -20.0}, lyPos[2]={20.0, -20.0}, lzPos[2]={20.0, 20.0};
 
 // Tells if the source is on/off
-int sourceStat[4] = {0, 0, 0, 1};
+int sourceStat[4] = {1, 0, 0, 0};
 int sourceSelected = 0;
 
 //Shader program attribs
