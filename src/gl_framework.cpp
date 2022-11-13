@@ -22,7 +22,7 @@ bool shift_held = false, control_held = false;
 int timestamp = 0;
 int isCont[207];
 std::vector<std::vector<float>> attrs;
-int fps = 1;
+int fps = 80;
 extern void renderGL();
 
 
@@ -160,6 +160,8 @@ namespace csX75
       fprintf(out_file, "\n");
       fflush(out_file);
       fclose(out_file);
+
+      printf("Appended this keyframe to src/keyframes.txt\n");
     }
     else if (!control_held && key == GLFW_KEY_L && action == GLFW_PRESS) {
       // Loads the array attrs with the keyframes read from the file
@@ -187,8 +189,6 @@ namespace csX75
 
       fclose(in_file);
       printf("Read %d keyframes from the saved file\n", lines_read);
-
-      printf("Per row contains %ld\n", attrs[0].size());
     }
     else if (!control_held && key == GLFW_KEY_P && action == GLFW_PRESS) {
       // Plays the animation by interpolating between the frames
@@ -230,13 +230,6 @@ namespace csX75
 
             curr_frame.push_back(var);
           }
-
-          // for(int k = 0; k < attrs[0].size(); k++) {
-          //   printf("%f, ", curr_frame[k]);
-          // }
-          // printf("\n");
-
-          // printf("%f, %f, %f\n", curr_frame[8], curr_frame[9], curr_frame[10]);
 
           // Now, reload curr_frame to render and using a timer callback
           // go to sleep
@@ -281,12 +274,13 @@ namespace csX75
           b->body->load_tree(curr_frame, ind);
           h->torso->load_tree(curr_frame, ind);
 
-          printf("Rendering %d\n", render++);
           glfwWaitEventsTimeout(1.0/fps);
           renderGL();
           glfwSwapBuffers(window);
         }
       }
+
+      printf("Animation ended\n");
     }
     else if (shift_held && key == GLFW_KEY_Q  && action == GLFW_PRESS | GLFW_REPEAT)
       c_zrot -= 3.0;
