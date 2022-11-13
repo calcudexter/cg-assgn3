@@ -330,6 +330,15 @@ namespace csX75
 		}
 	}
 
+	void HNode::load_tree(std::vector<float> state, int &init_ind) {
+		GLfloat a = state[init_ind++], b = state[init_ind++], c = state[init_ind++];
+		
+		init_rot(-a, -b, -c);
+		for(int i=0; i<children.size(); i++) {
+			children[i]->load_tree(state, init_ind);
+		}
+	}
+
 	void HNode::init_rot(GLfloat rx, GLfloat ry, GLfloat rz)
 	{
 		glm::mat4 mat = glm::rotate(glm::mat4(1.0f), rx, glm::vec3(1.0f, 0.0f, 0.0f));

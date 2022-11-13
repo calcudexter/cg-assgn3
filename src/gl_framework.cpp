@@ -21,6 +21,10 @@ bool shift_held = false, control_held = false;
 // Animation related
 int timestamp = 0;
 int isCont[207];
+std::vector<std::vector<float>> attrs;
+int fps = 1;
+extern void renderGL();
+
 
 namespace csX75
 {
@@ -92,7 +96,7 @@ namespace csX75
       {if(!cond) curr_node->inc_rz();}
     else if (key == GLFW_KEY_PAGE_DOWN && action == GLFW_PRESS | GLFW_REPEAT)
       {if(!cond) curr_node->dec_rz();}
-    else if (key == GLFW_KEY_P && action == GLFW_PRESS)
+    else if (control_held && key == GLFW_KEY_P && action == GLFW_PRESS)
     {
       // Rotations
 
@@ -136,7 +140,7 @@ namespace csX75
       for(int i = 0; i < 11; i++) isCont[i] = 1;
       isCont[1] = 0;
       fprintf(out_file, "%d, %d, %f, %f, %f, %f, %f, %f, %f, %f, %f, ", timestamp, (int) chosen_cam, c_xpos, c_ypos, c_zpos, c_up_x, c_up_y, c_up_z, c_xrot, c_yrot, c_zrot);
-      timestamp += 10;
+      timestamp += 100;
 
       // Light attributes
       for(int i = 11; i < 17; i++) isCont[i] = 1;
@@ -158,6 +162,7 @@ namespace csX75
       fclose(out_file);
     }
     else if (!control_held && key == GLFW_KEY_L && action == GLFW_PRESS) {
+      // Loads the array attrs with the keyframes read from the file
       FILE *in_file = fopen("../src/keyframes.txt", "r");
 
       if(in_file == NULL) {
@@ -168,8 +173,6 @@ namespace csX75
       size_t len = 0;
       ssize_t read;
       int lines_read = 0;
-
-      std::vector<std::vector<float>> attrs;
 
       while((read = getline(&line, &len, in_file)) != -1) {
         lines_read++;
@@ -185,8 +188,105 @@ namespace csX75
       fclose(in_file);
       printf("Read %d keyframes from the saved file\n", lines_read);
 
-      // Need to load some array with the read keyframes here and run the interpolation code somehow
-      // Then need to use the glfw_timer_callback animate the scene
+      printf("Per row contains %ld\n", attrs[0].size());
+    }
+    else if (!control_held && key == GLFW_KEY_P && action == GLFW_PRESS) {
+      // Plays the animation by interpolating between the frames
+      // Steps:
+      // 1. Interpolate the keyframes
+      // 2. Reload all the variables with the values that you have now stored
+      // this will automatically render it to the screen with the new parameters
+
+
+      // Base case is to load and render the scene with the first frame
+      // by default
+
+      for(int i = 0; i < 11; i++) isCont[i] = 1;
+      isCont[1] = 0;
+
+      for(int i = 11; i < 17; i++) isCont[i] = 1;
+      for(int i = 17; i < 21; i++) isCont[i] = 0;
+
+      for(int i = 21; i < 207; i++) isCont[i] = 1;
+
+      int render = 0;
+
+      for(int i = 1; i < attrs.size(); i++) {
+        int frame_diff = attrs[i][0] - attrs[i-1][0];
+
+        for(int j = 0; j < frame_diff; j++) {
+          std::vector<float> curr_frame;
+
+          for(int k = 0; k < attrs[0].size(); k++) {
+            if(isCont[k] == 0) {
+              curr_frame.push_back(attrs[i-1][k]);
+              continue;
+            }
+
+            // Find the interpolated value here
+
+            float var = (frame_diff-j-1)*attrs[i-1][k] + (j+1)*attrs[i][k];
+            var /= frame_diff;
+
+            curr_frame.push_back(var);
+          }
+
+          // for(int k = 0; k < attrs[0].size(); k++) {
+          //   printf("%f, ", curr_frame[k]);
+          // }
+          // printf("\n");
+
+          // printf("%f, %f, %f\n", curr_frame[8], curr_frame[9], curr_frame[10]);
+
+          // Now, reload curr_frame to render and using a timer callback
+          // go to sleep
+
+          int ind = 1;
+          chosen_cam = static_cast<Camera>(curr_frame[ind++]);
+          c_xpos = curr_frame[ind++];
+          c_ypos = curr_frame[ind++];
+          c_zpos = curr_frame[ind++];
+
+          c_up_x = curr_frame[ind++];
+          c_up_y = curr_frame[ind++];
+          c_up_z = curr_frame[ind++];
+
+          c_xrot = curr_frame[ind++];
+          c_yrot = curr_frame[ind++];
+          c_zrot = curr_frame[ind++];
+
+          lxPos[0] = curr_frame[ind++];
+          lyPos[0] = curr_frame[ind++];
+          lzPos[0] = curr_frame[ind++];
+
+          lxPos[1] = curr_frame[ind++];
+          lyPos[1] = curr_frame[ind++];
+          lzPos[1] = curr_frame[ind++];
+
+          sourceStat[0] = curr_frame[ind++];
+          sourceStat[1] = curr_frame[ind++];
+          sourceStat[2] = curr_frame[ind++];
+          sourceStat[3] = curr_frame[ind++];
+
+          gtx[0] = curr_frame[ind++];
+          gty[0] = curr_frame[ind++];
+          gtz[0] = curr_frame[ind++];
+
+          gtx[1] = curr_frame[ind++];
+          gty[1] = curr_frame[ind++];
+          gtz[1] = curr_frame[ind++];
+
+          // Need to reload bike and rider
+
+          b->body->load_tree(curr_frame, ind);
+          h->torso->load_tree(curr_frame, ind);
+
+          printf("Rendering %d\n", render++);
+          glfwWaitEventsTimeout(1.0/fps);
+          renderGL();
+          glfwSwapBuffers(window);
+        }
+      }
     }
     else if (shift_held && key == GLFW_KEY_Q  && action == GLFW_PRESS | GLFW_REPEAT)
       c_zrot -= 3.0;

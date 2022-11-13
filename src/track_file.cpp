@@ -114,7 +114,6 @@ float track_params[] =
 
 void initBuffersGL(void)
 {
-
   // Load shaders and use the resulting shader program
   std::string world_vertex_shader_file("../src/07_vshader.glsl");
   std::string lightSource_vertex_shader_file("../src/light_vshader.glsl");
@@ -419,7 +418,7 @@ int main(int argc, char** argv)
 {
   //! The pointer to the GLFW window
   GLFWwindow* window;
-
+  
   //! Setting up the GLFW Error callback
   glfwSetErrorCallback(csX75::error_callback);
 

@@ -67,6 +67,7 @@ namespace csX75	 {
 		void dec_rz();
 		void print_rot();
 		void print_rot_tree(FILE*);
+		void load_tree(std::vector<float> state, int &init_ind);
 		void init_rot(GLfloat rx, GLfloat ry, GLfloat rz);
 		glm::vec3 getWCSPos();
 		glm::vec3 getWCSDir();
