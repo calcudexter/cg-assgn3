@@ -1,6 +1,8 @@
 #include "gl_framework.hpp"
 #include "hierarchy_node.hpp"
 
+extern GLfloat c_xpos, c_ypos, c_zpos;
+extern GLfloat c_up_x, c_up_y, c_up_z;
 extern GLfloat c_xrot,c_yrot,c_zrot;
 extern GLfloat lxPos[2], lyPos[2], lzPos[2];
 extern GLfloat gtx[3], gty[3], gtz[3];
@@ -14,7 +16,12 @@ extern Camera chosen_cam;
 
 extern bool bike, rider, track;
 extern int selected, sourceStat[4], sourceSelected;
-bool shift_held = false;
+bool shift_held = false, control_held = false;
+
+// Animation related
+int timestamp = 0;
+int isCont[207];
+
 namespace csX75
 {
   //! Initialize GL State
@@ -44,6 +51,24 @@ namespace csX75
     glViewport(0, 0, width, height);
   }
   
+  // Assumes comma separated values and line ends with a comma
+  std::vector<float> splitstring(std::string s) {
+    s = ", " + s;
+    
+    std::vector<float> out;
+    int prev_comma = 0;
+
+    for(int i = 1; i < s.length(); i++) {
+      if(s[i] == ',') {
+        out.push_back(stof(s.substr(prev_comma + 2, (i-prev_comma-2))));
+
+        prev_comma = i;
+      }
+    }
+
+    return out;
+  }
+
   //!GLFW keyboard callback
   void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
   {
@@ -88,17 +113,84 @@ namespace csX75
       sourceSelected += 1;
       sourceSelected %= 4;
     }
-    else if (key == GLFW_KEY_A  && action == GLFW_PRESS | GLFW_REPEAT)
+    else if (shift_held && key == GLFW_KEY_A  && action == GLFW_PRESS | GLFW_REPEAT)
       c_yrot -= 3.0;
-    else if (key == GLFW_KEY_D  && action == GLFW_PRESS | GLFW_REPEAT)
+    else if (shift_held && key == GLFW_KEY_D  && action == GLFW_PRESS | GLFW_REPEAT)
       c_yrot += 3.0;
-    else if (key == GLFW_KEY_W  && action == GLFW_PRESS | GLFW_REPEAT)
+    else if (shift_held && key == GLFW_KEY_W  && action == GLFW_PRESS | GLFW_REPEAT)
       c_xrot -= 3.0;
-    else if (key == GLFW_KEY_S  && action == GLFW_PRESS | GLFW_REPEAT)
+    else if (shift_held && key == GLFW_KEY_S  && action == GLFW_PRESS | GLFW_REPEAT)
       c_xrot += 3.0;
-    else if (key == GLFW_KEY_Q  && action == GLFW_PRESS | GLFW_REPEAT)
+    else if (!shift_held && key == GLFW_KEY_S  && action == GLFW_PRESS) {
+      // Save the animation state
+
+      FILE *out_file = fopen("../src/keyframes.txt", "a+");
+
+      if(out_file == NULL) {
+        printf("Error! Couldn't open keyframes.txt\n");
+      }
+      
+      // Writing to the file now
+
+      // Camera attributes
+      for(int i = 0; i < 11; i++) isCont[i] = 1;
+      isCont[1] = 0;
+      fprintf(out_file, "%d, %d, %f, %f, %f, %f, %f, %f, %f, %f, %f, ", timestamp, (int) chosen_cam, c_xpos, c_ypos, c_zpos, c_up_x, c_up_y, c_up_z, c_xrot, c_yrot, c_zrot);
+      timestamp += 10;
+
+      // Light attributes
+      for(int i = 11; i < 17; i++) isCont[i] = 1;
+      for(int i = 17; i < 21; i++) isCont[i] = 0;
+      // The order of insertion is as follows
+      // In positions, global lights 1 then 2
+      // Then, states of lights 1 and 2, spotlight and headlight
+      fprintf(out_file, "%f, %f, %f, %f, %f, %f, %d, %d, %d, %d, ", lxPos[0], lyPos[0], lzPos[0], lxPos[1], lyPos[1], lzPos[1], sourceStat[0], sourceStat[1], sourceStat[2], sourceStat[3]);
+
+      // Bike then Rider attributes
+      for(int i = 21; i < 207; i++) isCont[i] = 1;
+      fprintf(out_file, "%f, %f, %f, %f, %f, %f, ", gtx[0], gty[0], gtz[0], gtx[1], gty[1], gtz[1]);
+
+      b->body->print_rot_tree(out_file);
+      h->torso->print_rot_tree(out_file);
+
+      fprintf(out_file, "\n");
+      fflush(out_file);
+      fclose(out_file);
+    }
+    else if (!control_held && key == GLFW_KEY_L && action == GLFW_PRESS) {
+      FILE *in_file = fopen("../src/keyframes.txt", "r");
+
+      if(in_file == NULL) {
+        printf("Error! Couldn't read keyframes.txt\n");
+      }
+
+      char* line  = NULL;
+      size_t len = 0;
+      ssize_t read;
+      int lines_read = 0;
+
+      std::vector<std::vector<float>> attrs;
+
+      while((read = getline(&line, &len, in_file)) != -1) {
+        lines_read++;
+
+        // Need to store the data here within some data structure
+        // First of all, need to process the string into proper format
+        // and get rid of the commas
+
+        std::string line_read(line);
+        attrs.push_back(splitstring(line_read));
+      }
+
+      fclose(in_file);
+      printf("Read %d keyframes from the saved file\n", lines_read);
+
+      // Need to load some array with the read keyframes here and run the interpolation code somehow
+      // Then need to use the glfw_timer_callback animate the scene
+    }
+    else if (shift_held && key == GLFW_KEY_Q  && action == GLFW_PRESS | GLFW_REPEAT)
       c_zrot -= 3.0;
-    else if (key == GLFW_KEY_E  && action == GLFW_PRESS | GLFW_REPEAT)
+    else if (shift_held && key == GLFW_KEY_E  && action == GLFW_PRESS | GLFW_REPEAT)
       c_zrot += 3.0;
     else if((key == GLFW_KEY_2 || key == GLFW_KEY_KP_2) && action == GLFW_PRESS | GLFW_REPEAT) {
       if(selected == 3) {
@@ -192,6 +284,14 @@ namespace csX75
       else if(action == GLFW_RELEASE)
       { shift_held = false;}
     }
+    else if (key == GLFW_KEY_LEFT_CONTROL || key == GLFW_KEY_RIGHT_CONTROL) {
+      if(action == GLFW_PRESS) {
+        control_held = true;
+      }
+      else {
+        control_held = false;
+      }
+    }
     else if(key == GLFW_KEY_Z && action == GLFW_PRESS)
       selected = 3;
     else if(key == GLFW_KEY_X && action == GLFW_PRESS) {
@@ -241,19 +341,19 @@ namespace csX75
       // printf("Scaling factor (rider) %f\n", fac[1]);
       // printf("Scaling factor (track) %f\n", fac[2]);
     }
-    else if(key == GLFW_KEY_J && action == GLFW_PRESS | GLFW_REPEAT) {
+    else if(control_held && key == GLFW_KEY_J && action == GLFW_PRESS | GLFW_REPEAT) {
       if(sourceSelected > 1) return;
 
       if(shift_held) lxPos[sourceSelected] -= 1.0f;
       else lxPos[sourceSelected] += 1.0f;
     }
-    else if(key == GLFW_KEY_K && action == GLFW_PRESS | GLFW_REPEAT) {
+    else if(control_held && key == GLFW_KEY_K && action == GLFW_PRESS | GLFW_REPEAT) {
       if(sourceSelected > 1) return;
       
       if(shift_held) lyPos[sourceSelected] -= 1.0f;
       else lyPos[sourceSelected] += 1.0f;
     }
-    else if(key == GLFW_KEY_L && action == GLFW_PRESS | GLFW_REPEAT) {
+    else if(control_held && key == GLFW_KEY_L && action == GLFW_PRESS | GLFW_REPEAT) {
       if(sourceSelected > 1) return;
       
       if(shift_held) lzPos[sourceSelected] -= 1.0f;

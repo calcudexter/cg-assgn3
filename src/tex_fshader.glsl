@@ -138,8 +138,8 @@ void main ()
   }
 
   // The last two arguments are the cosines of 25 and 50 degrees
-  if(l1On[2] == 1) fac += spotLight(lPos[2], spotDir[0], 0.9063, 0.0);
-  if(l1On[3] == 1) fac += spotLight(lPos[3], spotDir[1], 0.9063, 0.0);
+  if(l1On[2] == 1) fac += spotLight(lPos[2], spotDir[0], 0.9763, 0.9063);
+  if(l1On[3] == 1) fac += spotLight(lPos[3], spotDir[1], 0.9063, 0.6428);
 
   fac = clamp(fac, 0.0, 1.0);
   
