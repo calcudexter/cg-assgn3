@@ -22,7 +22,7 @@ bool shift_held = false, control_held = false;
 int timestamp = 0;
 int isCont[207];
 std::vector<std::vector<float>> attrs;
-int fps = 80;
+int fps = 100;
 extern void renderGL();
 
 
@@ -165,6 +165,8 @@ namespace csX75
     }
     else if (!control_held && key == GLFW_KEY_L && action == GLFW_PRESS) {
       // Loads the array attrs with the keyframes read from the file
+      attrs.clear();
+
       FILE *in_file = fopen("../src/keyframes.txt", "r");
 
       if(in_file == NULL) {
