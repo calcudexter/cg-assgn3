@@ -10,6 +10,7 @@ glm::mat4 lookat_matrix;
 
 glm::mat4 model_matrix;
 glm::mat4 view_matrix;
+glm::mat4 view_projection_matrix;
 
 
 glm::mat4 modelview_matrix;
@@ -18,7 +19,17 @@ glm::mat3 normal_matrix;
 GLuint uModelViewMatrix;
 GLuint viewMatrix;
 GLuint normalMatrix;
-GLuint lPos, l1On;
+GLuint modelMatrix;
+
+// The structure of the array below is as follows :
+// lPos = {Global light 1, Global light 2, Spotlight, Headlight}
+GLuint lPos[4], l1On;
+
+glm::vec3 lightPos[4], headlightDir;
+
+// The structure of spotDir is as follows :
+// spotDir = {Spotlight, Headlight}
+GLuint spotDir[2];
 
 int lightVertices;
 
@@ -27,7 +38,7 @@ Bike* b;
 Track* t;
 
 // Buffers for light source
-GLuint vbo, vao;
+GLuint vbo[4], vao[4];
 
 bool bike = true, rider = true, track = true;
 int selected;
@@ -103,11 +114,11 @@ float track_params[] =
 
 void initBuffersGL(void)
 {
-
   // Load shaders and use the resulting shader program
   std::string world_vertex_shader_file("../src/07_vshader.glsl");
   std::string lightSource_vertex_shader_file("../src/light_vshader.glsl");
   std::string fragment_shader_file("../src/07_fshader.glsl");
+  std::string lightSource_fragment_shader_file("../src/light_fshader.glsl");
 
   std::vector<GLuint> worldShaderList;
   worldShaderList.push_back(csX75::LoadShaderGL(GL_VERTEX_SHADER, world_vertex_shader_file));
@@ -124,10 +135,17 @@ void initBuffersGL(void)
   uModelViewMatrix = glGetUniformLocation( worldShaderProgram, "uModelViewMatrix" );
   normalMatrix = glGetUniformLocation( worldShaderProgram, "normalMatrix" );
   viewMatrix = glGetUniformLocation( worldShaderProgram, "viewMatrix" );
+  modelMatrix = glGetUniformLocation( worldShaderProgram, "modelMatrix" );
   
-  lPos = glGetUniformLocation( worldShaderProgram, "lPos" );
+  lPos[0] = glGetUniformLocation( worldShaderProgram, "lPos[0]" );
+  lPos[1] = glGetUniformLocation( worldShaderProgram, "lPos[1]" );
+  lPos[2] = glGetUniformLocation( worldShaderProgram, "lPos[2]" );
+  lPos[3] = glGetUniformLocation( worldShaderProgram, "lPos[3]" );
+
   l1On = glGetUniformLocation( worldShaderProgram, "l1On" );
 
+  spotDir[0] = glGetUniformLocation( worldShaderProgram, "spotDir[0]" );
+  spotDir[1] = glGetUniformLocation( worldShaderProgram, "spotDir[1]" );
   // For texture mapping
   // Initialising the buffers to render the light sources
 
@@ -148,7 +166,7 @@ void initBuffersGL(void)
   // Initialising the buffers to render the light sources
   std::vector<GLuint> lightSourceShaderList;
   lightSourceShaderList.push_back(csX75::LoadShaderGL(GL_VERTEX_SHADER, lightSource_vertex_shader_file));
-  lightSourceShaderList.push_back(csX75::LoadShaderGL(GL_FRAGMENT_SHADER, fragment_shader_file));
+  lightSourceShaderList.push_back(csX75::LoadShaderGL(GL_FRAGMENT_SHADER, lightSource_fragment_shader_file));
 
   lightShaderProgram = csX75::CreateProgramGL(lightSourceShaderList);
   glUseProgram(lightShaderProgram);
@@ -158,18 +176,70 @@ void initBuffersGL(void)
   vColor = glGetAttribLocation( lightShaderProgram, "vColor" );
   uModelViewMatrix = glGetUniformLocation( lightShaderProgram, "uModelViewMatrix" );
 
-  glGenVertexArrays(1, &vao);
-  glGenBuffers(1, &vbo);
+  glGenVertexArrays(4, vao);
+  glGenBuffers(4, vbo);
 
-  glBindVertexArray(vao);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  // Source 1
+  glBindVertexArray(vao[0]);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 
-  Sphere light(0.5, 20, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-  lightVertices = light.num_vertices;
+  Sphere light1(0.5, 20, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+  lightVertices = light1.num_vertices;
 
   glBufferData(GL_ARRAY_BUFFER, lightVertices*sizeof(glm::vec4) + lightVertices*sizeof(glm::vec4), NULL, GL_STATIC_DRAW);
-  glBufferSubData(GL_ARRAY_BUFFER, 0, lightVertices*sizeof(glm::vec4), light.vert_arr);
-  glBufferSubData(GL_ARRAY_BUFFER, lightVertices*sizeof(glm::vec4), lightVertices*sizeof(glm::vec4), light.col_arr);
+  glBufferSubData(GL_ARRAY_BUFFER, 0, lightVertices*sizeof(glm::vec4), light1.vert_arr);
+  glBufferSubData(GL_ARRAY_BUFFER, lightVertices*sizeof(glm::vec4), lightVertices*sizeof(glm::vec4), light1.col_arr);
+
+  glEnableVertexAttribArray(vPosition);
+  glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+
+  glEnableVertexAttribArray(vColor);
+  glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(lightVertices*sizeof(glm::vec4)));
+
+  // Source 2
+  glBindVertexArray(vao[1]);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+
+  Sphere light2(0.5, 20, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+  lightVertices = light2.num_vertices;
+
+  glBufferData(GL_ARRAY_BUFFER, lightVertices*sizeof(glm::vec4) + lightVertices*sizeof(glm::vec4), NULL, GL_STATIC_DRAW);
+  glBufferSubData(GL_ARRAY_BUFFER, 0, lightVertices*sizeof(glm::vec4), light2.vert_arr);
+  glBufferSubData(GL_ARRAY_BUFFER, lightVertices*sizeof(glm::vec4), lightVertices*sizeof(glm::vec4), light2.col_arr);
+
+  glEnableVertexAttribArray(vPosition);
+  glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+
+  glEnableVertexAttribArray(vColor);
+  glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(lightVertices*sizeof(glm::vec4)));
+
+  // Source 3 : Spotlight
+  glBindVertexArray(vao[2]);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+
+  Sphere light3(0.5, 20, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+  lightVertices = light3.num_vertices;
+
+  glBufferData(GL_ARRAY_BUFFER, lightVertices*sizeof(glm::vec4) + lightVertices*sizeof(glm::vec4), NULL, GL_STATIC_DRAW);
+  glBufferSubData(GL_ARRAY_BUFFER, 0, lightVertices*sizeof(glm::vec4), light3.vert_arr);
+  glBufferSubData(GL_ARRAY_BUFFER, lightVertices*sizeof(glm::vec4), lightVertices*sizeof(glm::vec4), light3.col_arr);
+
+  glEnableVertexAttribArray(vPosition);
+  glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+
+  glEnableVertexAttribArray(vColor);
+  glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(lightVertices*sizeof(glm::vec4)));
+
+  // Source 4 : Headlight
+  glBindVertexArray(vao[3]);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
+
+  Sphere light4(0.25, 20, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+  lightVertices = light4.num_vertices;
+
+  glBufferData(GL_ARRAY_BUFFER, lightVertices*sizeof(glm::vec4) + lightVertices*sizeof(glm::vec4), NULL, GL_STATIC_DRAW);
+  glBufferSubData(GL_ARRAY_BUFFER, 0, lightVertices*sizeof(glm::vec4), light4.vert_arr);
+  glBufferSubData(GL_ARRAY_BUFFER, lightVertices*sizeof(glm::vec4), lightVertices*sizeof(glm::vec4), light4.col_arr);
 
   glEnableVertexAttribArray(vPosition);
   glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
@@ -201,18 +271,28 @@ void renderGL(void)
   projection_matrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 500.0f);
   // projection_matrix = glm::frustum(-20.0, 20.0, -20.0, 20.0, -500.0, 500.0);
 
-  view_matrix = projection_matrix*lookat_matrix;
+  view_matrix = lookat_matrix;
+  view_projection_matrix = projection_matrix * lookat_matrix;
 
   glUseProgram(worldShaderProgram);
   glUniformMatrix4fv(viewMatrix, 1, GL_FALSE, glm::value_ptr(view_matrix));
   
-  glm::vec3 lightPos = glm::vec3(lxPos, lyPos, lzPos);
+  // These are the positions of light in the world coordinate system
+  lightPos[0] = glm::vec3(lxPos[0], lyPos[0], lzPos[0]);
+  lightPos[1] = glm::vec3(lxPos[1], lyPos[1], lzPos[1]);
+  lightPos[2] = glm::vec3(gtx[1], gty[1], 10.0f);
+  lightPos[3] = glm::vec3(0.0f);
 
-  // printf("Light pos is %f, %f, %f\n", lxPos, lyPos, lzPos);
-  glUniform3fv(lPos, 1, glm::value_ptr(lightPos));
+  glUniform3fv(lPos[0], 1, glm::value_ptr(lightPos[0]));
+  glUniform3fv(lPos[1], 1, glm::value_ptr(lightPos[1]));
+  glUniform3fv(lPos[2], 1, glm::value_ptr(lightPos[2]));
 
-  glUniform1i(l1On, source1);
+  glUniform1iv(l1On, 4, sourceStat);
 
+  glUniform3fv(spotDir[0], 1, glm::value_ptr(glm::vec3(0.0f, 0.0f, -1.0f)));
+
+  // matrixStack.push_back(view_projection_matrix);
+  matrixStack.push_back(projection_matrix);
   matrixStack.push_back(view_matrix);
   
   if(rider) {
@@ -227,6 +307,13 @@ void renderGL(void)
     matrixStack.push_back(glm::scale(glm::mat4(1.0f), scaling[0] * glm::vec3(1.0f, 1.0f, 1.0f)));
     b->update_bike(dof_param);
     b->render_bike();
+
+    lightPos[3] = b->body->getWCSPos();
+    glUniform3fv(lPos[3], 1, glm::value_ptr(lightPos[3]));
+
+    headlightDir = b->body->getWCSDir();
+    glUniform3fv(spotDir[1], 1, glm::value_ptr(headlightDir));
+
     matrixStack.pop_back();
     matrixStack.pop_back();
   }
@@ -239,13 +326,38 @@ void renderGL(void)
   }
 
   // Rendering the light sources
+  // Source 1
   glUseProgram(lightShaderProgram);
   
-  glm::mat4 model_matrix = glm::translate(glm::mat4(1.0f), lightPos);
-  glm::mat4 modelViewProjectionMatrix = view_matrix * model_matrix;
+  glm::mat4 model_matrix = glm::translate(glm::mat4(1.0f), lightPos[0]);
+  glm::mat4 modelViewProjectionMatrix = view_projection_matrix * model_matrix;
 
   glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelViewProjectionMatrix));
-  glBindVertexArray(vao);
+  glBindVertexArray(vao[0]);
+  glDrawArrays(GL_TRIANGLES, 0, lightVertices);
+
+  // Source 2
+  model_matrix = glm::translate(glm::mat4(1.0f), lightPos[1]);
+  modelViewProjectionMatrix = view_projection_matrix * model_matrix;
+
+  glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelViewProjectionMatrix));
+  glBindVertexArray(vao[1]);
+  glDrawArrays(GL_TRIANGLES, 0, lightVertices);
+
+  // Source 3
+  model_matrix = glm::translate(glm::mat4(1.0f), lightPos[2]);
+  modelViewProjectionMatrix = view_projection_matrix * model_matrix;
+
+  glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelViewProjectionMatrix));
+  glBindVertexArray(vao[2]);
+  glDrawArrays(GL_TRIANGLES, 0, lightVertices);
+
+  // Source 4
+  model_matrix = glm::translate(glm::mat4(1.0f), lightPos[3]);
+  modelViewProjectionMatrix = view_projection_matrix * model_matrix;
+
+  glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelViewProjectionMatrix));
+  glBindVertexArray(vao[3]);
   glDrawArrays(GL_TRIANGLES, 0, lightVertices);
 }
 
@@ -306,7 +418,7 @@ int main(int argc, char** argv)
 {
   //! The pointer to the GLFW window
   GLFWwindow* window;
-
+  
   //! Setting up the GLFW Error callback
   glfwSetErrorCallback(csX75::error_callback);
 
@@ -323,7 +435,7 @@ int main(int argc, char** argv)
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 
 
   //! Create a windowed mode window and its OpenGL context
-  window = glfwCreateWindow(800, 800, "CS475 Assignment 2 Track", NULL, NULL);
+  window = glfwCreateWindow(500, 500, "CS475 Assignment 2 Track", NULL, NULL);
   if (!window)
     {
       glfwTerminate();

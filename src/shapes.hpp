@@ -113,10 +113,15 @@ public:
 class Track_plane : public Shape
 {   
     float plane_h, plane_w;
+    std::vector<glm::vec2> tex_coords;
 public:
+    glm::vec2* tex_arr;
     Track_plane(float ph, float pw, glm::vec4 col);
     ~Track_plane();
-    void add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4* norm_arr);
+    void insert_tex_quad(glm::vec4* vert_arr, glm::vec2* tex_arr, glm::vec4 a, glm::vec4 b, glm::vec4 c, glm::vec4 d);
+    void add_vertices(glm::vec4* vert_arr, glm::vec2* tex_arr, glm::vec4* norm_arr);
+    // The function below was used earlier to add colors, changing it now
+    void add_vertices(glm::vec4* vert_arr, glm::vec4* tex_arr, glm::vec4* norm_arr);
 };
 
 class SkyBox: public Shape

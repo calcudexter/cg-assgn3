@@ -3,9 +3,12 @@
 
 #include <iostream>
 
-extern GLuint vPosition,vColor,vNormal,uModelViewMatrix,normalMatrix;
-extern GLuint worldShaderProgram;
+extern GLuint vPosition,vColor,vNormal,uModelViewMatrix,normalMatrix,modelMatrix;
+extern GLuint worldShaderProgram, lightShaderProgram, texShaderProgram;
+extern GLuint lPos[4], l1On;
+extern glm::vec3 lightPos[4], headlightDir, spotDir[2];
 extern std::vector<glm::mat4> matrixStack;
+extern int sourceStat[4];
 
 namespace csX75
 {
@@ -85,6 +88,19 @@ namespace csX75
 		this->vtexCoord = glGetAttribLocation(this->texShaderProgram, "texCoord" );
 		this->vtexNormal = glGetAttribLocation(this->texShaderProgram, "vNormal" );
   		this->utexModelViewMatrix = glGetUniformLocation(this->texShaderProgram, "uModelViewMatrix" );
+		this->vtexNormalMatrix = glGetUniformLocation(this->texShaderProgram, "normalMatrix" );
+		this->vtexModelMatrix = glGetUniformLocation(this->texShaderProgram, "modelMatrix");
+
+		this->lPos[0] = glGetUniformLocation( this->texShaderProgram, "lPos[0]" );
+		this->lPos[1] = glGetUniformLocation( this->texShaderProgram, "lPos[1]" );
+		this->lPos[2] = glGetUniformLocation( this->texShaderProgram, "lPos[2]" );
+		this->lPos[3] = glGetUniformLocation( this->texShaderProgram, "lPos[3]" );
+
+		this->l1On = glGetUniformLocation( this->texShaderProgram, "l1On" );
+
+		this->spotDir[0] = glGetUniformLocation( this->texShaderProgram, "spotDir[0]" );
+		this->spotDir[1] = glGetUniformLocation( this->texShaderProgram, "spotDir[1]" );
+
 		// std::cout<<"p: "<<vPosition << "coord : "<<this->vtexCoord<<"umatrix : "<<this->utexModelViewMatrix<<std::endl;
 		  // Load Textures 
 		this->tex = LoadTexture((std::string("../src/images/")+filename).c_str(),w,h);
@@ -198,6 +214,22 @@ namespace csX75
 
 			glUniformMatrix4fv(this->utexModelViewMatrix, 1, GL_FALSE, glm::value_ptr(*ms_mult));
 
+			glm::mat4 model_matrix = glm::inverse(matrixStack[0] * matrixStack[1]) * (*ms_mult);
+			glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(model_matrix)));
+
+			glUniformMatrix4fv(this->vtexModelMatrix, 1, GL_FALSE, glm::value_ptr(model_matrix));
+			glUniformMatrix3fv(this->vtexNormalMatrix, 1, GL_FALSE, glm::value_ptr(normal_matrix));
+
+			glUniform3fv(this->lPos[0], 1, glm::value_ptr(lightPos[0]));
+			glUniform3fv(this->lPos[1], 1, glm::value_ptr(lightPos[1]));
+			glUniform3fv(this->lPos[2], 1, glm::value_ptr(lightPos[2]));
+
+			glUniform1iv(this->l1On, 4, sourceStat);
+			glUniform3fv(this->spotDir[0], 1, glm::value_ptr(glm::vec3(0.0f, 0.0f, -1.0f)));
+
+			glUniform3fv(this->lPos[3], 1, glm::value_ptr(lightPos[3]));
+			glUniform3fv(this->spotDir[1], 1, glm::value_ptr(headlightDir));
+
 			glBindVertexArray (vao);
 			glDrawArrays(GL_TRIANGLES, 0, num_vertices);
 			
@@ -209,9 +241,20 @@ namespace csX75
 		glm::mat4* ms_mult = multiply_stack(matrixStack);
 
 		glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(*ms_mult));
+		
+		// Need the model matrix in shaders too
+		glm::mat4 model_matrix = glm::inverse(matrixStack[0] * matrixStack[1]) * (*ms_mult);
+		glUniformMatrix4fv(modelMatrix, 1, GL_FALSE, glm::value_ptr(model_matrix));
 
-		glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(*ms_mult)));
+		// ms_mult is the product of complete matrix stack
+		// It contains the projection and viewing transformations too
+		glUniformMatrix4fv(this->utexModelViewMatrix, 1, GL_FALSE, glm::value_ptr(*ms_mult));
+
+		// So, just to keep lighting in the WCS, I am removing the projection component
+		// in the normal matrix
+		glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(model_matrix)));
 		glUniformMatrix3fv(normalMatrix, 1, GL_FALSE, glm::value_ptr(normal_matrix));
+
 
 		glBindVertexArray (vao);
 		glDrawArrays(GL_TRIANGLES, 0, num_vertices);
@@ -276,6 +319,26 @@ namespace csX75
 		printf("Rotations of %s {%f, %f, %f}\n", this->name.c_str(), rx, ry, rz);
 	}
 
+	void HNode::print_rot_tree(FILE* out_file) {
+		GLfloat rx = atan2(rot_mat[2][1], rot_mat[2][2]), ry = atan2(-rot_mat[2][0], sqrt(rot_mat[2][1]*rot_mat[2][1] + rot_mat[2][2]*rot_mat[2][2]));
+		GLfloat rz = atan2(rot_mat[1][0], rot_mat[0][0]);
+
+		fprintf(out_file, "%f, %f, %f, ", rx, ry, rz);
+
+		for(int i=0;i<children.size();i++){
+			children[i]->print_rot_tree(out_file);
+		}
+	}
+
+	void HNode::load_tree(std::vector<float> state, int &init_ind) {
+		GLfloat a = state[init_ind++], b = state[init_ind++], c = state[init_ind++];
+		
+		init_rot(-a, -b, -c);
+		for(int i=0; i<children.size(); i++) {
+			children[i]->load_tree(state, init_ind);
+		}
+	}
+
 	void HNode::init_rot(GLfloat rx, GLfloat ry, GLfloat rz)
 	{
 		glm::mat4 mat = glm::rotate(glm::mat4(1.0f), rx, glm::vec3(1.0f, 0.0f, 0.0f));
@@ -294,6 +357,22 @@ namespace csX75
 		}	
 
 		return mult;
+	}
+
+	glm::vec3 HNode::getWCSPos() {
+		glm::vec4 OCSPos = glm::vec4(6.0f, 3.0f, 0.0f, 1.0f);
+
+		OCSPos = matrixStack[2] * matrixStack[3] * inv_trans * rot_mat * pre_trans * translation * pre_rot * OCSPos;
+
+		return glm::vec3(OCSPos);
+	}
+
+	glm::vec3 HNode::getWCSDir() {
+		glm::vec4 OCSDir = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+
+		OCSDir = matrixStack[2] * matrixStack[3] * inv_trans * rot_mat * pre_trans * translation * pre_rot * OCSDir;
+
+		return glm::vec3(OCSDir);
 	}
 
 }

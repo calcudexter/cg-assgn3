@@ -1,0 +1,17 @@
+The keyframe will be store the attributes of the objects as such basically
+
+Timestamp, Camera, Light, Rider, Bike
+
+Camera :
+1. Type
+2. If the type is global :
+i. Position, Up, Rotation
+Else, garbage values to keep the record length same
+
+Light :
+1. Positions of global lights
+2. States of all the lights
+
+Rider, Bike :
+1. Global translation coordinates of the Rider and Bike
+2. Euler Angles of the rotation matrices according to the hierarchy defined earlier

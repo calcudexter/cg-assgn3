@@ -36,12 +36,14 @@ float dis = 20.0f;
 GLfloat gtx[3]={-5.90f, -6.70f, 0.0f}, gty[3]={-15.4f, -15.2f, -15.2f}, gtz[3]={1.60f-dis, 3.20f-dis, 0.0f-dis};
 GLfloat scaling[3] = {0.31f, 0.17f, 3.52f};
 
-GLfloat lxPos=20.0, lyPos=20.0, lzPos=20.0;
+GLfloat lxPos[2]={20.0, -20.0}, lyPos[2]={20.0, -20.0}, lzPos[2]={20.0, 20.0};
 
-int source1 = 1;
+// Tells if the source is on/off
+int sourceStat[4] = {1, 0, 0, 0};
+int sourceSelected = 0;
 
 //Shader program attribs
-GLuint vPosition,vColor, vNormal;
+GLuint vPosition,vColor,vNormal;
 
 //global matrix stack for hierarchical modelling
 std::vector<glm::mat4> matrixStack;

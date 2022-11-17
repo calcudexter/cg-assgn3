@@ -30,6 +30,7 @@ namespace csX75	 {
 		GLuint num_vertices;
 		GLuint vao,vbo;
 		GLuint vtexPos, vtexCoord, vtexNormal, utexModelViewMatrix;
+		GLuint vtexNormalMatrix, vtexModelMatrix, l1On, lPos[4], spotDir[2];
 		GLuint texShaderProgram;
 		GLuint tex;
 
@@ -65,7 +66,11 @@ namespace csX75	 {
 		void dec_ry();
 		void dec_rz();
 		void print_rot();
+		void print_rot_tree(FILE*);
+		void load_tree(std::vector<float> state, int &init_ind);
 		void init_rot(GLfloat rx, GLfloat ry, GLfloat rz);
+		glm::vec3 getWCSPos();
+		glm::vec3 getWCSDir();
 	};
 
 	glm::mat4* multiply_stack(std::vector <glm::mat4> );
