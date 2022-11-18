@@ -1,3 +1,5 @@
+#include "stb_image.h"
+#include "stb_image_write.h"
 #include "gl_framework.hpp"
 #include "hierarchy_node.hpp"
 
@@ -20,14 +22,33 @@ bool shift_held = false, control_held = false;
 
 // Animation related
 int timestamp = 0;
-int isCont[207];
+int isCont[210];
 std::vector<std::vector<float>> attrs;
 int fps = 100;
 extern void renderGL();
 
+int frame_index = 0; // for saving frames
+bool save_frames = false;
 
 namespace csX75
 {
+  void saveImage(const char* filepath, GLFWwindow* w) {
+    int width, height;
+    glfwGetFramebufferSize(w, &width, &height);
+    GLsizei nrChannels = 3;
+    GLsizei stride = nrChannels * width;
+    stride += (stride % 4) ? (4 - stride % 4) : 0;
+    GLsizei bufferSize = stride * height;
+    std::vector<char> buffer(bufferSize);
+    glPixelStorei(GL_PACK_ALIGNMENT, 4);
+    glReadBuffer(GL_FRONT);
+    glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, buffer.data());
+    // stbi_flip_vertically_on_write(true);
+    stbi_write_png(filepath, width, height, nrChannels, buffer.data(), stride);
+    std::cout<<"image_saved"<<std::endl;
+  }
+
+
   //! Initialize GL State
   void initGL(void)
   {
@@ -96,21 +117,8 @@ namespace csX75
       {if(!cond) curr_node->inc_rz();}
     else if (key == GLFW_KEY_PAGE_DOWN && action == GLFW_PRESS | GLFW_REPEAT)
       {if(!cond) curr_node->dec_rz();}
-    else if (control_held && key == GLFW_KEY_P && action == GLFW_PRESS)
+    else if (key == GLFW_KEY_I && action == GLFW_PRESS)
     {
-      // Rotations
-
-      // printf("Scaling factor (bike) %f\n", scaling[0]);
-      // printf("Scaling factor (rider) %f\n", scaling[1]);
-      // printf("Scaling factor (track) %f\n", scaling[2]);
-
-      // printf("Translations (bike): {%f, %f, %f}\n", gtx[0], gty[0], gtz[0]);
-      // printf("Translations (rider): {%f, %f, %f}\n", gtx[1], gty[1], gtz[1]);
-      // printf("Translations (track): {%f, %f, %f}\n", gtx[2], gty[2], gtz[2]);
-
-      // b->print_rot();
-      // h->print_rot();
-      // if(sourceSelected == 2) return;
       sourceStat[sourceSelected] = (1-sourceStat[sourceSelected]);
     }
     else if (key == GLFW_KEY_O  && action == GLFW_PRESS) {
@@ -151,8 +159,9 @@ namespace csX75
       fprintf(out_file, "%f, %f, %f, %f, %f, %f, %d, %d, %d, %d, ", lxPos[0], lyPos[0], lzPos[0], lxPos[1], lyPos[1], lzPos[1], sourceStat[0], sourceStat[1], sourceStat[2], sourceStat[3]);
 
       // Bike then Rider attributes
-      for(int i = 21; i < 207; i++) isCont[i] = 1;
-      fprintf(out_file, "%f, %f, %f, %f, %f, %f, ", gtx[0], gty[0], gtz[0], gtx[1], gty[1], gtz[1]);
+      for(int i = 21; i < 210; i++) isCont[i] = 1;
+      fprintf(out_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, ", gtx[0], gty[0], gtz[0], gtx[1], gty[1], gtz[1], gtx[2], gty[2], gtz[2]);
+      //fprintf(out_file, "%f, %f, %f, %f, %f, %f", gtx[0], gty[0], gtz[0], gtx[1], gty[1], gtz[1]);
 
       b->body->print_rot_tree(out_file);
       h->torso->print_rot_tree(out_file);
@@ -209,7 +218,7 @@ namespace csX75
       for(int i = 11; i < 17; i++) isCont[i] = 1;
       for(int i = 17; i < 21; i++) isCont[i] = 0;
 
-      for(int i = 21; i < 207; i++) isCont[i] = 1;
+      for(int i = 21; i < 210; i++) isCont[i] = 1;
 
       int render = 0;
 
@@ -271,6 +280,9 @@ namespace csX75
           gty[1] = curr_frame[ind++];
           gtz[1] = curr_frame[ind++];
 
+          gtx[2] = curr_frame[ind++];
+          gty[2] = curr_frame[ind++];
+          gtz[2] = curr_frame[ind++];
           // Need to reload bike and rider
 
           b->body->load_tree(curr_frame, ind);
@@ -278,78 +290,108 @@ namespace csX75
 
           glfwWaitEventsTimeout(1.0/fps);
           renderGL();
+          if(save_frames)
+          {
+            std::string filename = std::string("../video_frames/frame_") + std::to_string(frame_index) + std::string(".png");
+            saveImage(filename.c_str(), window);
+            frame_index++;
+          }
           glfwSwapBuffers(window);
         }
       }
-
+      frame_index = 0;
       printf("Animation ended\n");
     }
     else if (shift_held && key == GLFW_KEY_Q  && action == GLFW_PRESS | GLFW_REPEAT)
       c_zrot -= 3.0;
     else if (shift_held && key == GLFW_KEY_E  && action == GLFW_PRESS | GLFW_REPEAT)
       c_zrot += 3.0;
-    else if((key == GLFW_KEY_2 || key == GLFW_KEY_KP_2) && action == GLFW_PRESS | GLFW_REPEAT) {
+    else if((key == GLFW_KEY_KP_2) && action == GLFW_PRESS | GLFW_REPEAT) {
       if(selected == 3) {
         gty[0] -= 0.1f;
         gty[1] -= 0.1f;
         gty[2] -= 0.1f;
       }
+      else if(selected == 4) {
+        gty[0] -= 0.1f;
+        gty[1] -= 0.1f;
+      }
       else
         gty[selected] -= 0.1f;
     }
-    else if((key == GLFW_KEY_8 || key == GLFW_KEY_KP_8) && action == GLFW_PRESS | GLFW_REPEAT)
+    else if(( key == GLFW_KEY_KP_8) && action == GLFW_PRESS | GLFW_REPEAT){
       if(selected == 3) {
         gty[0] += 0.1f;
         gty[1] += 0.1f;
         gty[2] += 0.1f;
       }
+      else if(selected == 4) {
+        gty[0] += 0.1f;
+        gty[1] += 0.1f;
+      }
       else
         gty[selected] += 0.1f;
-    else if((key == GLFW_KEY_4 || key == GLFW_KEY_KP_4) && action == GLFW_PRESS | GLFW_REPEAT)
+    }
+    else if(( key == GLFW_KEY_KP_4) && action == GLFW_PRESS | GLFW_REPEAT)
       if(selected == 3) {
         gtx[0] -= 0.1f;
         gtx[1] -= 0.1f;
         gtx[2] -= 0.1f;
       }
+      else if(selected == 4) {
+        gtx[0] -= 0.1f;
+        gtx[1] -= 0.1f;
+      }
       else
         gtx[selected] -= 0.1f;
-    else if((key == GLFW_KEY_6 || key == GLFW_KEY_KP_6) && action == GLFW_PRESS | GLFW_REPEAT)
+    else if(( key == GLFW_KEY_KP_6) && action == GLFW_PRESS | GLFW_REPEAT){
       if(selected == 3) {
         gtx[0] += 0.1f;
         gtx[1] += 0.1f;
         gtx[2] += 0.1f;
       }
+      else if(selected == 4) {
+        gtx[0] += 0.1f;
+        gtx[1] += 0.1f;
+      }
       else
         gtx[selected] += 0.1f;
-    else if((key == GLFW_KEY_5 || key == GLFW_KEY_KP_5) && action == GLFW_PRESS | GLFW_REPEAT) {
+    }
+    else if(( key == GLFW_KEY_KP_5) && action == GLFW_PRESS | GLFW_REPEAT) {
       if(shift_held)
+      {
         if(selected == 3) {
           gtz[0] -= 0.1f;
           gtz[1] -= 0.1f;
           gtz[2] -= 0.1f;
         }
+        else if(selected == 4) {
+          gtz[0] -= 0.1f;
+          gtz[1] -= 0.1f;
+        }
         else
           gtz[selected] -= 0.1f;
+      }
       else {
         if(selected == 3) {
           gtz[0] += 0.1f;
           gtz[1] += 0.1f;
           gtz[2] += 0.1f;
         }
+        else if(selected == 4) {
+          gtz[0] += 0.1f;
+          gtz[1] += 0.1f;
+        }
         else
           gtz[selected] += 0.1f;
       }
     }
-    else if (key == GLFW_KEY_C && action == GLFW_PRESS) {
-      if(rider)
+    else if (rider && control_held && action == GLFW_PRESS) {
+      curr_node = getNode(key);
+      if(curr_node)
       {
         selected = 1;
-        printf("Press keys to select the part\n");
-        char c;
-        scanf(" %c", &c);
-        // printf("Key pressed %c\n", c);
-
-        curr_node = getNode(c);
+        printf("Selected %c\n", key);
       }
     }
     else if (key == GLFW_KEY_F && action == GLFW_PRESS | GLFW_REPEAT)
@@ -391,18 +433,19 @@ namespace csX75
     else if(key == GLFW_KEY_Z && action == GLFW_PRESS)
       selected = 3;
     else if(key == GLFW_KEY_X && action == GLFW_PRESS) {
-      if(track)
-      {
-        selected = 2;
-        curr_node = t->plane1;
-      }
+      selected = 4;
+    }
+    else if(key == GLFW_KEY_C && action == GLFW_PRESS) {
+      selected = 2;
+      curr_node = t->plane1;
     }
     else if(key == GLFW_KEY_V && action == GLFW_PRESS) {
-      if(bike)
-      {
-        selected = 0;
-        curr_node = b->body;
-      }
+      selected = 0;
+      curr_node = b->body;
+    }
+    else if(key == GLFW_KEY_B && action == GLFW_PRESS) {
+      selected = 1;
+      curr_node = h->torso;
     }
     else if(key == GLFW_KEY_M && action == GLFW_PRESS | GLFW_REPEAT)
     {

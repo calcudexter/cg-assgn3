@@ -365,52 +365,52 @@ HNode* getNode(char key)
 {
   switch(key)
   {
-    case 'a':
+    case GLFW_KEY_1:
       // printf("Returning Torso\n");
       return h->torso;
       
-    case 'b':
+    case GLFW_KEY_2:
       // printf("Returning Left Upper Arm\n");
       return h->left_arm[0];
       
-    case 'c':
+    case GLFW_KEY_3:
       // printf("Returning Left Lower Arm\n");
       return h->left_arm[1];
       
-    case 'd':
+    case GLFW_KEY_4:
       // printf("Returning Right Upper Arm\n");
       return h->right_arm[0];
       
-    case 'e':
+    case GLFW_KEY_5:
       // printf("Returning Right Lower Arm\n");
       return h->right_arm[1];
       
-    case 'f':
+    case GLFW_KEY_6:
       // printf("Returning Left Upper Leg\n");
       return h->left_leg[0];
       
-    case 'g':
+    case GLFW_KEY_7:
       // printf("Returning Left Lower Leg\n");
       return h->left_leg[1];
       
-    case 'h':
+    case GLFW_KEY_8:
       // printf("Returning Right Upper Leg\n");
       return h->right_leg[0];
       
-    case 'i':
+    case GLFW_KEY_9:
       // printf("Returning Right Lower Leg\n");
       return h->right_leg[1];
       
-    case 'j':
+    case GLFW_KEY_0:
       // printf("Returning Neck\n");
       return h->neck;
       
-    case 'k':
+    case GLFW_KEY_MINUS:
       // printf("Returning Head\n");
       return h->head;
     
     default:
-      return h->torso;
+      return NULL;
   }
 }
 
