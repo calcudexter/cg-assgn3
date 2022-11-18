@@ -2,3 +2,4 @@
 *.out
 *.o
 video_frames/
+output.mp4

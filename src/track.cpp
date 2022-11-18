@@ -37,7 +37,7 @@ void Track::initialize_hnode()
 {
 
   // SkyBox
-  SkyBox sb(50, 50, 50, glm::vec4(1.0,1.0,1.0,1.0));
+  SkyBox sb(30, 30, 30, glm::vec4(1.0,1.0,1.0,1.0));
 
   float tl = this->track_l, r = this->inner_r + this->track_t/2;
   float del = (tl*cosR(36) + 2*r*sinR(36));
@@ -60,7 +60,7 @@ void Track::initialize_hnode()
   this->plane1 = new HNode(NULL, plane1_s.num_vertices, plane1_s.vert_arr, plane1_s.tex_arr, plane1_s.norm_arr, plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec2), plane1_s.num_vertices*sizeof(glm::vec4), "Plane1", "road.bmp", 800, 800);
   
   this->skybox = new HNode(this->plane1, sb.num_vertices, sb.vert_arr, sb.tex_arr, sb.norm_arr, sb.num_vertices*sizeof(glm::vec4), sb.num_vertices*sizeof(glm::vec2), sb.num_vertices*sizeof(glm::vec4), "SkyBox", "skybox.bmp", 1024, 768);
-  this->skybox->change_parameters(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+  this->skybox->change_parameters(0.0, 0.0, 7.0, 0.0, 0.0, 0.0);
 
   // this->plane2 = new HNode(this->plane1, plane1_s.num_vertices, plane1_s.vert_arr, plane1_s.col_arr, plane1_s.norm_arr, plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), plane1_s.num_vertices*sizeof(glm::vec4), "Plane2");
 

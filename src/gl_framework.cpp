@@ -22,13 +22,13 @@ bool shift_held = false, control_held = false;
 
 // Animation related
 int timestamp = 0;
-int isCont[210];
+int isCont[211];
 std::vector<std::vector<float>> attrs;
 int fps = 100;
 extern void renderGL();
 
 int frame_index = 0; // for saving frames
-bool save_frames = false;
+bool save_frames = true;
 
 namespace csX75
 {
@@ -159,9 +159,9 @@ namespace csX75
       fprintf(out_file, "%f, %f, %f, %f, %f, %f, %d, %d, %d, %d, ", lxPos[0], lyPos[0], lzPos[0], lxPos[1], lyPos[1], lzPos[1], sourceStat[0], sourceStat[1], sourceStat[2], sourceStat[3]);
 
       // Bike then Rider attributes
-      for(int i = 21; i < 210; i++) isCont[i] = 1;
-      fprintf(out_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, ", gtx[0], gty[0], gtz[0], gtx[1], gty[1], gtz[1], gtx[2], gty[2], gtz[2]);
-      //fprintf(out_file, "%f, %f, %f, %f, %f, %f", gtx[0], gty[0], gtz[0], gtx[1], gty[1], gtz[1]);
+      for(int i = 21; i < 211; i++) isCont[i] = 1;
+      fprintf(out_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, ", gtx[0], gty[0], gtz[0], gtx[1], gty[1], gtz[1], gtx[2], gty[2], gtz[2], dof_param[2]);
+      //fprintf(out_file, "%f, %f, %f, %f, %f, %f, ", gtx[0], gty[0], gtz[0], gtx[1], gty[1], gtz[1]);
 
       b->body->print_rot_tree(out_file);
       h->torso->print_rot_tree(out_file);
@@ -218,7 +218,7 @@ namespace csX75
       for(int i = 11; i < 17; i++) isCont[i] = 1;
       for(int i = 17; i < 21; i++) isCont[i] = 0;
 
-      for(int i = 21; i < 210; i++) isCont[i] = 1;
+      for(int i = 21; i < 211; i++) isCont[i] = 1;
 
       int render = 0;
 
@@ -284,6 +284,8 @@ namespace csX75
           gty[2] = curr_frame[ind++];
           gtz[2] = curr_frame[ind++];
           // Need to reload bike and rider
+
+          dof_param[2] = curr_frame[ind++];
 
           b->body->load_tree(curr_frame, ind);
           h->torso->load_tree(curr_frame, ind);
