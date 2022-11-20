@@ -2,6 +2,7 @@
 #include "stb_image_write.h"
 #include "gl_framework.hpp"
 #include "hierarchy_node.hpp"
+#include <iomanip>
 
 extern GLfloat c_xpos, c_ypos, c_zpos;
 extern GLfloat c_up_x, c_up_y, c_up_z;
@@ -28,7 +29,7 @@ int fps = 100;
 extern void renderGL();
 
 int frame_index = 0; // for saving frames
-bool save_frames = true;
+extern bool save_frames;
 
 namespace csX75
 {
@@ -45,7 +46,6 @@ namespace csX75
     glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, buffer.data());
     // stbi_flip_vertically_on_write(true);
     stbi_write_png(filepath, width, height, nrChannels, buffer.data(), stride);
-    std::cout<<"image_saved"<<std::endl;
   }
 
 
@@ -294,8 +294,12 @@ namespace csX75
           renderGL();
           if(save_frames)
           {
-            std::string filename = std::string("../video_frames/frame_") + std::to_string(frame_index) + std::string(".png");
+            std::ostringstream ss;
+            ss << std::setfill('0')<<std::setw(5)<<frame_index;
+            std::string s = ss.str();
+            std::string filename = std::string("../video_frames/frame-") + s + std::string(".png");
             saveImage(filename.c_str(), window);
+            std::cout<<"image_saved "<<frame_index<<std::endl;
             frame_index++;
           }
           glfwSwapBuffers(window);

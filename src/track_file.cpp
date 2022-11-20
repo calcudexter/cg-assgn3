@@ -45,6 +45,8 @@ int selected;
 
 Camera chosen_cam = GLOBAL;
 
+bool save_frames = false;
+
 glm::mat4 getCameraMatrix(Camera cam = GLOBAL)
 {
   if(cam == GLOBAL)
@@ -416,9 +418,15 @@ HNode* getNode(char key)
 
 int main(int argc, char** argv)
 {
+  if(argc == 2)
+  {
+    save_frames = std::atoi(argv[1]);
+  }
+  
   //! The pointer to the GLFW window
   GLFWwindow* window;
   
+
   //! Setting up the GLFW Error callback
   glfwSetErrorCallback(csX75::error_callback);
 
@@ -435,7 +443,7 @@ int main(int argc, char** argv)
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 
 
   //! Create a windowed mode window and its OpenGL context
-  window = glfwCreateWindow(500, 500, "CS475 Assignment 2 Track", NULL, NULL);
+  window = glfwCreateWindow(800, 800, "CS475 Assignment 3", NULL, NULL);
   if (!window)
     {
       glfwTerminate();

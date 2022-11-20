@@ -1,4 +1,4 @@
-# CS475 : Assignment 2(Modelling FMX)
+# CS475 : Assignment 3(Modelling FMX)
 ### By Harsh Shah(200050049), Neeraj Jadhav(200050086)
 
 ## Run instructions
@@ -10,22 +10,26 @@ This would create binaries in `bin` folder. To run the binary, change the curren
 ```
 cd bin 
 ``` 
-and then run the required file.
+and then run the required binary.
 ```
-./<name-of-file>
+./fmx-animate
 ```
-
-## Hierarchy of models
-### Rider
-![Rider Hierarchy](./rider_hierarchy.png)
-### Bike
-![Bike Hierarchy](./hierarchy_bike.png)
-### Track
-![Track Hierarchy](./track_hierarchical.png)
-
 # Key bindings :  
+## Animation
+S : Saving a key frame(appends all the state variables to file `keyframes.txt`)  
+L : Loads all the saved keyframes  
+P : Plays the animation after interpolating between keyframes
+
+## Cameras
+N : Toggle between global camera, Rider Camera(behind rider), and First Person View camera 
+
+## Lights
+O : Toggle between lights(four lights in total: 2 global illumination lights, 1 headlight and 1 spotlight)  
+I : Turn on/off the current light
+
+
 ## Global rotation
-The keys W, A, S, D, Q, E have been used for global rotation. Pressing these
+The keys W, A, S, D, Q, E pressed with SHIFT have been used for global rotation. Pressing these
 keys change the respective Euler angles as described below. The entire model, even
 if rider, bike and track are present, gets rotated using these keys.
 Let θx, θy, θz be the Euler angles then
@@ -40,8 +44,7 @@ Let θx, θy, θz be the Euler angles then
 The keys 2, 4, 6, 8, 5 have been used for global translation. They function as given
 below. The translation caused by pressing these keys is with respect to the rotated
 axes (caused by doing global rotation as described in the previous section). Note
-that these keys translate only the currently selected object. Details on selecting an
-object have been provided in the Miscellaneous section.
+that these keys translate only the currently selected object. 
 1. 8 : Move towards +Y
 2. 2 : Move towards -Y
 3. 6 : Move towards +X
@@ -68,27 +71,36 @@ Similarly for the track, along its axes
 
 ## Selecting Parts
 ### Rider
-First press C to active Rider part selection mode and then give input via the
-terminal for part selection.
-1. a : Select the torso
-2. b : Select the left upper arm
-3. c : Select the left lower arm
-4. d : Select the right upper arm
-5. e : Select the right lower arm
-6. f : Select the left thigh
-7. g : Select the left leg
-8. h : Select the right thigh
-9. i : Select the right leg
-10. j : Select the neck
-11. k : Select the head
+To select any specific part of rider press the corresponding key as listed below,
+1. CTRL + 0(or just B): Select the torso
+2. CTRL + 1 : Select the left upper arm
+3. CTRL + 2 : Select the left lower arm
+4. CTRL + 3 : Select the right upper arm
+5. CTRL + 4 : Select the right lower arm
+6. CTRL + 5 : Select the left thigh
+7. CTRL + 6 : Select the left leg
+8. CTRL + 7 : Select the right thigh
+9. CTRL + 8 : Select the right leg
+10. CTRL +  9 : Select the neck
+11. CTRL +  - : Select the head
+
 ### Bike
 Pressing V selects the bike.
+
 ### Track
-Pressing X selects the track.
+Pressing C selects the track.
+
+### Bike and Rider
+Pressing X selects the bike.
+
 ### All objects
 Pressing Z selects all objects.
+
 ## Scaling the objects
 Pressing M and Shift + M scales up and down the selected object respectively.
+
+## Link to video
+[Link](https://youtu.be/JisHq4VOFTY)
 
 # Undertaking
 We, Harsh Shah and Neeraj Jadhav, swear on river Styx, that we have not copied the code for assignment 2 present in the repository, nor have we indulged in any kind of plagiarism. We have coded all the scripts by ourselves.

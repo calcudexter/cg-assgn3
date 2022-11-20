@@ -1,5 +1,5 @@
 .vscode/
 *.out
 *.o
-video_frames/
-output.mp4
+*.png
+video/
