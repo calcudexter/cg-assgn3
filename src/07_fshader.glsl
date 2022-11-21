@@ -48,16 +48,6 @@ vec4 ptLight(vec3 lightPos) {
   float dotProduct = dot(n, lightDir);
   float intensity =  max(dotProduct, 0.0);
 
-  // Compute specular component only if light falls on vertex
-  // Specular being left for now
-  // if(intensity > 0.0)
-  // {
-  //   vec3 eye = normalize( vec3(-gl_Position));
-  //   vec3 h = normalize(lightDir + eye );
-  //   float intSpec = max(dot(h,n), 0.0);	
-  //   spec = specular * pow(intSpec, shininess);
-  // }
-
   return max((intensity * diffuse  + spec)*color, ambient);
 }
 

@@ -22,13 +22,6 @@ float ptLight(vec3 lightPos) {
   vec3 wcsPos = vec3(modelMatrix * pos);
   vec3 wcsLightPos = lightPos;
 
-  // Defining Materials
-  // vec4 diffuse = vec4(0.6, 0.6, 0.6, 1.0);
-  // vec4 ambient = vec4(0.5, 0.5, 0.5, 1.0);
-  // vec4 specular = vec4(1.0, 0.5, 0.5, 1.0);
-  // float shininess = 0.05;
-  // vec4 spec = vec4(0.0);
-
   float diffuse = 0.3;
   float ambient = 0.1;
   float specular = 0.5;
@@ -42,10 +35,6 @@ float ptLight(vec3 lightPos) {
   float dist = length(wcsLightPos - wcsPos);
   float attenuation = 1.0/(constant + linear * dist + quadratic * (dist * dist));
 
-  // ambient *= attenuation;
-  // diffuse *= attenuation;
-  // specular *= attenuation;
-  
   // Defining Light 
   // lightDir points towards the source from the vertex
   vec3 lightDir = wcsLightPos - wcsPos;
@@ -55,17 +44,6 @@ float ptLight(vec3 lightPos) {
   float dotProduct = dot(n, lightDir);
   float intensity =  max(dotProduct, 0.0);
 
-  // Compute specular component only if light falls on vertex
-  // Specular being left for now
-  // if(intensity > 0.0)
-  // {
-  //   vec3 eye = normalize( vec3(-gl_Position));
-  //   vec3 h = normalize(lightDir + eye );
-  //   float intSpec = max(dot(h,n), 0.0);	
-  //   spec = specular * pow(intSpec, shininess);
-  // }
-
-  // return max((intensity * diffuse  + spec), ambient);
   return max((intensity*(diffuse + spec)), ambient);
 }
 
@@ -79,13 +57,6 @@ float spotLight(vec3 lightPos, vec3 spotDir, float cutOff, float outCutOff) {
   // Transforming the positions to WCS
   vec3 wcsPos = vec3(modelMatrix * pos);
   vec3 wcsLightPos = lightPos;
-
-  // Defining Materials
-  // vec4 diffuse = vec4(0.6, 0.6, 0.6, 1.0);
-  // vec4 ambient = vec4(0.5, 0.5, 0.5, 1.0);
-  // vec4 specular = vec4(1.0, 0.5, 0.5, 1.0);
-  // float shininess = 0.05;
-  // vec4 spec = vec4(0.0); 
 
   float diffuse = 0.5;
   float ambient = 0.1;
@@ -105,7 +76,6 @@ float spotLight(vec3 lightPos, vec3 spotDir, float cutOff, float outCutOff) {
     float dotProduct = dot(n, lightDir);
     float intensity = max(dotProduct, 0.0);
 
-    // return max((intensity * diffuse + spec), ambient);
     return max((intensity*(diffuse + spec)), ambient);
   }
   else if (theta > outCutOff) {
@@ -118,7 +88,6 @@ float spotLight(vec3 lightPos, vec3 spotDir, float cutOff, float outCutOff) {
 
     intensity *= fac;
 
-    // return max((intensity * diffuse + spec), ambient);
     return max((intensity*(diffuse + spec)), ambient);
   }
   else {
@@ -128,8 +97,6 @@ float spotLight(vec3 lightPos, vec3 spotDir, float cutOff, float outCutOff) {
 
 void main ()
 {
-  // frag_color = texture2D(texture, tex);
-      
   frag_color = vec4(0.0);
   float fac = 0.0;
 
@@ -137,7 +104,6 @@ void main ()
     if(l1On[i] == 1) fac += ptLight(lPos[i]);
   }
 
-  // The last two arguments are the cosines of 25 and 50 degrees
   if(l1On[2] == 1) fac += spotLight(lPos[2], spotDir[0], 0.9763, 0.9063);
   if(l1On[3] == 1) fac += spotLight(lPos[3], spotDir[1], 0.9063, 0.6428);
 

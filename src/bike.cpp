@@ -64,12 +64,6 @@ void Bike::initialize_hnode()
   this->rear_wheel = new HNode(this->body, rear_wheel_s->num_vertices, rear_wheel_s->vert_arr, rear_wheel_s->col_arr, rear_wheel_s->norm_arr, rear_wheel_s->num_vertices*sizeof(glm::vec4), rear_wheel_s->num_vertices*sizeof(glm::vec4), rear_wheel_s->num_vertices*sizeof(glm::vec4), "RearWheel");
   this->rear_wheel->change_parameters(-this->body_w/2, -this->body_h/2, 0.0f, 0.0f, 0.0f, this->rear_rot);
   
-  // this->rear_wheel_dot = new HNode(this->rear_wheel, rear_dot_s->num_vertices, rear_dot_s->vert_arr, rear_dot_s->col_arr, rear_dot_s->num_vertices*sizeof(glm::vec4), rear_dot_s->num_vertices*sizeof(glm::vec4), "RearWheelDot");
-  // this->rear_wheel_dot->change_parameters(-this->wheel_r/2, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-  
-  // this->front_wheel_dot = new HNode(this->front_wheel, front_dot_s->num_vertices, front_dot_s->vert_arr, front_dot_s->col_arr, front_dot_s->num_vertices*sizeof(glm::vec4), front_dot_s->num_vertices*sizeof(glm::vec4), "FrontWheelDot");
-  // this->front_wheel_dot->change_parameters(this->wheel_r/2, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-
   glm::vec3 rots[20];
   for(int i = 0; i < 20; i++) {
     glm::mat4 mat = glm::rotate(glm::mat4(1.0f), glm::radians(18.0f*i), glm::vec3(0.0f, 0.0f, 1.0f))

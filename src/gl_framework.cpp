@@ -161,7 +161,6 @@ namespace csX75
       // Bike then Rider attributes
       for(int i = 21; i < 211; i++) isCont[i] = 1;
       fprintf(out_file, "%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, ", gtx[0], gty[0], gtz[0], gtx[1], gty[1], gtz[1], gtx[2], gty[2], gtz[2], dof_param[2]);
-      //fprintf(out_file, "%f, %f, %f, %f, %f, %f, ", gtx[0], gty[0], gtz[0], gtx[1], gty[1], gtz[1]);
 
       b->body->print_rot_tree(out_file);
       h->torso->print_rot_tree(out_file);
