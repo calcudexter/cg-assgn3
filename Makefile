@@ -16,7 +16,7 @@ INCLUDES=./src/gl_framework.hpp ./src/shader_util.hpp ./src/07_hierarchical_mode
 all: $(BIN3)
 
 $(BIN3): $(SRCS3) $(INCLUDES)
-	mkdir -p bin && g++ $(CPPFLAGS) $(SRCS3) -o $(BIN3) $(LDFLAGS) $(LIBS)
+	mkdir -p video_frames && mkdir -p bin && g++ $(CPPFLAGS) $(SRCS3) -o $(BIN3) $(LDFLAGS) $(LIBS)
 
 clean:
 	rm -r ${BIN_DIR}
