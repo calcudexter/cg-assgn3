@@ -257,18 +257,6 @@ Sphere::~Sphere()
     delete this->norm_arr;
 }
 
-// void Cuboid::insert_quad(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4 a, glm::vec4 b, glm::vec4 c, glm::vec4 d)
-// {
-//     vert_arr[this->index] = a; col_arr[this->index] = this->col; this->index++;
-//     vert_arr[this->index] = b; col_arr[this->index] = this->col; this->index++;
-//     vert_arr[this->index] = c; col_arr[this->index] = this->col; this->index++;
-//     vert_arr[this->index] = a; col_arr[this->index] = this->col; this->index++;
-//     vert_arr[this->index] = c; col_arr[this->index] = this->col; this->index++;
-//     vert_arr[this->index] = d; col_arr[this->index] = this->col; this->index++;
-// }
-
-
-
 void Cuboid::add_vertices(glm::vec4* vert_arr, glm::vec4* col_arr, glm::vec4* norm_arr)
 {   
     int ind = 0;
@@ -729,55 +717,6 @@ void SkyBox::add_vertices(glm::vec4* vert_arr, glm::vec2* col_arr, glm::vec4* no
     normal[4] = -glm::vec4(triangleNormal(glm::vec3(d_v), glm::vec3(h_v), glm::vec3(g_v)), 1.0f);
     normal[5] = -glm::vec4(triangleNormal(glm::vec3(h_v), glm::vec3(e_v), glm::vec3(f_v)), 1.0f);
 
-    // this->insert_tex_quad(vert_arr, tex_arr, e_v, a_v, b_v, f_v, 1.0/4, 1.0/3);
-    // norm_arr[ind++] = normal[1];
-    // norm_arr[ind++] = normal[1];
-    // norm_arr[ind++] = normal[1];
-    // norm_arr[ind++] = normal[1];
-    // norm_arr[ind++] = normal[1];
-    // norm_arr[ind++] = normal[1];
-
-    // this->insert_tex_quad(vert_arr, tex_arr, a_v, d_v, c_v, b_v, 1.0/4+0.0275, 2.0/3);
-    // norm_arr[ind++] = normal[0];
-    // norm_arr[ind++] = normal[0];
-    // norm_arr[ind++] = normal[0];
-    // norm_arr[ind++] = normal[0];
-    // norm_arr[ind++] = normal[0];
-    // norm_arr[ind++] = normal[0];
-
-    // this->insert_tex_quad(vert_arr, tex_arr, h_v, e_v, f_v, g_v, 1.0/4+0.0275, 0.0);
-    // norm_arr[ind++] = normal[5];
-    // norm_arr[ind++] = normal[5];
-    // norm_arr[ind++] = normal[5];
-    // norm_arr[ind++] = normal[5];
-    // norm_arr[ind++] = normal[5];
-    // norm_arr[ind++] = normal[5];
-
-    // this->insert_tex_quad(vert_arr, tex_arr, h_v, d_v, a_v, e_v, 0.0, 1.0/3);
-    // norm_arr[ind++] = normal[2];
-    // norm_arr[ind++] = normal[2];
-    // norm_arr[ind++] = normal[2];
-    // norm_arr[ind++] = normal[2];
-    // norm_arr[ind++] = normal[2];
-    // norm_arr[ind++] = normal[2];
-
-    // this->insert_tex_quad(vert_arr, tex_arr, f_v, b_v, c_v, g_v, 2.0/4, 1.0/3);
-    // norm_arr[ind++] = normal[3];
-    // norm_arr[ind++] = normal[3];
-    // norm_arr[ind++] = normal[3];
-    // norm_arr[ind++] = normal[3];
-    // norm_arr[ind++] = normal[3];
-    // norm_arr[ind++] = normal[3];
-
-    // this->insert_tex_quad(vert_arr, tex_arr, g_v, c_v, d_v, h_v, 3.0/4, 1.0/3);
-    // norm_arr[ind++] = normal[4];
-    // norm_arr[ind++] = normal[4];
-    // norm_arr[ind++] = normal[4];
-    // norm_arr[ind++] = normal[4];
-    // norm_arr[ind++] = normal[4];
-    // norm_arr[ind++] = normal[4];
-
-    
     this->insert_tex_quad(vert_arr, tex_arr, e_v, a_v, b_v, f_v, 1.0/4, 1.0/3);
     norm_arr[ind++] = normal[1]+normal[5]+normal[2];
     norm_arr[ind++] = normal[1]+normal[0]+normal[2];
