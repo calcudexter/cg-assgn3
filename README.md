@@ -67,7 +67,8 @@ For the bike, they work as follows :
 Similarly for the track, along its axes
 
 ## Bike’s movements
-1. Pressing F and Shift + F rotates the front tire 
+Press control and then
+1. Pressing and  F and Shift + F rotates the front tire 
 2. Pressing R and Shift + R rotates the rear tire
 3. Pressing T and Shift + T steers the bike.
 
