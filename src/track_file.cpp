@@ -45,7 +45,6 @@ int selected;
 
 Camera chosen_cam = GLOBAL;
 
-bool save_frames = false;
 
 glm::mat4 getCameraMatrix(Camera cam = GLOBAL)
 {
@@ -418,11 +417,6 @@ HNode* getNode(char key)
 
 int main(int argc, char** argv)
 {
-  if(argc == 2)
-  {
-    save_frames = std::atoi(argv[1]);
-  }
-  
   //! The pointer to the GLFW window
   GLFWwindow* window;
   
