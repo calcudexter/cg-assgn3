@@ -14,15 +14,13 @@ and then run the required binary.
 ```
 ./fmx-animate
 ```
-If you want to save the frames of animation to `video_frames` folder, then run
-```
-./fmx-animate 1
-```
+
 # Key bindings :  
 ## Animation
 S : Saving a key frame(appends all the state variables to file `keyframes.txt`)  
 L : Loads all the saved keyframes  
 P : Plays the animation after interpolating between keyframes
+R : Plays the animation and saves the frames to `video_frames` directory
 
 ## Cameras
 N : Toggle between global camera, Rider Camera(behind rider), and First Person View camera 

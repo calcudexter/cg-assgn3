@@ -29,8 +29,6 @@ int fps = 100;
 extern void renderGL();
 
 int frame_index = 0; // for saving frames
-extern bool save_frames;
-
 namespace csX75
 {
   void saveImage(const char* filepath, GLFWwindow* w) {
@@ -291,16 +289,112 @@ namespace csX75
 
           glfwWaitEventsTimeout(1.0/fps);
           renderGL();
-          if(save_frames)
-          {
-            std::ostringstream ss;
-            ss << std::setfill('0')<<std::setw(5)<<frame_index;
-            std::string s = ss.str();
-            std::string filename = std::string("../video_frames/frame-") + s + std::string(".png");
-            saveImage(filename.c_str(), window);
-            std::cout<<"image_saved "<<frame_index<<std::endl;
-            frame_index++;
+          glfwSwapBuffers(window);
+        }
+      }
+      frame_index = 0;
+      printf("Animation ended\n");
+    }
+    else if (!control_held && key == GLFW_KEY_R && action == GLFW_PRESS) {
+      // Plays the animation by interpolating between the frames
+      // Steps:
+      // 1. Interpolate the keyframes
+      // 2. Reload all the variables with the values that you have now stored
+      // this will automatically render it to the screen with the new parameters
+
+
+      // Base case is to load and render the scene with the first frame
+      // by default
+
+      for(int i = 0; i < 11; i++) isCont[i] = 1;
+      isCont[1] = 0;
+
+      for(int i = 11; i < 17; i++) isCont[i] = 1;
+      for(int i = 17; i < 21; i++) isCont[i] = 0;
+
+      for(int i = 21; i < 211; i++) isCont[i] = 1;
+
+      int render = 0;
+
+      for(int i = 1; i < attrs.size(); i++) {
+        int frame_diff = attrs[i][0] - attrs[i-1][0];
+
+        for(int j = 0; j < frame_diff; j++) {
+          std::vector<float> curr_frame;
+
+          for(int k = 0; k < attrs[0].size(); k++) {
+            if(isCont[k] == 0) {
+              curr_frame.push_back(attrs[i-1][k]);
+              continue;
+            }
+
+            // Find the interpolated value here
+
+            float var = (frame_diff-j-1)*attrs[i-1][k] + (j+1)*attrs[i][k];
+            var /= frame_diff;
+
+            curr_frame.push_back(var);
           }
+
+          // Now, reload curr_frame to render and using a timer callback
+          // go to sleep
+
+          int ind = 1;
+          chosen_cam = static_cast<Camera>(curr_frame[ind++]);
+          c_xpos = curr_frame[ind++];
+          c_ypos = curr_frame[ind++];
+          c_zpos = curr_frame[ind++];
+
+          c_up_x = curr_frame[ind++];
+          c_up_y = curr_frame[ind++];
+          c_up_z = curr_frame[ind++];
+
+          c_xrot = curr_frame[ind++];
+          c_yrot = curr_frame[ind++];
+          c_zrot = curr_frame[ind++];
+
+          lxPos[0] = curr_frame[ind++];
+          lyPos[0] = curr_frame[ind++];
+          lzPos[0] = curr_frame[ind++];
+
+          lxPos[1] = curr_frame[ind++];
+          lyPos[1] = curr_frame[ind++];
+          lzPos[1] = curr_frame[ind++];
+
+          sourceStat[0] = curr_frame[ind++];
+          sourceStat[1] = curr_frame[ind++];
+          sourceStat[2] = curr_frame[ind++];
+          sourceStat[3] = curr_frame[ind++];
+
+          gtx[0] = curr_frame[ind++];
+          gty[0] = curr_frame[ind++];
+          gtz[0] = curr_frame[ind++];
+
+          gtx[1] = curr_frame[ind++];
+          gty[1] = curr_frame[ind++];
+          gtz[1] = curr_frame[ind++];
+
+          gtx[2] = curr_frame[ind++];
+          gty[2] = curr_frame[ind++];
+          gtz[2] = curr_frame[ind++];
+          // Need to reload bike and rider
+
+          dof_param[2] = curr_frame[ind++];
+
+          b->body->load_tree(curr_frame, ind);
+          h->torso->load_tree(curr_frame, ind);
+
+          glfwWaitEventsTimeout(1.0/fps);
+          renderGL();
+
+          std::ostringstream ss;
+          ss << std::setfill('0')<<std::setw(5)<<frame_index;
+          std::string s = ss.str();
+          std::string filename = std::string("../video_frames/frame-") + s + std::string(".png");
+          saveImage(filename.c_str(), window);
+          // std::cout<<"image_saved "<<frame_index<<std::endl;
+          frame_index++;
+        
           glfwSwapBuffers(window);
         }
       }
@@ -399,14 +493,14 @@ namespace csX75
         printf("Selected %c\n", key);
       }
     }
-    else if (key == GLFW_KEY_F && action == GLFW_PRESS | GLFW_REPEAT)
+    else if (control_held && key == GLFW_KEY_F && action == GLFW_PRESS | GLFW_REPEAT)
     {
       if(shift_held)
         dof_param[1] -= 5.0f;
       else 
         dof_param[1] += 5.0f;
     }
-    else if (key == GLFW_KEY_R && action == GLFW_PRESS | GLFW_REPEAT)
+    else if (control_held && key == GLFW_KEY_R && action == GLFW_PRESS | GLFW_REPEAT)
     {
       if(shift_held)
         dof_param[0] -= 5.0f;
